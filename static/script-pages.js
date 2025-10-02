@@ -617,7 +617,11 @@ function hideLoading() {
 }
 
 function showNotification(message, type = 'info') {
-    const container = document.getElementById('notificationContainer');
+    // Ensure document.body exists
+    if (!document.body) {
+        console.error('Document body not ready');
+        return;
+    }
     
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
@@ -645,7 +649,26 @@ function showNotification(message, type = 'info') {
         </button>
     `;
     
-    container.appendChild(notification);
+    // Add styles for notification
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${getNotificationColor(type)};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        z-index: 1001;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        max-width: 400px;
+        animation: slideInRight 0.3s ease;
+    `;
+    
+    document.body.appendChild(notification);
     
     // Show notification
     setTimeout(() => {
@@ -665,4 +688,15 @@ function showNotification(message, type = 'info') {
             }, 300);
         }
     }, 5000);
+}
+
+// Get notification color based on type
+function getNotificationColor(type) {
+    const colors = {
+        success: '#27ae60',
+        error: '#e74c3c',
+        warning: '#f39c12',
+        info: '#3498db'
+    };
+    return colors[type] || '#3498db';
 }

@@ -427,6 +427,12 @@ function hideLoading() {
 
 // Show notification
 function showNotification(message, type = 'info') {
+    // Ensure document.body exists
+    if (!document.body) {
+        console.error('Document body not ready');
+        return;
+    }
+    
     // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
