@@ -1061,21 +1061,96 @@ html {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.severity-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: badgeShimmer 3s infinite;
 }
 
 .severity-severe .severity-badge {
-    background: #e74c3c;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
     color: white;
+    animation: severityHighPulse 1.8s infinite, severityHighColor 2.5s infinite;
+    box-shadow: 0 0 20px rgba(231, 76, 60, 0.6);
 }
 
 .severity-moderate .severity-badge {
-    background: #f39c12;
+    background: linear-gradient(135deg, #f39c12, #e67e22);
     color: white;
+    animation: severityMediumPulse 2.2s infinite, severityMediumColor 3s infinite;
+    box-shadow: 0 0 15px rgba(243, 156, 18, 0.5);
 }
 
 .severity-none .severity-badge {
-    background: #27ae60;
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
     color: white;
+    animation: severityLowPulse 2.8s infinite, severityLowColor 4s infinite;
+    box-shadow: 0 0 10px rgba(39, 174, 96, 0.4);
+}
+
+/* Severity Level Animations */
+@keyframes severityHighPulse {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 0 20px rgba(231, 76, 60, 0.6);
+    }
+    50% { 
+        transform: scale(1.06); 
+        box-shadow: 0 0 35px rgba(231, 76, 60, 0.9);
+    }
+}
+
+@keyframes severityHighColor {
+    0% { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+    25% { background: linear-gradient(135deg, #ff4757, #e74c3c); }
+    50% { background: linear-gradient(135deg, #ff3838, #ff4757); }
+    75% { background: linear-gradient(135deg, #ff4757, #e74c3c); }
+    100% { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+}
+
+@keyframes severityMediumPulse {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 0 15px rgba(243, 156, 18, 0.5);
+    }
+    50% { 
+        transform: scale(1.04); 
+        box-shadow: 0 0 28px rgba(243, 156, 18, 0.7);
+    }
+}
+
+@keyframes severityMediumColor {
+    0% { background: linear-gradient(135deg, #f39c12, #e67e22); }
+    33% { background: linear-gradient(135deg, #ffa502, #f39c12); }
+    66% { background: linear-gradient(135deg, #ff9500, #ffa502); }
+    100% { background: linear-gradient(135deg, #f39c12, #e67e22); }
+}
+
+@keyframes severityLowPulse {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 0 10px rgba(39, 174, 96, 0.4);
+    }
+    50% { 
+        transform: scale(1.03); 
+        box-shadow: 0 0 22px rgba(39, 174, 96, 0.6);
+    }
+}
+
+@keyframes severityLowColor {
+    0% { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+    50% { background: linear-gradient(135deg, #2ecc71, #1dd1a1); }
+    100% { background: linear-gradient(135deg, #27ae60, #2ecc71); }
 }
 
 .risk-badge {
@@ -1085,21 +1160,101 @@ html {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.risk-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: badgeShimmer 3s infinite;
+}
+
+@keyframes badgeShimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
 }
 
 .risk-high .risk-badge {
-    background: #e74c3c;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
     color: white;
+    animation: riskHighPulse 2s infinite, riskHighColor 3s infinite;
+    box-shadow: 0 0 20px rgba(231, 76, 60, 0.5);
 }
 
 .risk-medium .risk-badge {
-    background: #f39c12;
+    background: linear-gradient(135deg, #f39c12, #e67e22);
     color: white;
+    animation: riskMediumPulse 2.5s infinite, riskMediumColor 4s infinite;
+    box-shadow: 0 0 15px rgba(243, 156, 18, 0.4);
 }
 
 .risk-low .risk-badge {
-    background: #27ae60;
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
     color: white;
+    animation: riskLowPulse 3s infinite, riskLowColor 5s infinite;
+    box-shadow: 0 0 10px rgba(39, 174, 96, 0.3);
+}
+
+/* Risk Level Animations */
+@keyframes riskHighPulse {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 0 20px rgba(231, 76, 60, 0.5);
+    }
+    50% { 
+        transform: scale(1.05); 
+        box-shadow: 0 0 30px rgba(231, 76, 60, 0.8);
+    }
+}
+
+@keyframes riskHighColor {
+    0% { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+    25% { background: linear-gradient(135deg, #ff4757, #e74c3c); }
+    50% { background: linear-gradient(135deg, #ff3838, #ff4757); }
+    75% { background: linear-gradient(135deg, #ff4757, #e74c3c); }
+    100% { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+}
+
+@keyframes riskMediumPulse {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 0 15px rgba(243, 156, 18, 0.4);
+    }
+    50% { 
+        transform: scale(1.03); 
+        box-shadow: 0 0 25px rgba(243, 156, 18, 0.6);
+    }
+}
+
+@keyframes riskMediumColor {
+    0% { background: linear-gradient(135deg, #f39c12, #e67e22); }
+    33% { background: linear-gradient(135deg, #ffa502, #f39c12); }
+    66% { background: linear-gradient(135deg, #ff9500, #ffa502); }
+    100% { background: linear-gradient(135deg, #f39c12, #e67e22); }
+}
+
+@keyframes riskLowPulse {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 0 10px rgba(39, 174, 96, 0.3);
+    }
+    50% { 
+        transform: scale(1.02); 
+        box-shadow: 0 0 20px rgba(39, 174, 96, 0.5);
+    }
+}
+
+@keyframes riskLowColor {
+    0% { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+    50% { background: linear-gradient(135deg, #2ecc71, #1dd1a1); }
+    100% { background: linear-gradient(135deg, #27ae60, #2ecc71); }
 }
 
 .fault-description {

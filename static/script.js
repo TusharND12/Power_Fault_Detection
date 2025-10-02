@@ -213,6 +213,11 @@ function displayResults(result) {
     resultsContainer.style.display = 'block';
     resultsContainer.scrollIntoView({ behavior: 'smooth' });
     
+    // Animate badges after a short delay
+    setTimeout(() => {
+        animateBadges();
+    }, 500);
+    
     // Show success notification
     showNotification('Prediction completed successfully!', 'success');
 }
@@ -550,6 +555,46 @@ function updateProgressIndicator(step) {
         }
     });
 }
+
+// Animate badges when they appear
+function animateBadges() {
+    const badges = document.querySelectorAll('.risk-badge, .severity-badge');
+    badges.forEach((badge, index) => {
+        // Reset animation
+        badge.style.animation = 'none';
+        badge.offsetHeight; // Trigger reflow
+        
+        // Add staggered animation
+        setTimeout(() => {
+            badge.style.animation = '';
+            badge.classList.add('badge-appear');
+        }, index * 200);
+    });
+}
+
+// Add CSS for badge appearance animation
+const badgeStyle = document.createElement('style');
+badgeStyle.textContent = `
+    .badge-appear {
+        animation: badgeAppear 0.6s ease-out;
+    }
+    
+    @keyframes badgeAppear {
+        0% {
+            transform: scale(0) rotate(180deg);
+            opacity: 0;
+        }
+        50% {
+            transform: scale(1.2) rotate(90deg);
+            opacity: 0.8;
+        }
+        100% {
+            transform: scale(1) rotate(0deg);
+            opacity: 1;
+        }
+    }
+`;
+document.head.appendChild(badgeStyle);
 
 // Add CSS animation for notifications
 const style = document.createElement('style');
