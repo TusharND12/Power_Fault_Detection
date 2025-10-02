@@ -1704,6 +1704,210 @@ html {
     }
 }
 
+/* Live Graph Section */
+.live-graph-section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 25px;
+    animation: graphSlideIn 0.8s ease-out 2.0s both;
+    position: relative;
+    overflow: hidden;
+}
+
+.live-graph-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3498db, #e74c3c, #f39c12);
+    transform: scaleX(0);
+    animation: borderGrow 0.8s ease-out 2.2s forwards;
+}
+
+.live-graph-section h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: titleFadeIn 0.6s ease-out 2.1s both;
+}
+
+.live-graph-section h3 i {
+    color: #3498db;
+    animation: iconBounce 0.6s ease-out 2.3s both;
+}
+
+.graph-container {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+    animation: containerFadeIn 0.6s ease-out 2.2s both;
+}
+
+.graph-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(52, 152, 219, 0.05), rgba(231, 76, 60, 0.05));
+    border-radius: 8px;
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+.graph-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+    animation: controlsSlideIn 0.6s ease-out 2.3s both;
+}
+
+.graph-btn {
+    background: #ecf0f1;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    color: #7f8c8d;
+    position: relative;
+    overflow: hidden;
+}
+
+.graph-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.graph-btn:hover::before {
+    left: 100%;
+}
+
+.graph-btn:hover {
+    background: #3498db;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.graph-btn.active {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    animation: activePulse 2s ease-in-out infinite;
+}
+
+.graph-status {
+    display: flex;
+    justify-content: space-around;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    animation: statusSlideIn 0.6s ease-out 2.4s both;
+}
+
+.status-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-label {
+    font-size: 0.8rem;
+    color: #7f8c8d;
+    font-weight: 500;
+}
+
+.status-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.live-indicator {
+    color: #27ae60 !important;
+    animation: livePulse 2s ease-in-out infinite;
+}
+
+@keyframes graphSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes containerFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes controlsSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes statusSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes activePulse {
+    0%, 100% {
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    }
+    50% {
+        box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
+    }
+}
+
+@keyframes livePulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
 /* Footer */
 .footer {
     text-align: center;

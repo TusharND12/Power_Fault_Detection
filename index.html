@@ -240,6 +240,34 @@
                             <!-- Input parameters will be displayed here -->
                         </div>
                     </div>
+
+                    <!-- Live Graph Section -->
+                    <div class="live-graph-section">
+                        <h3><i class="fas fa-chart-line"></i> Live System Monitoring</h3>
+                        <div class="graph-container">
+                            <canvas id="liveGraph" width="800" height="400"></canvas>
+                        </div>
+                        <div class="graph-controls">
+                            <button class="graph-btn active" data-type="voltage">Voltage</button>
+                            <button class="graph-btn" data-type="current">Current</button>
+                            <button class="graph-btn" data-type="power">Power</button>
+                            <button class="graph-btn" data-type="frequency">Frequency</button>
+                        </div>
+                        <div class="graph-status">
+                            <div class="status-item">
+                                <span class="status-label">Update Rate:</span>
+                                <span class="status-value" id="updateRate">1.0s</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Data Points:</span>
+                                <span class="status-value" id="dataPoints">0</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Status:</span>
+                                <span class="status-value live-indicator" id="graphStatus">Live</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -259,6 +287,7 @@
 
     <!-- Chart.js for visualizations -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <script src="static/script.js"></script>
 </body>
 </html>

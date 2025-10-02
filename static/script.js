@@ -478,6 +478,9 @@ function showNotification(message, type = 'info') {
         console.error('Document body not ready');
         return;
     }
+
+    // Initialize live graph
+    initializeLiveGraph();
     
     // Create notification element
     const notification = document.createElement('div');
@@ -842,5 +845,318 @@ function getFaultDetails(voltage, current, temperature, predictedClass, probabil
                 "Document system status"
             ]
         };
+    }
+}
+
+// Live Graph Variables
+let liveGraph = null;
+let graphData = {
+    voltage: [],
+    current: [],
+    power: [],
+    frequency: []
+};
+let currentGraphType = 'voltage';
+let graphUpdateInterval = null;
+let dataPointCount = 0;
+
+// Initialize Live Graph
+function initializeLiveGraph() {
+    const canvas = document.getElementById('liveGraph');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    
+    // Initialize with sample data
+    initializeGraphData();
+    
+    // Create Chart.js instance
+    liveGraph = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Voltage (V)',
+                data: [],
+                borderColor: '#3498db',
+                backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#3498db',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 750,
+                easing: 'easeInOutQuart'
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20,
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#ffffff',
+                    bodyColor: '#ffffff',
+                    borderColor: '#3498db',
+                    borderWidth: 1,
+                    cornerRadius: 8,
+                    displayColors: true
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Time',
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        maxTicksLimit: 10,
+                        font: {
+                            size: 10
+                        }
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Value',
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 10
+                        }
+                    }
+                }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
+            }
+        }
+    });
+
+    // Setup graph controls
+    setupGraphControls();
+    
+    // Start live updates
+    startLiveUpdates();
+}
+
+// Initialize graph data with realistic electrical values
+function initializeGraphData() {
+    const now = new Date();
+    const baseTime = now.getTime();
+    
+    // Generate initial data points
+    for (let i = 0; i < 20; i++) {
+        const time = new Date(baseTime - (19 - i) * 1000);
+        const timeLabel = time.toLocaleTimeString();
+        
+        // Generate realistic electrical data
+        graphData.voltage.push({
+            x: timeLabel,
+            y: 2200 + Math.random() * 100 - 50
+        });
+        
+        graphData.current.push({
+            x: timeLabel,
+            y: 150 + Math.random() * 20 - 10
+        });
+        
+        graphData.power.push({
+            x: timeLabel,
+            y: 330000 + Math.random() * 20000 - 10000
+        });
+        
+        graphData.frequency.push({
+            x: timeLabel,
+            y: 50 + Math.random() * 0.2 - 0.1
+        });
+    }
+}
+
+// Setup graph control buttons
+function setupGraphControls() {
+    const buttons = document.querySelectorAll('.graph-btn');
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            button.classList.add('active');
+            
+            // Update graph type
+            currentGraphType = button.dataset.type;
+            updateGraphType();
+        });
+    });
+}
+
+// Update graph type and data
+function updateGraphType() {
+    if (!liveGraph) return;
+
+    const configs = {
+        voltage: {
+            label: 'Voltage (V)',
+            color: '#3498db',
+            data: graphData.voltage
+        },
+        current: {
+            label: 'Current (A)',
+            color: '#e74c3c',
+            data: graphData.current
+        },
+        power: {
+            label: 'Power (W)',
+            color: '#f39c12',
+            data: graphData.power
+        },
+        frequency: {
+            label: 'Frequency (Hz)',
+            color: '#27ae60',
+            data: graphData.frequency
+        }
+    };
+
+    const config = configs[currentGraphType];
+    
+    liveGraph.data.datasets[0].label = config.label;
+    liveGraph.data.datasets[0].borderColor = config.color;
+    liveGraph.data.datasets[0].backgroundColor = config.color + '20';
+    liveGraph.data.datasets[0].pointBackgroundColor = config.color;
+    liveGraph.data.datasets[0].data = config.data;
+    
+    // Update labels
+    liveGraph.data.labels = config.data.map(d => d.x);
+    
+    liveGraph.update('active');
+}
+
+// Start live data updates
+function startLiveUpdates() {
+    if (graphUpdateInterval) {
+        clearInterval(graphUpdateInterval);
+    }
+    
+    graphUpdateInterval = setInterval(() => {
+        updateLiveData();
+    }, 1000); // Update every second
+}
+
+// Update live data
+function updateLiveData() {
+    if (!liveGraph) return;
+
+    const now = new Date();
+    const timeLabel = now.toLocaleTimeString();
+    
+    // Generate new data point based on current graph type
+    let newValue;
+    const baseValues = {
+        voltage: 2200,
+        current: 150,
+        power: 330000,
+        frequency: 50
+    };
+    
+    const variations = {
+        voltage: 100,
+        current: 20,
+        power: 20000,
+        frequency: 0.2
+    };
+    
+    const baseValue = baseValues[currentGraphType];
+    const variation = variations[currentGraphType];
+    
+    // Add some realistic variation and trends
+    const trend = Math.sin(Date.now() / 10000) * 0.1; // Slow trend
+    const noise = (Math.random() - 0.5) * 2; // Random noise
+    newValue = baseValue + (trend + noise) * variation;
+    
+    // Add new data point
+    graphData[currentGraphType].push({
+        x: timeLabel,
+        y: newValue
+    });
+    
+    // Keep only last 30 data points
+    if (graphData[currentGraphType].length > 30) {
+        graphData[currentGraphType].shift();
+    }
+    
+    // Update data point count
+    dataPointCount++;
+    updateGraphStatus();
+    
+    // Update chart
+    updateGraphType();
+}
+
+// Update graph status display
+function updateGraphStatus() {
+    const updateRateEl = document.getElementById('updateRate');
+    const dataPointsEl = document.getElementById('dataPoints');
+    const graphStatusEl = document.getElementById('graphStatus');
+    
+    if (updateRateEl) updateRateEl.textContent = '1.0s';
+    if (dataPointsEl) dataPointsEl.textContent = dataPointCount.toString();
+    if (graphStatusEl) {
+        graphStatusEl.textContent = 'Live';
+        graphStatusEl.className = 'status-value live-indicator';
+    }
+}
+
+// Stop live updates
+function stopLiveUpdates() {
+    if (graphUpdateInterval) {
+        clearInterval(graphUpdateInterval);
+        graphUpdateInterval = null;
+    }
+    
+    const graphStatusEl = document.getElementById('graphStatus');
+    if (graphStatusEl) {
+        graphStatusEl.textContent = 'Paused';
+        graphStatusEl.className = 'status-value';
     }
 }
