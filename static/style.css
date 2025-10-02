@@ -19,6 +19,73 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Electrical Grid Background */
+.electrical-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.1;
+}
+
+.grid-line {
+    position: absolute;
+    background: linear-gradient(90deg, transparent, #667eea, transparent);
+    height: 2px;
+    animation: gridFlow 3s linear infinite;
+}
+
+.grid-line-1 {
+    top: 20%;
+    left: 0;
+    width: 100%;
+    animation-delay: 0s;
+}
+
+.grid-line-2 {
+    top: 50%;
+    left: 0;
+    width: 100%;
+    animation-delay: 1s;
+}
+
+.grid-line-3 {
+    top: 80%;
+    left: 0;
+    width: 100%;
+    animation-delay: 2s;
+}
+
+.grid-node {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #667eea;
+    border-radius: 50%;
+    animation: nodePulse 2s ease-in-out infinite;
+}
+
+.grid-node-1 { top: 20%; left: 10%; animation-delay: 0s; }
+.grid-node-2 { top: 20%; left: 50%; animation-delay: 0.5s; }
+.grid-node-3 { top: 20%; left: 90%; animation-delay: 1s; }
+.grid-node-4 { top: 50%; left: 25%; animation-delay: 1.5s; }
+.grid-node-5 { top: 50%; left: 75%; animation-delay: 2s; }
+.grid-node-6 { top: 80%; left: 50%; animation-delay: 2.5s; }
+
+@keyframes gridFlow {
+    0% { transform: translateX(-100%); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateX(100%); opacity: 0; }
+}
+
+@keyframes nodePulse {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.5); opacity: 1; }
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -60,11 +127,120 @@ html {
     z-index: 1;
 }
 
-.logo i {
+/* Electrical Icon with Sparks */
+.electrical-icon {
+    position: relative;
+    display: inline-block;
+}
+
+.electrical-icon i {
     font-size: 3rem;
     color: #ffd700;
     text-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
-    animation: pulse 2s infinite;
+    animation: electricalPulse 2s infinite;
+    position: relative;
+    z-index: 2;
+}
+
+.electric-sparks {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    pointer-events: none;
+}
+
+.spark {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #ffd700;
+    border-radius: 50%;
+    animation: sparkAnimation 1.5s infinite;
+}
+
+.spark-1 {
+    top: 20%;
+    left: 30%;
+    animation-delay: 0s;
+}
+
+.spark-2 {
+    top: 60%;
+    right: 20%;
+    animation-delay: 0.5s;
+}
+
+.spark-3 {
+    bottom: 20%;
+    left: 60%;
+    animation-delay: 1s;
+}
+
+@keyframes electricalPulse {
+    0%, 100% { 
+        transform: scale(1); 
+        filter: brightness(1);
+    }
+    50% { 
+        transform: scale(1.1); 
+        filter: brightness(1.3);
+    }
+}
+
+@keyframes sparkAnimation {
+    0% { 
+        opacity: 0; 
+        transform: scale(0);
+    }
+    50% { 
+        opacity: 1; 
+        transform: scale(1);
+    }
+    100% { 
+        opacity: 0; 
+        transform: scale(0);
+    }
+}
+
+/* Live Status Indicator */
+.live-status {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(39, 174, 96, 0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(39, 174, 96, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background: #27ae60;
+    border-radius: 50%;
+    animation: statusBlink 1.5s infinite;
+}
+
+.status-indicator span {
+    color: #27ae60;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+@keyframes statusBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
 }
 
 @keyframes pulse {
@@ -223,9 +399,118 @@ html {
     font-size: 0.95rem;
 }
 
-.form-group label i {
-    color: #3498db;
+/* Icon Containers with Animations */
+.icon-container {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+}
+
+.icon-container i {
+    color: #667eea;
     width: 16px;
+    position: relative;
+    z-index: 2;
+}
+
+.icon-pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid #667eea;
+    border-radius: 50%;
+    animation: iconPulse 2s infinite;
+}
+
+.icon-flow {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 20px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #667eea, transparent);
+    animation: flowAnimation 1.5s infinite;
+}
+
+.icon-graph {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid #667eea;
+    border-radius: 2px;
+    animation: graphAnimation 2s infinite;
+}
+
+.icon-temp {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e74c3c;
+    border-radius: 50%;
+    animation: tempAnimation 3s infinite;
+}
+
+.icon-wind {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 20px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #3498db, transparent);
+    animation: windAnimation 1s infinite;
+}
+
+@keyframes iconPulse {
+    0%, 100% { 
+        transform: translate(-50%, -50%) scale(1); 
+        opacity: 0.3;
+    }
+    50% { 
+        transform: translate(-50%, -50%) scale(1.2); 
+        opacity: 0.8;
+    }
+}
+
+@keyframes flowAnimation {
+    0% { transform: translateX(-100%); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateX(100%); opacity: 0; }
+}
+
+@keyframes graphAnimation {
+    0%, 100% { 
+        transform: translate(-50%, -50%) scaleY(1); 
+    }
+    50% { 
+        transform: translate(-50%, -50%) scaleY(0.5); 
+    }
+}
+
+@keyframes tempAnimation {
+    0%, 100% { 
+        transform: translate(-50%, -50%) scale(1); 
+        border-color: #e74c3c;
+    }
+    50% { 
+        transform: translate(-50%, -50%) scale(1.1); 
+        border-color: #ff6b6b;
+    }
+}
+
+@keyframes windAnimation {
+    0% { transform: translateX(-100%); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateX(100%); opacity: 0; }
 }
 
 .form-group input,
@@ -452,6 +737,92 @@ html {
     background: linear-gradient(135deg, #3498db, #2980b9);
     color: white;
     box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+    position: relative;
+    overflow: visible;
+}
+
+.circuit-lines {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    pointer-events: none;
+}
+
+.circuit-line {
+    position: absolute;
+    background: linear-gradient(45deg, transparent, #3498db, transparent);
+    animation: circuitFlow 2s linear infinite;
+}
+
+.circuit-line-1 {
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 60px;
+    transform: translateX(-50%);
+    animation-delay: 0s;
+}
+
+.circuit-line-2 {
+    top: 50%;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    transform: translateY(-50%);
+    animation-delay: 0.5s;
+}
+
+.circuit-line-3 {
+    top: 50%;
+    right: 0;
+    width: 60px;
+    height: 2px;
+    transform: translateY(-50%);
+    animation-delay: 1s;
+}
+
+@keyframes circuitFlow {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* Confidence Bar */
+.confidence-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(52, 152, 219, 0.2);
+    border-radius: 3px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.confidence-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #27ae60, #2ecc71);
+    border-radius: 3px;
+    width: 0%;
+    transition: width 1s ease-in-out;
+    position: relative;
+}
+
+.confidence-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
 }
 
 .prediction-icon.warning {

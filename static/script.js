@@ -229,6 +229,14 @@ function updatePredictionCard(result) {
     // Set confidence
     confidenceText.textContent = `Confidence: ${(result.confidence * 100).toFixed(1)}%`;
     
+    // Animate confidence bar
+    const confidenceFill = document.getElementById('confidenceFill');
+    if (confidenceFill) {
+        setTimeout(() => {
+            confidenceFill.style.width = `${result.confidence * 100}%`;
+        }, 500);
+    }
+    
     // Update icon and colors based on prediction
     predictionIcon.className = 'fas';
     if (result.prediction === 'Line Breakage') {

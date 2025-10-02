@@ -9,14 +9,40 @@
     <link href="static/style.css" rel="stylesheet">
 </head>
 <body>
+    <!-- Electrical Grid Background -->
+    <div class="electrical-grid">
+        <div class="grid-line grid-line-1"></div>
+        <div class="grid-line grid-line-2"></div>
+        <div class="grid-line grid-line-3"></div>
+        <div class="grid-node grid-node-1"></div>
+        <div class="grid-node grid-node-2"></div>
+        <div class="grid-node grid-node-3"></div>
+        <div class="grid-node grid-node-4"></div>
+        <div class="grid-node grid-node-5"></div>
+        <div class="grid-node grid-node-6"></div>
+    </div>
+    
     <div class="container">
         <header class="header">
             <div class="header-content">
                 <div class="logo">
-                    <i class="fas fa-bolt"></i>
+                    <div class="electrical-icon">
+                        <i class="fas fa-bolt"></i>
+                        <div class="electric-sparks">
+                            <span class="spark spark-1"></span>
+                            <span class="spark spark-2"></span>
+                            <span class="spark spark-3"></span>
+                        </div>
+                    </div>
                     <h1>Power Fault Prediction System</h1>
                 </div>
                 <p class="subtitle">AI-powered electrical grid monitoring and fault prediction</p>
+                <div class="live-status">
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        <span>LIVE MONITORING</span>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -47,7 +73,10 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="voltage">
-                                <i class="fas fa-bolt"></i>
+                                <div class="icon-container">
+                                    <i class="fas fa-bolt"></i>
+                                    <div class="icon-pulse"></div>
+                                </div>
                                 Voltage (V)
                             </label>
                             <input type="number" id="voltage" name="voltage" step="0.0001" min="0" max="5000" value="0.0000" placeholder="Enter voltage (e.g., 2200.0000)" required>
@@ -56,7 +85,10 @@
 
                         <div class="form-group">
                             <label for="current">
-                                <i class="fas fa-stream"></i>
+                                <div class="icon-container">
+                                    <i class="fas fa-stream"></i>
+                                    <div class="icon-flow"></div>
+                                </div>
                                 Current (A)
                             </label>
                             <input type="number" id="current" name="current" step="0.0001" min="0" max="1000" value="0.0000" placeholder="Enter current (e.g., 250.0000)" required>
@@ -65,7 +97,10 @@
 
                         <div class="form-group">
                             <label for="power_load">
-                                <i class="fas fa-chart-line"></i>
+                                <div class="icon-container">
+                                    <i class="fas fa-chart-line"></i>
+                                    <div class="icon-graph"></div>
+                                </div>
                                 Power Load (MW)
                             </label>
                             <input type="number" id="power_load" name="power_load" step="0.0001" min="0" max="200" value="0.0000" placeholder="Enter power load (e.g., 50.0000)" required>
@@ -74,7 +109,10 @@
 
                         <div class="form-group">
                             <label for="temperature">
-                                <i class="fas fa-thermometer-half"></i>
+                                <div class="icon-container">
+                                    <i class="fas fa-thermometer-half"></i>
+                                    <div class="icon-temp"></div>
+                                </div>
                                 Temperature (°C)
                             </label>
                             <input type="number" id="temperature" name="temperature" step="0.0001" min="-50" max="100" value="0.0000" placeholder="Enter temperature (e.g., 25.0000)" required>
@@ -83,7 +121,10 @@
 
                         <div class="form-group">
                             <label for="wind_speed">
-                                <i class="fas fa-wind"></i>
+                                <div class="icon-container">
+                                    <i class="fas fa-wind"></i>
+                                    <div class="icon-wind"></div>
+                                </div>
                                 Wind Speed (km/h)
                             </label>
                             <input type="number" id="wind_speed" name="wind_speed" step="0.0001" min="0" max="200" value="0.0000" required>
@@ -170,10 +211,18 @@
                         <div class="prediction-card" id="predictionCard">
                             <div class="prediction-icon">
                                 <i class="fas fa-exclamation-triangle" id="predictionIcon"></i>
+                                <div class="circuit-lines">
+                                    <div class="circuit-line circuit-line-1"></div>
+                                    <div class="circuit-line circuit-line-2"></div>
+                                    <div class="circuit-line circuit-line-3"></div>
+                                </div>
                             </div>
                             <div class="prediction-details">
                                 <h3 id="predictionLabel">Predicted Fault Type</h3>
                                 <p class="confidence" id="confidenceText">Confidence: 0%</p>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" id="confidenceFill"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
