@@ -1313,6 +1313,9 @@ function initializeChatbot() {
         send: !!chatbotSend
     });
     
+    // Test click functionality
+    console.log('Setting up click handlers...');
+    
     // Make chatbot visible by default (collapsed state)
     chatbotContainer.style.display = 'flex';
     chatbotContainer.style.visibility = 'visible';
@@ -1323,8 +1326,16 @@ function initializeChatbot() {
     isChatbotOpen = false;
     
     console.log('Chatbot should now be visible');
+    
+    // Add a simple test to verify the chatbot is working
+    setTimeout(() => {
+        console.log('Testing chatbot click...');
+        console.log('Container element:', chatbotContainer);
+        console.log('Container classes:', chatbotContainer.className);
+        console.log('Is chatbot open:', isChatbotOpen);
+    }, 2000);
 
-    // Toggle chatbot
+    // Toggle chatbot (close button)
     chatbotToggle.addEventListener('click', (e) => {
         e.stopPropagation();
         isChatbotOpen = false;
@@ -1332,16 +1343,25 @@ function initializeChatbot() {
         chatbotWindow.classList.remove('active');
     });
 
-    // Click on container to expand
-    chatbotContainer.addEventListener('click', () => {
-        if (!isChatbotOpen) {
+    // Click on container to expand (only when collapsed)
+    chatbotContainer.addEventListener('click', (e) => {
+        console.log('Chatbot clicked, current state:', isChatbotOpen, chatbotContainer.classList.contains('expanded'));
+        if (!isChatbotOpen && !chatbotContainer.classList.contains('expanded')) {
+            e.preventDefault();
+            console.log('Expanding chatbot...');
             isChatbotOpen = true;
             chatbotContainer.classList.add('expanded');
             chatbotWindow.classList.add('active');
             setTimeout(() => {
-                chatbotInput.focus();
+                if (chatbotInput) chatbotInput.focus();
+                console.log('Chatbot expanded and focused');
             }, 300);
         }
+    });
+
+    // Prevent clicks inside the chat window from closing
+    chatbotWindow.addEventListener('click', (e) => {
+        e.stopPropagation();
     });
 
     // Send message
