@@ -500,8 +500,13 @@ function showNotification(message, type = 'info') {
     // Initialize interactive features
     initializeInteractiveFeatures();
     
-    // Initialize chatbot
+    // Initialize chatbot immediately
     initializeChatbot();
+    
+    // Also try again after a short delay to ensure it's ON
+    setTimeout(() => {
+        initializeChatbot();
+    }, 500);
     
     // Create notification element
     const notification = document.createElement('div');
@@ -1287,8 +1292,21 @@ function initializeChatbot() {
 
     console.log('Initializing chatbot...');
     
+    // Make sure chatbot is visible
+    chatbotContainer.style.display = 'flex';
+    chatbotContainer.style.visibility = 'visible';
+    chatbotContainer.style.opacity = '1';
+    chatbotContainer.style.transform = 'translateY(0)';
+    
     // Start in collapsed state
     isChatbotOpen = false;
+    
+    console.log('Chatbot is now ON and visible!');
+    
+    // Add welcome message
+    setTimeout(() => {
+        addMessage("Hello! I'm your AI Safety Advisor. I can help you with electrical fault prevention and provide personalized recommendations. How can I assist you today?", 'bot');
+    }, 1000);
     
     // Simple click handler for the container
     chatbotContainer.addEventListener('click', function() {
