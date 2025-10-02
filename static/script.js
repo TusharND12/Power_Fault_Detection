@@ -507,6 +507,9 @@ function showNotification(message, type = 'info') {
     // Initialize gauge charts
     initializeGaugeCharts();
     
+    // Initialize PDF download when results are shown
+    initializePdfDownload();
+    
     // Initialize interactive features
     initializeInteractiveFeatures();
     
@@ -528,6 +531,11 @@ function showNotification(message, type = 'info') {
     
     // Initialize PDF download functionality
     initializePdfDownload();
+    
+    // Also try again after a delay in case the button isn't ready yet
+    setTimeout(() => {
+        initializePdfDownload();
+    }, 1000);
     
     // Create notification element
     const notification = document.createElement('div');
@@ -1048,13 +1056,24 @@ function initializeGaugeCharts() {
 
 // PDF Download Functionality
 function initializePdfDownload() {
+    console.log('Initializing PDF download...');
     const downloadBtn = document.getElementById('downloadPdfBtn');
+    console.log('PDF button found:', !!downloadBtn);
     if (downloadBtn) {
-        downloadBtn.addEventListener('click', generatePdfReport);
+        downloadBtn.addEventListener('click', function(e) {
+            console.log('PDF button clicked!');
+            e.preventDefault();
+            showNotification('PDF generation started...', 'info');
+            generatePdfReport();
+        });
+        console.log('PDF download event listener added');
+    } else {
+        console.error('PDF download button not found!');
     }
 }
 
 async function generatePdfReport() {
+    console.log('PDF generation started...');
     const downloadBtn = document.getElementById('downloadPdfBtn');
     const originalText = downloadBtn.innerHTML;
     
@@ -1062,6 +1081,14 @@ async function generatePdfReport() {
         // Show loading state
         downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
         downloadBtn.disabled = true;
+        
+        // Check if required libraries are loaded
+        if (typeof html2canvas === 'undefined') {
+            throw new Error('html2canvas library not loaded');
+        }
+        if (typeof window.jspdf === 'undefined') {
+            throw new Error('jsPDF library not loaded');
+        }
         
         // Wait for charts to be fully rendered
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -1071,6 +1098,7 @@ async function generatePdfReport() {
         if (!resultsContainer) {
             throw new Error('Results container not found');
         }
+        console.log('Results container found:', !!resultsContainer);
         
         // Create a temporary container for PDF generation
         const tempContainer = document.createElement('div');
