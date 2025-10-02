@@ -505,6 +505,18 @@ function showNotification(message, type = 'info') {
         initializeChatbot();
     }, 1000);
     
+    // Force chatbot visibility immediately
+    setTimeout(() => {
+        const chatbotContainer = document.getElementById('chatbotContainer');
+        if (chatbotContainer) {
+            chatbotContainer.style.display = 'block';
+            chatbotContainer.style.visibility = 'visible';
+            chatbotContainer.style.opacity = '1';
+            chatbotContainer.style.transform = 'translateY(0)';
+            console.log('Forced chatbot visibility');
+        }
+    }, 500);
+    
     // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
@@ -1293,6 +1305,13 @@ function initializeChatbot() {
     }
 
     console.log('Initializing chatbot...');
+    console.log('Chatbot elements found:', {
+        toggle: !!chatbotToggle,
+        container: !!chatbotContainer,
+        window: !!chatbotWindow,
+        input: !!chatbotInput,
+        send: !!chatbotSend
+    });
     
     // Make chatbot visible by default
     chatbotContainer.style.display = 'block';
@@ -1303,6 +1322,8 @@ function initializeChatbot() {
     // Force visibility
     chatbotContainer.style.transform = 'translateY(0)';
     chatbotContainer.classList.add('active');
+    
+    console.log('Chatbot should now be visible');
 
     // Toggle chatbot
     chatbotToggle.addEventListener('click', () => {
