@@ -1381,6 +1381,43 @@ function addMessage(content, sender) {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
+// Show typing indicator
+function showTypingIndicator() {
+    const messagesContainer = document.getElementById('chatbotMessages');
+    if (!messagesContainer) return;
+
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'message bot-message typing-message';
+    typingDiv.id = 'typing-indicator';
+    
+    const avatar = document.createElement('div');
+    avatar.className = 'message-avatar';
+    avatar.innerHTML = '<i class="fas fa-robot"></i>';
+    
+    const typingContent = document.createElement('div');
+    typingContent.className = 'typing-indicator';
+    typingContent.innerHTML = `
+        <span>AI is thinking</span>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+    `;
+    
+    typingDiv.appendChild(avatar);
+    typingDiv.appendChild(typingContent);
+    
+    messagesContainer.appendChild(typingDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Hide typing indicator
+function hideTypingIndicator() {
+    const typingIndicator = document.getElementById('typing-indicator');
+    if (typingIndicator) {
+        typingIndicator.remove();
+    }
+}
+
 // Handle quick actions
 function handleQuickAction(action) {
     let response = '';
@@ -1474,6 +1511,24 @@ I can analyze your system parameters to provide personalized recommendations. Pl
 Go ahead and run a prediction to get started!`;
             }
             break;
+            
+        case 'current-fault':
+            if (currentFormData) {
+                response = analyzeCurrentFault(currentFormData);
+            } else {
+                response = `⚡ **Current Fault Analysis:**
+
+I can provide detailed analysis of your current fault prediction. Please submit a fault prediction first, and I'll be able to:
+
+• Analyze your specific fault type and severity
+• Provide targeted solutions for your fault
+• Suggest immediate actions to take
+• Recommend long-term prevention strategies
+• Create a customized action plan
+
+Run a prediction to get personalized fault analysis!`;
+            }
+            break;
     }
     
     addMessage(response, 'bot');
@@ -1481,14 +1536,21 @@ Go ahead and run a prediction to get started!`;
 
 // Generate AI response
 function generateAIResponse(userMessage) {
-    const message = userMessage.toLowerCase();
+    // Show typing indicator
+    showTypingIndicator();
+    
+    // Simulate thinking time
+    setTimeout(() => {
+        hideTypingIndicator();
+        const message = userMessage.toLowerCase();
     
     // Keywords for different topics
-    const preventionKeywords = ['prevent', 'avoid', 'prevention', 'safety', 'protect'];
-    const maintenanceKeywords = ['maintain', 'maintenance', 'repair', 'fix', 'service'];
-    const emergencyKeywords = ['emergency', 'urgent', 'danger', 'hazard', 'accident'];
-    const analysisKeywords = ['analyze', 'analysis', 'data', 'parameters', 'values'];
-    const generalKeywords = ['hello', 'hi', 'help', 'what', 'how', 'why'];
+    const preventionKeywords = ['prevent', 'avoid', 'prevention', 'safety', 'protect', 'secure', 'shield'];
+    const maintenanceKeywords = ['maintain', 'maintenance', 'repair', 'fix', 'service', 'check', 'inspect'];
+    const emergencyKeywords = ['emergency', 'urgent', 'danger', 'hazard', 'accident', 'critical', 'alarm'];
+    const analysisKeywords = ['analyze', 'analysis', 'data', 'parameters', 'values', 'monitor', 'check'];
+    const generalKeywords = ['hello', 'hi', 'help', 'what', 'how', 'why', 'explain', 'tell'];
+    const faultKeywords = ['fault', 'error', 'problem', 'issue', 'failure', 'breakdown'];
     
     if (preventionKeywords.some(keyword => message.includes(keyword))) {
         return `🛡️ **Prevention is Key!** Here are essential electrical safety measures:
@@ -1554,6 +1616,33 @@ What specific aspects would you like me to analyze?`;
         }
     }
     
+    if (faultKeywords.some(keyword => message.includes(keyword))) {
+        return `⚡ **Fault Analysis & Solutions**
+
+**Common Electrical Faults:**
+• **Short Circuits** - Caused by insulation failure
+• **Overloads** - Excessive current draw
+• **Ground Faults** - Current leakage to ground
+• **Arc Faults** - High-resistance connections
+• **Equipment Failures** - Component degradation
+
+**Immediate Actions:**
+1. **Isolate** affected circuits immediately
+2. **Assess** the severity and impact
+3. **Document** all observations
+4. **Notify** appropriate personnel
+5. **Implement** safety protocols
+
+**Prevention Strategies:**
+• Regular insulation testing
+• Load monitoring and management
+• Proper grounding systems
+• Equipment maintenance schedules
+• Staff training programs
+
+Need specific guidance for your fault type?`;
+    }
+    
     if (generalKeywords.some(keyword => message.includes(keyword))) {
         return `👋 **Hello! I'm your AI Safety Advisor.**
 
@@ -1562,12 +1651,13 @@ I can help you with:
 • **Maintenance Guides** - Keep systems running safely  
 • **Emergency Response** - Handle critical situations
 • **Data Analysis** - Understand your system parameters
+• **Fault Solutions** - Troubleshoot specific issues
 
 What would you like to know about electrical safety?`;
     }
     
-    // Default response
-    return `I understand you're asking about "${userMessage}". 
+        // Default response
+        const defaultResponse = `I understand you're asking about "${userMessage}". 
 
 As your AI Safety Advisor, I can help with:
 • Electrical fault prevention strategies
@@ -1576,6 +1666,9 @@ As your AI Safety Advisor, I can help with:
 • Analysis of your system parameters
 
 Could you be more specific about what you'd like to know? I'm here to help keep your electrical systems safe!`;
+        
+        addMessage(defaultResponse, 'bot');
+    }, 1500); // 1.5 second delay
 }
 
 // Analyze user data
@@ -1639,6 +1732,116 @@ function analyzeUserData(formData) {
 • Update safety procedures as needed
 
 Need specific action plans for any of these issues?`;
+
+    return analysis;
+}
+
+// Analyze current fault
+function analyzeCurrentFault(formData) {
+    const voltage = parseFloat(formData.voltage) || 0;
+    const current = parseFloat(formData.current) || 0;
+    const power = parseFloat(formData.power) || 0;
+    const frequency = parseFloat(formData.frequency) || 0;
+    const temperature = parseFloat(formData.temperature) || 0;
+    const humidity = parseFloat(formData.humidity) || 0;
+    const windSpeed = parseFloat(formData.wind_speed) || 0;
+    const pressure = parseFloat(formData.pressure) || 0;
+
+    // Determine fault type based on parameters
+    let faultType = "System Normal";
+    let severity = "LOW";
+    let immediateActions = [];
+    let longTermSolutions = [];
+
+    // Analyze parameters for fault patterns
+    if (voltage === 0 && current === 0 && power === 0) {
+        faultType = "System Offline";
+        severity = "MEDIUM";
+        immediateActions = [
+            "Check main power supply",
+            "Verify circuit breakers",
+            "Inspect power connections",
+            "Test backup systems"
+        ];
+        longTermSolutions = [
+            "Implement redundant power systems",
+            "Install UPS backup",
+            "Regular power system testing",
+            "Staff training on power restoration"
+        ];
+    } else if (voltage > 2500 || voltage < 2000) {
+        faultType = "Voltage Anomaly";
+        severity = "HIGH";
+        immediateActions = [
+            "Isolate affected circuits immediately",
+            "Check voltage regulators",
+            "Monitor other system parameters",
+            "Alert maintenance team"
+        ];
+        longTermSolutions = [
+            "Install voltage monitoring systems",
+            "Upgrade voltage regulation equipment",
+            "Implement automatic voltage correction",
+            "Regular voltage calibration"
+        ];
+    } else if (current > 200) {
+        faultType = "Overload Condition";
+        severity = "HIGH";
+        immediateActions = [
+            "Reduce load immediately",
+            "Check for short circuits",
+            "Monitor temperature rise",
+            "Prepare for emergency shutdown"
+        ];
+        longTermSolutions = [
+            "Load balancing analysis",
+            "Upgrade conductor capacity",
+            "Install load monitoring",
+            "Implement load shedding systems"
+        ];
+    } else if (temperature > 40) {
+        faultType = "Thermal Stress";
+        severity = "MEDIUM";
+        immediateActions = [
+            "Improve ventilation",
+            "Check cooling systems",
+            "Monitor temperature trends",
+            "Reduce load if necessary"
+        ];
+        longTermSolutions = [
+            "Install better cooling systems",
+            "Improve equipment spacing",
+            "Regular thermal inspections",
+            "Environmental controls"
+        ];
+    }
+
+    let analysis = `⚡ **Current Fault Analysis:**
+
+**Detected Fault Type:** ${faultType}
+**Severity Level:** ${severity}
+**Analysis Time:** ${new Date().toLocaleString()}
+
+**System Parameters:**
+• Voltage: ${voltage}V ${voltage > 2500 || voltage < 2000 ? '⚠️' : '✅'}
+• Current: ${current}A ${current > 200 ? '⚠️' : '✅'}
+• Power: ${power}W
+• Temperature: ${temperature}°C ${temperature > 40 ? '⚠️' : '✅'}
+• Humidity: ${humidity}% ${humidity > 80 ? '⚠️' : '✅'}
+
+**🚨 Immediate Actions Required:**
+${immediateActions.map(action => `• ${action}`).join('\n')}
+
+**🔧 Long-term Solutions:**
+${longTermSolutions.map(solution => `• ${solution}`).join('\n')}
+
+**📋 Recommended Timeline:**
+• **Immediate (0-1 hour):** ${immediateActions[0]}
+• **Short-term (1-24 hours):** Complete immediate actions
+• **Medium-term (1-7 days):** Implement monitoring improvements
+• **Long-term (1-4 weeks):** Execute long-term solutions
+
+Need specific guidance for any of these actions?`;
 
     return analysis;
 }
