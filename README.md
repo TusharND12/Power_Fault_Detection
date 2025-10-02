@@ -319,4 +319,5 @@ Give a ⭐️ if this project helped you!
 
 **Built with ❤️ for the power systems industry**
 
-*Empowering electrical grid monitoring with AI-driven fault prediction*
+*Empowering electrical grid monitoring with AI-driven fault prediction*#   T r i g g e r   d e p l o y m e n t  
+ 
