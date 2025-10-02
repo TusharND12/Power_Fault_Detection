@@ -1083,6 +1083,10 @@ async function generatePdfReport() {
         downloadBtn.disabled = true;
         
         // Check if required libraries are loaded
+        console.log('Checking libraries...');
+        console.log('html2canvas available:', typeof html2canvas !== 'undefined');
+        console.log('jsPDF available:', typeof window.jspdf !== 'undefined');
+        
         if (typeof html2canvas === 'undefined') {
             throw new Error('html2canvas library not loaded');
         }
@@ -1091,6 +1095,7 @@ async function generatePdfReport() {
         }
         
         // Wait for charts to be fully rendered
+        console.log('Waiting for charts to render...');
         await new Promise(resolve => setTimeout(resolve, 2000));
         
         // Get the results container
@@ -1142,6 +1147,7 @@ async function generatePdfReport() {
         document.body.appendChild(tempContainer);
         
         // Generate PDF using html2canvas and jsPDF
+        console.log('Starting html2canvas...');
         const canvas = await html2canvas(tempContainer, {
             scale: 2,
             useCORS: true,
@@ -1150,13 +1156,16 @@ async function generatePdfReport() {
             width: 800,
             height: tempContainer.scrollHeight
         });
+        console.log('html2canvas completed, canvas size:', canvas.width, 'x', canvas.height);
         
         // Clean up temporary container
         document.body.removeChild(tempContainer);
         
         // Create PDF
+        console.log('Creating PDF...');
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
+        console.log('PDF object created');
         const imgWidth = 210;
         const pageHeight = 295;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
@@ -1187,15 +1196,63 @@ async function generatePdfReport() {
         }
         
         // Save the PDF
+        console.log('Saving PDF...');
         const fileName = `Power_Fault_Report_${new Date().toISOString().split('T')[0]}.pdf`;
+        console.log('PDF filename:', fileName);
         pdf.save(fileName);
+        console.log('PDF saved successfully');
         
         // Show success message
         showNotification('PDF report generated successfully!', 'success');
         
     } catch (error) {
         console.error('Error generating PDF:', error);
-        showNotification('Error generating PDF report. Please try again.', 'error');
+        console.log('Trying fallback PDF generation...');
+        
+        // Fallback: Simple text-based PDF
+        try {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            
+            // Add title
+            pdf.setFontSize(20);
+            pdf.text('Power Fault Analysis Report', 20, 30);
+            
+            // Add date
+            pdf.setFontSize(12);
+            pdf.text(`Generated: ${new Date().toLocaleString()}`, 20, 50);
+            
+            // Add basic content
+            pdf.setFontSize(14);
+            pdf.text('System Analysis Results:', 20, 70);
+            
+            // Add prediction results if available
+            const predictionLabel = document.getElementById('predictionLabel');
+            const confidenceText = document.getElementById('confidenceText');
+            
+            if (predictionLabel) {
+                pdf.setFontSize(12);
+                pdf.text(`Fault Type: ${predictionLabel.textContent}`, 20, 90);
+            }
+            
+            if (confidenceText) {
+                pdf.text(`Confidence: ${confidenceText.textContent}`, 20, 100);
+            }
+            
+            // Add note
+            pdf.setFontSize(10);
+            pdf.text('Note: This is a simplified report. For full visualizations,', 20, 120);
+            pdf.text('please use the web interface.', 20, 130);
+            
+            // Save fallback PDF
+            const fileName = `Power_Fault_Report_Simple_${new Date().toISOString().split('T')[0]}.pdf`;
+            pdf.save(fileName);
+            
+            showNotification('Simple PDF report generated successfully!', 'success');
+        } catch (fallbackError) {
+            console.error('Fallback PDF generation failed:', fallbackError);
+            showNotification('Error generating PDF report. Please try again.', 'error');
+        }
     } finally {
         // Reset button state
         downloadBtn.innerHTML = originalText;
