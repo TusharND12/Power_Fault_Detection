@@ -1313,26 +1313,17 @@ function initializeChatbot() {
         addMessage("Try asking me about prevention, maintenance, emergency procedures, or data analysis. I can also analyze your electrical system parameters!", 'bot');
     }, 3000);
     
-    // Simple click handler for the container
-    chatbotContainer.addEventListener('click', function() {
-        console.log('Chatbot clicked!');
-        
-        if (!isChatbotOpen) {
-            // Open chatbot
+    // Click handler for the container (only when collapsed)
+    chatbotContainer.addEventListener('click', function(e) {
+        // Only handle clicks when chatbot is collapsed
+        if (!isChatbotOpen && !chatbotContainer.classList.contains('expanded')) {
+            console.log('Chatbot clicked - opening!');
             isChatbotOpen = true;
             chatbotContainer.classList.add('expanded');
             if (chatbotWindow) {
                 chatbotWindow.classList.add('active');
             }
             console.log('Chatbot opened');
-        } else {
-            // Close chatbot
-            isChatbotOpen = false;
-            chatbotContainer.classList.remove('expanded');
-            if (chatbotWindow) {
-                chatbotWindow.classList.remove('active');
-            }
-            console.log('Chatbot closed');
         }
     });
 
@@ -1365,20 +1356,50 @@ function initializeChatbot() {
     }
 
     // Event listeners
-    chatbotSend.addEventListener('click', sendMessage);
-    chatbotInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
+    if (chatbotSend) {
+        chatbotSend.addEventListener('click', (e) => {
+            e.stopPropagation();
             sendMessage();
-        }
-    });
+        });
+    }
+    
+    if (chatbotInput) {
+        chatbotInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.stopPropagation();
+                sendMessage();
+            }
+        });
+        
+        // Prevent clicks on input from closing chatbot
+        chatbotInput.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
 
     // Quick actions
     quickActions.forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
             const action = btn.dataset.action;
             handleQuickAction(action);
         });
     });
+    
+    // Prevent clicks inside the chat window from closing the chatbot
+    if (chatbotWindow) {
+        chatbotWindow.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
+    
+    // Prevent clicks on messages from closing the chatbot
+    const messagesContainer = document.getElementById('chatbotMessages');
+    if (messagesContainer) {
+        messagesContainer.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
 }
 
 // Add message to chat
