@@ -2230,6 +2230,144 @@ html {
     box-shadow: 0 0 10px #f39c12;
 }
 
+/* Theme Toggle */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10000;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.theme-toggle:hover {
+    transform: translateY(-2px) scale(1.1);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.theme-toggle i {
+    color: white;
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover i {
+    transform: rotate(180deg);
+}
+
+/* Dark Theme */
+.dark-theme {
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+    color: #e0e0e0;
+}
+
+.dark-theme .header {
+    background: linear-gradient(135deg, rgba(30, 30, 50, 0.95), rgba(20, 30, 50, 0.9));
+    border: 1px solid rgba(100, 200, 255, 0.2);
+}
+
+.dark-theme .form-container {
+    background: linear-gradient(135deg, rgba(30, 30, 50, 0.9), rgba(20, 30, 50, 0.8));
+    border: 1px solid rgba(100, 200, 255, 0.2);
+}
+
+.dark-theme .form-group input,
+.dark-theme .form-group select {
+    background: rgba(40, 40, 60, 0.8);
+    border: 1px solid rgba(100, 200, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.dark-theme .form-group input:focus,
+.dark-theme .form-group select:focus {
+    border-color: #64c8ff;
+    box-shadow: 0 0 0 3px rgba(100, 200, 255, 0.1);
+}
+
+.dark-theme .btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.dark-theme .btn:hover {
+    background: linear-gradient(135deg, #764ba2, #667eea);
+    transform: translateY(-2px);
+}
+
+.dark-theme .results-container {
+    background: linear-gradient(135deg, rgba(30, 30, 50, 0.95), rgba(20, 30, 50, 0.9));
+    border: 1px solid rgba(100, 200, 255, 0.2);
+}
+
+.dark-theme .prediction-card {
+    background: linear-gradient(135deg, rgba(40, 40, 60, 0.9), rgba(30, 30, 50, 0.8));
+    border: 1px solid rgba(100, 200, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.dark-theme .chatbot-container {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.dark-theme .chatbot-header {
+    background: linear-gradient(135deg, #2c3e50, #34495e, #667eea);
+}
+
+.dark-theme .chatbot-window {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+}
+
+.dark-theme .chatbot-messages {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+}
+
+.dark-theme .message-content {
+    background: linear-gradient(135deg, rgba(60, 60, 80, 0.9), rgba(50, 50, 70, 0.8));
+    color: #e0e0e0;
+    border: 1px solid rgba(100, 200, 255, 0.2);
+}
+
+.dark-theme .user-message .message-content {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.dark-theme .quick-action-btn {
+    background: linear-gradient(135deg, rgba(60, 60, 80, 0.9), rgba(50, 50, 70, 0.8));
+    border: 2px solid rgba(100, 200, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.dark-theme .quick-action-btn:hover {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.dark-theme .chatbot-input {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    border-top: 1px solid rgba(100, 200, 255, 0.2);
+}
+
+.dark-theme .chatbot-input input {
+    background: linear-gradient(135deg, rgba(40, 40, 60, 0.9), rgba(30, 30, 50, 0.8));
+    border: 2px solid rgba(100, 200, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.dark-theme .chatbot-input input:focus {
+    border-color: #64c8ff;
+    background: rgba(40, 40, 60, 0.95);
+}
+
 /* AI Chatbot */
 .chatbot-container {
     position: fixed;
@@ -2528,6 +2666,79 @@ html {
 .chatbot-send-btn:hover {
     transform: scale(1.1);
     box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+}
+
+/* Gauge Section */
+.gauge-section {
+    margin-top: 30px;
+    padding: 25px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 249, 250, 0.9));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: slideInUp 0.6s ease-out;
+}
+
+.gauge-section h3 {
+    margin: 0 0 20px 0;
+    color: #2c3e50;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.gauge-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.gauge-item {
+    text-align: center;
+    padding: 15px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(248, 249, 250, 0.6));
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.gauge-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.gauge-item h4 {
+    margin: 10px 0 0 0;
+    color: #2c3e50;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.dark-theme .gauge-section {
+    background: linear-gradient(135deg, rgba(30, 30, 50, 0.95), rgba(20, 30, 50, 0.9));
+    border: 1px solid rgba(100, 200, 255, 0.2);
+}
+
+.dark-theme .gauge-section h3 {
+    color: #e0e0e0;
+}
+
+.dark-theme .gauge-item {
+    background: linear-gradient(135deg, rgba(40, 40, 60, 0.9), rgba(30, 30, 50, 0.8));
+    border: 1px solid rgba(100, 200, 255, 0.2);
+}
+
+.dark-theme .gauge-item h4 {
+    color: #e0e0e0;
 }
 
 /* Enhanced Chatbot Animations */

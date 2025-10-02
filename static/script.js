@@ -228,6 +228,13 @@ function displayResults(result) {
     // Update chatbot with form data for analysis
     updateFormDataForChatbot(result.input_features);
     
+    // Update gauge values
+    updateGaugeValues(
+        parseFloat(result.input_features.voltage) || 0,
+        parseFloat(result.input_features.current) || 0,
+        parseFloat(result.input_features.temperature) || 0
+    );
+    
     // Show success notification
     showNotification('Prediction completed successfully!', 'success');
 }
@@ -497,6 +504,9 @@ function showNotification(message, type = 'info') {
         initializeLiveGraph();
     }
     
+    // Initialize gauge charts
+    initializeGaugeCharts();
+    
     // Initialize interactive features
     initializeInteractiveFeatures();
     
@@ -507,6 +517,9 @@ function showNotification(message, type = 'info') {
     setTimeout(() => {
         initializeChatbot();
     }, 500);
+    
+    // Initialize theme toggle
+    initializeThemeToggle();
     
     // Create notification element
     const notification = document.createElement('div');
@@ -884,6 +897,107 @@ let graphData = {
 };
 let currentGraphType = 'voltage';
 let graphUpdateInterval = null;
+
+// Gauge Charts
+let voltageGauge = null;
+let currentGauge = null;
+let temperatureGauge = null;
+
+// Initialize Gauge Charts
+function initializeGaugeCharts() {
+    // Voltage Gauge
+    const voltageCtx = document.getElementById('voltageGauge');
+    if (voltageCtx) {
+        voltageGauge = new Chart(voltageCtx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [75, 25],
+                    backgroundColor: ['#2ecc71', '#ecf0f1'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: false }
+                }
+            }
+        });
+    }
+    
+    // Current Gauge
+    const currentCtx = document.getElementById('currentGauge');
+    if (currentCtx) {
+        currentGauge = new Chart(currentCtx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [60, 40],
+                    backgroundColor: ['#f39c12', '#ecf0f1'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: false }
+                }
+            }
+        });
+    }
+    
+    // Temperature Gauge
+    const temperatureCtx = document.getElementById('temperatureGauge');
+    if (temperatureCtx) {
+        temperatureGauge = new Chart(temperatureCtx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [45, 55],
+                    backgroundColor: ['#3498db', '#ecf0f1'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: false }
+                }
+            }
+        });
+    }
+}
+
+// Update Gauge Values
+function updateGaugeValues(voltage, current, temperature) {
+    if (voltageGauge) {
+        const voltagePercent = Math.min(Math.max((voltage / 2500) * 100, 0), 100);
+        voltageGauge.data.datasets[0].data = [voltagePercent, 100 - voltagePercent];
+        voltageGauge.update();
+    }
+    
+    if (currentGauge) {
+        const currentPercent = Math.min(Math.max((current / 200) * 100, 0), 100);
+        currentGauge.data.datasets[0].data = [currentPercent, 100 - currentPercent];
+        currentGauge.update();
+    }
+    
+    if (temperatureGauge) {
+        const tempPercent = Math.min(Math.max((temperature / 50) * 100, 0), 100);
+        temperatureGauge.data.datasets[0].data = [tempPercent, 100 - tempPercent];
+        temperatureGauge.update();
+    }
+}
 let dataPointCount = 0;
 
 // Initialize Live Graph
@@ -1271,6 +1385,44 @@ rippleStyle.textContent = `
     }
 `;
 document.head.appendChild(rippleStyle);
+
+// Theme Management
+let isDarkTheme = false;
+
+// Initialize Theme Toggle
+function initializeThemeToggle() {
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    
+    if (!themeToggle || !themeIcon) return;
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        toggleTheme();
+    }
+    
+    themeToggle.addEventListener('click', () => {
+        toggleTheme();
+    });
+}
+
+// Toggle Theme
+function toggleTheme() {
+    isDarkTheme = !isDarkTheme;
+    const body = document.body;
+    const themeIcon = document.getElementById('themeIcon');
+    
+    if (isDarkTheme) {
+        body.classList.add('dark-theme');
+        themeIcon.className = 'fas fa-sun';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        body.classList.remove('dark-theme');
+        themeIcon.className = 'fas fa-moon';
+        localStorage.setItem('theme', 'light');
+    }
+}
 
 // AI Chatbot
 let currentFormData = null;
