@@ -500,22 +500,8 @@ function showNotification(message, type = 'info') {
     // Initialize interactive features
     initializeInteractiveFeatures();
     
-    // Initialize chatbot directly as well
-    setTimeout(() => {
-        initializeChatbot();
-    }, 1000);
-    
-    // Force chatbot visibility immediately (collapsed state)
-    setTimeout(() => {
-        const chatbotContainer = document.getElementById('chatbotContainer');
-        if (chatbotContainer) {
-            chatbotContainer.style.display = 'flex';
-            chatbotContainer.style.visibility = 'visible';
-            chatbotContainer.style.opacity = '1';
-            chatbotContainer.style.transform = 'translateY(0)';
-            console.log('Forced chatbot visibility (collapsed)');
-        }
-    }, 500);
+    // Initialize chatbot
+    initializeChatbot();
     
     // Create notification element
     const notification = document.createElement('div');
@@ -1216,11 +1202,6 @@ function stopLiveUpdates() {
 // Initialize interactive features
 function initializeInteractiveFeatures() {
     addMicroInteractions();
-    
-    // Initialize chatbot with retry mechanism
-    setTimeout(() => {
-        initializeChatbot();
-    }, 500);
 }
 
 // Micro-interactions
@@ -1299,89 +1280,51 @@ function initializeChatbot() {
     const chatbotSend = document.getElementById('chatbotSend');
     const quickActions = document.querySelectorAll('.quick-action-btn');
 
-    if (!chatbotToggle || !chatbotContainer || !chatbotWindow) {
-        console.log('Chatbot elements not found');
+    if (!chatbotContainer) {
+        console.log('Chatbot container not found');
         return;
     }
 
     console.log('Initializing chatbot...');
-    console.log('Chatbot elements found:', {
-        toggle: !!chatbotToggle,
-        container: !!chatbotContainer,
-        window: !!chatbotWindow,
-        input: !!chatbotInput,
-        send: !!chatbotSend
-    });
-    
-    // Test click functionality
-    console.log('Setting up click handlers...');
-    
-    // Make chatbot visible by default (collapsed state)
-    chatbotContainer.style.display = 'flex';
-    chatbotContainer.style.visibility = 'visible';
-    chatbotContainer.style.opacity = '1';
-    chatbotContainer.style.transform = 'translateY(0)';
     
     // Start in collapsed state
     isChatbotOpen = false;
     
-    console.log('Chatbot should now be visible');
-    
-    // Add a simple test to verify the chatbot is working
-    setTimeout(() => {
-        console.log('Testing chatbot click...');
-        console.log('Container element:', chatbotContainer);
-        console.log('Container classes:', chatbotContainer.className);
-        console.log('Is chatbot open:', isChatbotOpen);
-    }, 2000);
-
-    // Toggle chatbot (close button)
-    chatbotToggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        isChatbotOpen = false;
-        chatbotContainer.classList.remove('expanded');
-        chatbotWindow.classList.remove('active');
-    });
-
-    // Click on container to expand (only when collapsed)
-    chatbotContainer.addEventListener('click', (e) => {
-        console.log('Chatbot clicked, current state:', isChatbotOpen, chatbotContainer.classList.contains('expanded'));
-        if (!isChatbotOpen && !chatbotContainer.classList.contains('expanded')) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Expanding chatbot...');
+    // Simple click handler for the container
+    chatbotContainer.addEventListener('click', function() {
+        console.log('Chatbot clicked!');
+        
+        if (!isChatbotOpen) {
+            // Open chatbot
             isChatbotOpen = true;
             chatbotContainer.classList.add('expanded');
-            chatbotWindow.classList.add('active');
-            setTimeout(() => {
-                if (chatbotInput) chatbotInput.focus();
-                console.log('Chatbot expanded and focused');
-            }, 300);
+            if (chatbotWindow) {
+                chatbotWindow.classList.add('active');
+            }
+            console.log('Chatbot opened');
+        } else {
+            // Close chatbot
+            isChatbotOpen = false;
+            chatbotContainer.classList.remove('expanded');
+            if (chatbotWindow) {
+                chatbotWindow.classList.remove('active');
+            }
+            console.log('Chatbot closed');
         }
     });
 
-    // Alternative click handler for the icon specifically
-    const chatbotIcon = chatbotContainer.querySelector('.chatbot-icon');
-    if (chatbotIcon) {
-        chatbotIcon.addEventListener('click', (e) => {
-            e.preventDefault();
+    // Close button handler
+    if (chatbotToggle) {
+        chatbotToggle.addEventListener('click', function(e) {
             e.stopPropagation();
-            console.log('Icon clicked directly');
-            if (!isChatbotOpen && !chatbotContainer.classList.contains('expanded')) {
-                isChatbotOpen = true;
-                chatbotContainer.classList.add('expanded');
-                chatbotWindow.classList.add('active');
-                setTimeout(() => {
-                    if (chatbotInput) chatbotInput.focus();
-                }, 300);
+            isChatbotOpen = false;
+            chatbotContainer.classList.remove('expanded');
+            if (chatbotWindow) {
+                chatbotWindow.classList.remove('active');
             }
+            console.log('Chatbot closed via X button');
         });
     }
-
-    // Prevent clicks inside the chat window from closing
-    chatbotWindow.addEventListener('click', (e) => {
-        e.stopPropagation();
-    });
 
     // Send message
     function sendMessage() {

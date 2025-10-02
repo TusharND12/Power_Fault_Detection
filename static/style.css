@@ -2232,49 +2232,35 @@ html {
 
 /* AI Chatbot */
 .chatbot-container {
-    position: fixed !important;
-    bottom: 20px !important;
-    left: 20px !important;
-    width: 60px !important;
-    height: 60px !important;
-    background: linear-gradient(135deg, #3498db, #2980b9) !important;
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    border-radius: 50% !important;
-    box-shadow: 
-        0 8px 25px rgba(52, 152, 219, 0.4),
-        0 0 0 2px rgba(255, 255, 255, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    z-index: 9999 !important;
-    transform: translateY(0) !important;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    font-family: 'Inter', sans-serif;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    border-radius: 50%;
+    box-shadow: 0 4px 20px rgba(52, 152, 219, 0.4);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    user-select: none;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .chatbot-container:hover {
-    transform: translateY(-2px) scale(1.05) !important;
-    box-shadow: 
-        0 12px 30px rgba(52, 152, 219, 0.5),
-        0 0 0 3px rgba(255, 255, 255, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 25px rgba(52, 152, 219, 0.5);
 }
 
 .chatbot-container.expanded {
-    width: 380px !important;
-    height: auto !important;
-    max-height: 600px !important;
-    border-radius: 25px !important;
-    align-items: flex-start !important;
-    justify-content: flex-start !important;
+    width: 380px;
+    height: auto;
+    max-height: 600px;
+    border-radius: 25px;
+    align-items: flex-start;
+    justify-content: flex-start;
 }
 
 .chatbot-container.active {
@@ -2382,12 +2368,6 @@ html {
     color: white;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     animation: pulse 2s ease-in-out infinite;
-    pointer-events: none;
-    user-select: none;
-}
-
-.chatbot-icon:hover {
-    transform: scale(1.1);
 }
 
 .chatbot-container.expanded .chatbot-icon {
