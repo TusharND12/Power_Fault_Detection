@@ -505,15 +505,15 @@ function showNotification(message, type = 'info') {
         initializeChatbot();
     }, 1000);
     
-    // Force chatbot visibility immediately
+    // Force chatbot visibility immediately (collapsed state)
     setTimeout(() => {
         const chatbotContainer = document.getElementById('chatbotContainer');
         if (chatbotContainer) {
-            chatbotContainer.style.display = 'block';
+            chatbotContainer.style.display = 'flex';
             chatbotContainer.style.visibility = 'visible';
             chatbotContainer.style.opacity = '1';
             chatbotContainer.style.transform = 'translateY(0)';
-            console.log('Forced chatbot visibility');
+            console.log('Forced chatbot visibility (collapsed)');
         }
     }, 500);
     
@@ -1313,28 +1313,34 @@ function initializeChatbot() {
         send: !!chatbotSend
     });
     
-    // Make chatbot visible by default
-    chatbotContainer.style.display = 'block';
+    // Make chatbot visible by default (collapsed state)
+    chatbotContainer.style.display = 'flex';
     chatbotContainer.style.visibility = 'visible';
     chatbotContainer.style.opacity = '1';
-    chatbotWindow.classList.add('active');
-    
-    // Force visibility
     chatbotContainer.style.transform = 'translateY(0)';
-    chatbotContainer.classList.add('active');
+    
+    // Start in collapsed state
+    isChatbotOpen = false;
     
     console.log('Chatbot should now be visible');
 
     // Toggle chatbot
-    chatbotToggle.addEventListener('click', () => {
-        isChatbotOpen = !isChatbotOpen;
-        if (isChatbotOpen) {
-            chatbotContainer.classList.add('active');
+    chatbotToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        isChatbotOpen = false;
+        chatbotContainer.classList.remove('expanded');
+        chatbotWindow.classList.remove('active');
+    });
+
+    // Click on container to expand
+    chatbotContainer.addEventListener('click', () => {
+        if (!isChatbotOpen) {
+            isChatbotOpen = true;
+            chatbotContainer.classList.add('expanded');
             chatbotWindow.classList.add('active');
-            chatbotInput.focus();
-        } else {
-            chatbotContainer.classList.remove('active');
-            chatbotWindow.classList.remove('active');
+            setTimeout(() => {
+                chatbotInput.focus();
+            }, 300);
         }
     });
 

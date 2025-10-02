@@ -2235,25 +2235,37 @@ html {
     position: fixed !important;
     bottom: 20px !important;
     left: 20px !important;
-    width: 380px !important;
-    max-height: 600px !important;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 249, 250, 0.95)) !important;
+    width: 60px !important;
+    height: 60px !important;
+    background: linear-gradient(135deg, #3498db, #2980b9) !important;
     backdrop-filter: blur(25px);
     -webkit-backdrop-filter: blur(25px);
-    border-radius: 25px !important;
+    border-radius: 50% !important;
     box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.15),
-        0 0 0 1px rgba(52, 152, 219, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4);
-    border: 2px solid rgba(52, 152, 219, 0.2) !important;
+        0 8px 25px rgba(52, 152, 219, 0.4),
+        0 0 0 2px rgba(255, 255, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
     z-index: 9999 !important;
     transform: translateY(0) !important;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
-    display: block !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     visibility: visible !important;
     opacity: 1 !important;
     font-family: 'Inter', sans-serif;
+    cursor: pointer;
+}
+
+.chatbot-container.expanded {
+    width: 380px !important;
+    height: auto !important;
+    max-height: 600px !important;
+    border-radius: 25px !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
 }
 
 .chatbot-container.active {
@@ -2261,7 +2273,7 @@ html {
 }
 
 .chatbot-header {
-    display: flex;
+    display: none;
     align-items: center;
     padding: 20px 25px;
     background: linear-gradient(135deg, #2c3e50, #34495e, #3498db);
@@ -2270,6 +2282,10 @@ html {
     position: relative;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
+
+.chatbot-container.expanded .chatbot-header {
+    display: flex;
 }
 
 .chatbot-header::before {
@@ -2342,10 +2358,25 @@ html {
 }
 
 .chatbot-window {
-    display: flex;
+    display: none;
     height: 450px;
     flex-direction: column;
     background: linear-gradient(135deg, #f8f9fa, #ffffff);
+}
+
+.chatbot-container.expanded .chatbot-window {
+    display: flex;
+}
+
+.chatbot-icon {
+    font-size: 24px;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.chatbot-container.expanded .chatbot-icon {
+    display: none;
 }
 
 .chatbot-window.active {
