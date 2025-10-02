@@ -1120,27 +1120,58 @@ function updateLiveData() {
     
     // Generate new data point based on current graph type
     let newValue;
-    const baseValues = {
-        voltage: 2200,
-        current: 150,
-        power: 330000,
-        frequency: 50
-    };
     
-    const variations = {
-        voltage: 100,
-        current: 20,
-        power: 20000,
-        frequency: 0.2
-    };
+    // Try to use actual form data if available, otherwise use simulation
+    const formData = getCurrentFormData();
+    const useRealData = formData && Object.values(formData).some(val => val > 0);
     
-    const baseValue = baseValues[currentGraphType];
-    const variation = variations[currentGraphType];
-    
-    // Add some realistic variation and trends
-    const trend = Math.sin(Date.now() / 10000) * 0.1; // Slow trend
-    const noise = (Math.random() - 0.5) * 2; // Random noise
-    newValue = baseValue + (trend + noise) * variation;
+    if (useRealData) {
+        // Use actual form data as base with realistic variations
+        const baseValues = {
+            voltage: parseFloat(formData.voltage) || 2200,
+            current: parseFloat(formData.current) || 150,
+            power: parseFloat(formData.power) || 330000,
+            frequency: parseFloat(formData.frequency) || 50
+        };
+        
+        const variations = {
+            voltage: Math.max(50, baseValues.voltage * 0.05), // 5% variation
+            current: Math.max(10, baseValues.current * 0.1),  // 10% variation
+            power: Math.max(10000, baseValues.power * 0.06),  // 6% variation
+            frequency: Math.max(0.1, baseValues.frequency * 0.004) // 0.4% variation
+        };
+        
+        const baseValue = baseValues[currentGraphType];
+        const variation = variations[currentGraphType];
+        
+        // Add realistic variation around actual values
+        const trend = Math.sin(Date.now() / 10000) * 0.05; // Smaller trend for real data
+        const noise = (Math.random() - 0.5) * 1; // Smaller noise for real data
+        newValue = baseValue + (trend + noise) * variation;
+    } else {
+        // Use simulation data when no real data available
+        const baseValues = {
+            voltage: 2200,
+            current: 150,
+            power: 330000,
+            frequency: 50
+        };
+        
+        const variations = {
+            voltage: 100,
+            current: 20,
+            power: 20000,
+            frequency: 0.2
+        };
+        
+        const baseValue = baseValues[currentGraphType];
+        const variation = variations[currentGraphType];
+        
+        // Add some realistic variation and trends
+        const trend = Math.sin(Date.now() / 10000) * 0.1; // Slow trend
+        const noise = (Math.random() - 0.5) * 2; // Random noise
+        newValue = baseValue + (trend + noise) * variation;
+    }
     
     // Add new data point
     graphData[currentGraphType].push({
@@ -1187,4 +1218,21 @@ function stopLiveUpdates() {
         graphStatusEl.textContent = 'Paused';
         graphStatusEl.className = 'status-value';
     }
+}
+
+// Get current form data for graph
+function getCurrentFormData() {
+    if (!form) return null;
+    
+    const formData = new FormData(form);
+    return {
+        voltage: formData.get('voltage') || '0',
+        current: formData.get('current') || '0',
+        power: formData.get('power') || '0',
+        frequency: formData.get('frequency') || '0',
+        temperature: formData.get('temperature') || '0',
+        humidity: formData.get('humidity') || '0',
+        wind_speed: formData.get('wind_speed') || '0',
+        pressure: formData.get('pressure') || '0'
+    };
 }
