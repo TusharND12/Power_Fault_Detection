@@ -2382,6 +2382,12 @@ html {
     color: white;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     animation: pulse 2s ease-in-out infinite;
+    pointer-events: none;
+    user-select: none;
+}
+
+.chatbot-icon:hover {
+    transform: scale(1.1);
 }
 
 .chatbot-container.expanded .chatbot-icon {

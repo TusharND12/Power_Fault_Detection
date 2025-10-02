@@ -1348,6 +1348,7 @@ function initializeChatbot() {
         console.log('Chatbot clicked, current state:', isChatbotOpen, chatbotContainer.classList.contains('expanded'));
         if (!isChatbotOpen && !chatbotContainer.classList.contains('expanded')) {
             e.preventDefault();
+            e.stopPropagation();
             console.log('Expanding chatbot...');
             isChatbotOpen = true;
             chatbotContainer.classList.add('expanded');
@@ -1358,6 +1359,24 @@ function initializeChatbot() {
             }, 300);
         }
     });
+
+    // Alternative click handler for the icon specifically
+    const chatbotIcon = chatbotContainer.querySelector('.chatbot-icon');
+    if (chatbotIcon) {
+        chatbotIcon.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Icon clicked directly');
+            if (!isChatbotOpen && !chatbotContainer.classList.contains('expanded')) {
+                isChatbotOpen = true;
+                chatbotContainer.classList.add('expanded');
+                chatbotWindow.classList.add('active');
+                setTimeout(() => {
+                    if (chatbotInput) chatbotInput.focus();
+                }, 300);
+            }
+        });
+    }
 
     // Prevent clicks inside the chat window from closing
     chatbotWindow.addEventListener('click', (e) => {
