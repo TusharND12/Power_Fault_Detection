@@ -521,6 +521,11 @@ function showNotification(message, type = 'info') {
     // Initialize theme toggle
     initializeThemeToggle();
     
+    // Initialize gauge charts on page load
+    setTimeout(() => {
+        initializeGaugeCharts();
+    }, 1000);
+    
     // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
@@ -905,8 +910,11 @@ let temperatureGauge = null;
 
 // Initialize Gauge Charts
 function initializeGaugeCharts() {
+    console.log('Initializing gauge charts...');
+    
     // Voltage Gauge
     const voltageCtx = document.getElementById('voltageGauge');
+    console.log('Voltage canvas found:', !!voltageCtx);
     if (voltageCtx) {
         voltageGauge = new Chart(voltageCtx, {
             type: 'doughnut',
@@ -941,10 +949,12 @@ function initializeGaugeCharts() {
                 }
             }
         });
+        console.log('Voltage gauge created successfully');
     }
     
     // Current Gauge
     const currentCtx = document.getElementById('currentGauge');
+    console.log('Current canvas found:', !!currentCtx);
     if (currentCtx) {
         currentGauge = new Chart(currentCtx, {
             type: 'doughnut',
@@ -979,10 +989,12 @@ function initializeGaugeCharts() {
                 }
             }
         });
+        console.log('Current gauge created successfully');
     }
     
     // Temperature Gauge
     const temperatureCtx = document.getElementById('temperatureGauge');
+    console.log('Temperature canvas found:', !!temperatureCtx);
     if (temperatureCtx) {
         temperatureGauge = new Chart(temperatureCtx, {
             type: 'doughnut',
@@ -1017,6 +1029,17 @@ function initializeGaugeCharts() {
                 }
             }
         });
+        console.log('Temperature gauge created successfully');
+    }
+    
+    console.log('Gauge charts initialization completed');
+    
+    // If no gauges were created, try again after a delay
+    if (!voltageGauge && !currentGauge && !temperatureGauge) {
+        console.log('No gauges created, retrying...');
+        setTimeout(() => {
+            initializeGaugeCharts();
+        }, 2000);
     }
 }
 
