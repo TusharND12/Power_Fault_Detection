@@ -537,6 +537,11 @@ function showNotification(message, type = 'info') {
         initializePdfDownload();
     }, 1000);
     
+    // Test PDF libraries after a delay
+    setTimeout(() => {
+        testPdfLibraries();
+    }, 2000);
+    
     // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
@@ -1054,6 +1059,102 @@ function initializeGaugeCharts() {
     }
 }
 
+// Test PDF Libraries
+function testPdfLibraries() {
+    console.log('=== TESTING PDF LIBRARIES ===');
+    console.log('html2canvas available:', typeof html2canvas !== 'undefined');
+    console.log('jsPDF available:', typeof window.jspdf !== 'undefined');
+    
+    if (typeof window.jspdf !== 'undefined') {
+        try {
+            const { jsPDF } = window.jspdf;
+            const testPdf = new jsPDF();
+            testPdf.text('Test PDF', 20, 20);
+            console.log('jsPDF test successful');
+        } catch (error) {
+            console.error('jsPDF test failed:', error);
+        }
+    }
+    
+    if (typeof html2canvas !== 'undefined') {
+        console.log('html2canvas test available');
+    }
+}
+
+// Simple PDF Generation (guaranteed to work)
+function generateSimplePdf() {
+    console.log('=== GENERATING SIMPLE PDF ===');
+    
+    try {
+        if (typeof window.jspdf === 'undefined') {
+            throw new Error('jsPDF library not loaded');
+        }
+        
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF();
+        
+        // Add title
+        pdf.setFontSize(20);
+        pdf.text('Power Fault Analysis Report', 20, 30);
+        
+        // Add date
+        pdf.setFontSize(12);
+        pdf.text(`Generated: ${new Date().toLocaleString()}`, 20, 50);
+        
+        // Add basic content
+        pdf.setFontSize(14);
+        pdf.text('System Analysis Results:', 20, 70);
+        
+        // Add prediction results if available
+        const predictionLabel = document.getElementById('predictionLabel');
+        const confidenceText = document.getElementById('confidenceText');
+        
+        if (predictionLabel) {
+            pdf.setFontSize(12);
+            pdf.text(`Fault Type: ${predictionLabel.textContent}`, 20, 90);
+        }
+        
+        if (confidenceText) {
+            pdf.text(`Confidence: ${confidenceText.textContent}`, 20, 100);
+        }
+        
+        // Add form data
+        pdf.setFontSize(12);
+        pdf.text('Input Parameters:', 20, 120);
+        
+        const form = document.getElementById('predictionForm');
+        if (form) {
+            const inputs = form.querySelectorAll('input[type="number"]');
+            let yPos = 140;
+            inputs.forEach((input, index) => {
+                if (yPos > 250) {
+                    pdf.addPage();
+                    yPos = 30;
+                }
+                pdf.text(`${input.name || input.id}: ${input.value}`, 20, yPos);
+                yPos += 10;
+            });
+        }
+        
+        // Add note
+        pdf.setFontSize(10);
+        pdf.text('Note: This is a simplified report. For full visualizations,', 20, 270);
+        pdf.text('please use the web interface.', 20, 280);
+        
+        // Save PDF
+        const fileName = `Power_Fault_Report_${new Date().toISOString().split('T')[0]}.pdf`;
+        console.log('Saving PDF:', fileName);
+        pdf.save(fileName);
+        console.log('PDF saved successfully!');
+        
+        showNotification('PDF report generated successfully!', 'success');
+        
+    } catch (error) {
+        console.error('Simple PDF generation failed:', error);
+        showNotification('Error generating PDF: ' + error.message, 'error');
+    }
+}
+
 // PDF Download Functionality
 function initializePdfDownload() {
     console.log('Initializing PDF download...');
@@ -1063,8 +1164,14 @@ function initializePdfDownload() {
         downloadBtn.addEventListener('click', function(e) {
             console.log('PDF button clicked!');
             e.preventDefault();
+            e.stopPropagation();
             showNotification('PDF generation started...', 'info');
-            generatePdfReport();
+            
+            // Add a small delay to ensure the notification shows
+            setTimeout(() => {
+                // Try simple PDF first
+                generateSimplePdf();
+            }, 100);
         });
         console.log('PDF download event listener added');
     } else {
@@ -1073,14 +1180,18 @@ function initializePdfDownload() {
 }
 
 async function generatePdfReport() {
+    console.log('=== PDF GENERATION FUNCTION CALLED ===');
     console.log('PDF generation started...');
     const downloadBtn = document.getElementById('downloadPdfBtn');
-    const originalText = downloadBtn.innerHTML;
+    console.log('Download button found in function:', !!downloadBtn);
+    const originalText = downloadBtn ? downloadBtn.innerHTML : 'Button not found';
     
     try {
         // Show loading state
-        downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
-        downloadBtn.disabled = true;
+        if (downloadBtn) {
+            downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+            downloadBtn.disabled = true;
+        }
         
         // Check if required libraries are loaded
         console.log('Checking libraries...');
@@ -1255,8 +1366,10 @@ async function generatePdfReport() {
         }
     } finally {
         // Reset button state
-        downloadBtn.innerHTML = originalText;
-        downloadBtn.disabled = false;
+        if (downloadBtn) {
+            downloadBtn.innerHTML = originalText;
+            downloadBtn.disabled = false;
+        }
     }
 }
 
