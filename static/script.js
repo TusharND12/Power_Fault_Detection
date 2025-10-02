@@ -500,6 +500,11 @@ function showNotification(message, type = 'info') {
     // Initialize interactive features
     initializeInteractiveFeatures();
     
+    // Initialize chatbot directly as well
+    setTimeout(() => {
+        initializeChatbot();
+    }, 1000);
+    
     // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
@@ -1199,7 +1204,11 @@ function stopLiveUpdates() {
 // Initialize interactive features
 function initializeInteractiveFeatures() {
     addMicroInteractions();
-    initializeChatbot();
+    
+    // Initialize chatbot with retry mechanism
+    setTimeout(() => {
+        initializeChatbot();
+    }, 500);
 }
 
 // Micro-interactions
@@ -1278,7 +1287,22 @@ function initializeChatbot() {
     const chatbotSend = document.getElementById('chatbotSend');
     const quickActions = document.querySelectorAll('.quick-action-btn');
 
-    if (!chatbotToggle || !chatbotContainer || !chatbotWindow) return;
+    if (!chatbotToggle || !chatbotContainer || !chatbotWindow) {
+        console.log('Chatbot elements not found');
+        return;
+    }
+
+    console.log('Initializing chatbot...');
+    
+    // Make chatbot visible by default
+    chatbotContainer.style.display = 'block';
+    chatbotContainer.style.visibility = 'visible';
+    chatbotContainer.style.opacity = '1';
+    chatbotWindow.classList.add('active');
+    
+    // Force visibility
+    chatbotContainer.style.transform = 'translateY(0)';
+    chatbotContainer.classList.add('active');
 
     // Toggle chatbot
     chatbotToggle.addEventListener('click', () => {
