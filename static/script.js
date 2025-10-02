@@ -87,7 +87,6 @@ async function handleFormSubmit(event) {
     } catch (error) {
         console.error('Error making prediction:', error);
         showNotification('Error making prediction: ' + error.message, 'error');
-        playSound('error');
     } finally {
         hideLoading();
     }
@@ -228,7 +227,6 @@ function displayResults(result) {
     
     // Show success notification
     showNotification('Prediction completed successfully!', 'success');
-    playSound('success');
 }
 
 // Update prediction card
@@ -1195,120 +1193,9 @@ function stopLiveUpdates() {
 }
 
 // Interactive Features
-let isDarkTheme = false;
-let soundEnabled = true;
-let particlesEnabled = true;
-
 // Initialize interactive features
 function initializeInteractiveFeatures() {
-    setupThemeToggle();
-    setupSoundToggle();
-    setupParticleToggle();
-    setupSoundEffects();
     addMicroInteractions();
-}
-
-// Theme Toggle
-function setupThemeToggle() {
-    const themeToggle = document.getElementById('themeToggle');
-    if (!themeToggle) return;
-    
-    themeToggle.addEventListener('click', () => {
-        isDarkTheme = !isDarkTheme;
-        toggleTheme();
-        playSound('click');
-    });
-}
-
-function toggleTheme() {
-    const body = document.body;
-    const themeToggle = document.getElementById('themeToggle');
-    
-    if (isDarkTheme) {
-        body.classList.add('dark-theme');
-        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-        themeToggle.style.background = 'linear-gradient(135deg, #f39c12, #e67e22)';
-    } else {
-        body.classList.remove('dark-theme');
-        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-        themeToggle.style.background = 'linear-gradient(135deg, #2c3e50, #34495e)';
-    }
-}
-
-// Sound Toggle
-function setupSoundToggle() {
-    const soundToggle = document.getElementById('soundToggle');
-    if (!soundToggle) return;
-    
-    soundToggle.addEventListener('click', () => {
-        soundEnabled = !soundEnabled;
-        soundToggle.innerHTML = soundEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
-        soundToggle.style.background = soundEnabled ? 
-            'linear-gradient(135deg, #27ae60, #2ecc71)' : 
-            'linear-gradient(135deg, #e74c3c, #c0392b)';
-        playSound('click');
-    });
-}
-
-// Particle Toggle
-function setupParticleToggle() {
-    const particleToggle = document.getElementById('particleToggle');
-    const particlesContainer = document.getElementById('particlesContainer');
-    if (!particleToggle || !particlesContainer) return;
-    
-    particleToggle.addEventListener('click', () => {
-        particlesEnabled = !particlesEnabled;
-        particlesContainer.style.display = particlesEnabled ? 'block' : 'none';
-        particleToggle.innerHTML = particlesEnabled ? '<i class="fas fa-magic"></i>' : '<i class="fas fa-ban"></i>';
-        particleToggle.style.background = particlesEnabled ? 
-            'linear-gradient(135deg, #9b59b6, #8e44ad)' : 
-            'linear-gradient(135deg, #95a5a6, #7f8c8d)';
-        playSound('click');
-    });
-}
-
-// Sound Effects
-function setupSoundEffects() {
-    // Create audio context for sound effects
-    if (!window.audioContext) {
-        window.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    }
-}
-
-function playSound(type) {
-    if (!soundEnabled || !window.audioContext) return;
-    
-    const ctx = window.audioContext;
-    const oscillator = ctx.createOscillator();
-    const gainNode = ctx.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(ctx.destination);
-    
-    switch(type) {
-        case 'click':
-            oscillator.frequency.setValueAtTime(800, ctx.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1);
-            gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
-            break;
-        case 'success':
-            oscillator.frequency.setValueAtTime(523, ctx.currentTime);
-            oscillator.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
-            oscillator.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
-            gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-            break;
-        case 'error':
-            oscillator.frequency.setValueAtTime(200, ctx.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.3);
-            gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-            break;
-    }
-    
-    oscillator.start(ctx.currentTime);
-    oscillator.stop(ctx.currentTime + 0.3);
 }
 
 // Micro-interactions
