@@ -1308,6 +1308,11 @@ function initializeChatbot() {
         addMessage("Hello! I'm your AI Safety Advisor. I can help you with electrical fault prevention and provide personalized recommendations. How can I assist you today?", 'bot');
     }, 1000);
     
+    // Add a test message to show the chatbot can reply
+    setTimeout(() => {
+        addMessage("Try asking me about prevention, maintenance, emergency procedures, or data analysis. I can also analyze your electrical system parameters!", 'bot');
+    }, 3000);
+    
     // Simple click handler for the container
     chatbotContainer.addEventListener('click', function() {
         console.log('Chatbot clicked!');
