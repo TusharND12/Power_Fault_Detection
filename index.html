@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Power Fault Prediction System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="static/style.css" rel="stylesheet">
 </head>
@@ -23,7 +24,23 @@
             <div class="form-container">
                 <div class="form-header">
                     <h2><i class="fas fa-cog"></i> System Parameters</h2>
-                    <p>Enter the current power system parameters to get fault predictions</p>
+                    <p>Enter the current power system parameters to get AI-powered fault predictions</p>
+                    <div class="progress-indicator">
+                        <div class="progress-step active" data-step="1">
+                            <span class="step-number">1</span>
+                            <span class="step-label">Input Data</span>
+                        </div>
+                        <div class="progress-line"></div>
+                        <div class="progress-step" data-step="2">
+                            <span class="step-number">2</span>
+                            <span class="step-label">Analysis</span>
+                        </div>
+                        <div class="progress-line"></div>
+                        <div class="progress-step" data-step="3">
+                            <span class="step-number">3</span>
+                            <span class="step-label">Results</span>
+                        </div>
+                    </div>
                 </div>
 
                 <form id="predictionForm" class="prediction-form">
@@ -33,7 +50,7 @@
                                 <i class="fas fa-bolt"></i>
                                 Voltage (V)
                             </label>
-                            <input type="number" id="voltage" name="voltage" step="0.0001" min="0" max="5000" value="0.0000" required>
+                            <input type="number" id="voltage" name="voltage" step="0.0001" min="0" max="5000" value="0.0000" placeholder="Enter voltage (e.g., 2200.0000)" required>
                             <span class="input-hint">Typical range: 1000-3000V</span>
                         </div>
 
@@ -42,7 +59,7 @@
                                 <i class="fas fa-stream"></i>
                                 Current (A)
                             </label>
-                            <input type="number" id="current" name="current" step="0.0001" min="0" max="1000" value="0.0000" required>
+                            <input type="number" id="current" name="current" step="0.0001" min="0" max="1000" value="0.0000" placeholder="Enter current (e.g., 250.0000)" required>
                             <span class="input-hint">Typical range: 100-500A</span>
                         </div>
 
@@ -51,7 +68,7 @@
                                 <i class="fas fa-chart-line"></i>
                                 Power Load (MW)
                             </label>
-                            <input type="number" id="power_load" name="power_load" step="0.0001" min="0" max="200" value="0.0000" required>
+                            <input type="number" id="power_load" name="power_load" step="0.0001" min="0" max="200" value="0.0000" placeholder="Enter power load (e.g., 50.0000)" required>
                             <span class="input-hint">Typical range: 10-150MW</span>
                         </div>
 
@@ -60,7 +77,7 @@
                                 <i class="fas fa-thermometer-half"></i>
                                 Temperature (°C)
                             </label>
-                            <input type="number" id="temperature" name="temperature" step="0.0001" min="-50" max="100" value="0.0000" required>
+                            <input type="number" id="temperature" name="temperature" step="0.0001" min="-50" max="100" value="0.0000" placeholder="Enter temperature (e.g., 25.0000)" required>
                             <span class="input-hint">Operating temperature</span>
                         </div>
 

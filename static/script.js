@@ -61,6 +61,9 @@ async function handleFormSubmit(event) {
         return;
     }
     
+    // Update progress indicator
+    updateProgressIndicator(2);
+    
     // Show loading overlay
     showLoading();
     
@@ -190,6 +193,9 @@ function displayResults(result) {
         console.error('Results container not found');
         return;
     }
+    
+    // Update progress indicator
+    updateProgressIndicator(3);
     
     // Update prediction card
     updatePredictionCard(result);
@@ -523,6 +529,18 @@ function getNotificationColor(type) {
         info: '#3498db'
     };
     return colors[type] || '#3498db';
+}
+
+// Update progress indicator
+function updateProgressIndicator(step) {
+    const steps = document.querySelectorAll('.progress-step');
+    steps.forEach((stepElement, index) => {
+        if (index < step) {
+            stepElement.classList.add('active');
+        } else {
+            stepElement.classList.remove('active');
+        }
+    });
 }
 
 // Add CSS animation for notifications
