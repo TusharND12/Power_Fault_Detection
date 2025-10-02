@@ -225,6 +225,9 @@ function displayResults(result) {
         }
     }, 1000);
     
+    // Update chatbot with form data for analysis
+    updateFormDataForChatbot(result.input_features);
+    
     // Show success notification
     showNotification('Prediction completed successfully!', 'success');
 }
@@ -1196,6 +1199,7 @@ function stopLiveUpdates() {
 // Initialize interactive features
 function initializeInteractiveFeatures() {
     addMicroInteractions();
+    initializeChatbot();
 }
 
 // Micro-interactions
@@ -1260,3 +1264,362 @@ rippleStyle.textContent = `
     }
 `;
 document.head.appendChild(rippleStyle);
+
+// AI Chatbot
+let currentFormData = null;
+let isChatbotOpen = false;
+
+// Initialize Chatbot
+function initializeChatbot() {
+    const chatbotToggle = document.getElementById('chatbotToggle');
+    const chatbotContainer = document.getElementById('chatbotContainer');
+    const chatbotWindow = document.getElementById('chatbotWindow');
+    const chatbotInput = document.getElementById('chatbotInput');
+    const chatbotSend = document.getElementById('chatbotSend');
+    const quickActions = document.querySelectorAll('.quick-action-btn');
+
+    if (!chatbotToggle || !chatbotContainer || !chatbotWindow) return;
+
+    // Toggle chatbot
+    chatbotToggle.addEventListener('click', () => {
+        isChatbotOpen = !isChatbotOpen;
+        if (isChatbotOpen) {
+            chatbotContainer.classList.add('active');
+            chatbotWindow.classList.add('active');
+            chatbotInput.focus();
+        } else {
+            chatbotContainer.classList.remove('active');
+            chatbotWindow.classList.remove('active');
+        }
+    });
+
+    // Send message
+    function sendMessage() {
+        const message = chatbotInput.value.trim();
+        if (!message) return;
+
+        addMessage(message, 'user');
+        chatbotInput.value = '';
+
+        // Simulate typing delay
+        setTimeout(() => {
+            const response = generateAIResponse(message);
+            addMessage(response, 'bot');
+        }, 1000 + Math.random() * 1000);
+    }
+
+    // Event listeners
+    chatbotSend.addEventListener('click', sendMessage);
+    chatbotInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    // Quick actions
+    quickActions.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const action = btn.dataset.action;
+            handleQuickAction(action);
+        });
+    });
+}
+
+// Add message to chat
+function addMessage(content, sender) {
+    const messagesContainer = document.getElementById('chatbotMessages');
+    if (!messagesContainer) return;
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${sender}-message`;
+
+    const avatar = document.createElement('div');
+    avatar.className = 'message-avatar';
+    avatar.innerHTML = sender === 'bot' ? '<i class="fas fa-robot"></i>' : '<i class="fas fa-user"></i>';
+
+    const messageContent = document.createElement('div');
+    messageContent.className = 'message-content';
+    
+    const messageText = document.createElement('p');
+    messageText.textContent = content;
+    
+    const messageTime = document.createElement('div');
+    messageTime.className = 'message-time';
+    messageTime.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+    messageContent.appendChild(messageText);
+    messageContent.appendChild(messageTime);
+    messageDiv.appendChild(avatar);
+    messageDiv.appendChild(messageContent);
+    messagesContainer.appendChild(messageDiv);
+
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Handle quick actions
+function handleQuickAction(action) {
+    let response = '';
+    
+    switch(action) {
+        case 'prevention':
+            response = `🛡️ **Electrical Fault Prevention Tips:**
+
+• **Regular Inspections**: Check equipment monthly for signs of wear, corrosion, or damage
+• **Proper Maintenance**: Follow manufacturer schedules for cleaning and calibration
+• **Environmental Control**: Maintain stable temperature (15-35°C) and humidity (40-60%)
+• **Load Management**: Avoid overloading circuits and ensure proper load distribution
+• **Protection Devices**: Install and test circuit breakers, fuses, and surge protectors
+• **Grounding**: Ensure proper grounding and bonding of all electrical equipment
+• **Training**: Keep staff trained on electrical safety procedures
+• **Documentation**: Maintain detailed logs of all maintenance activities
+
+Would you like specific advice for your system parameters?`;
+            break;
+            
+        case 'maintenance':
+            response = `🔧 **Maintenance Schedule Guide:**
+
+**Daily Checks:**
+• Visual inspection of equipment
+• Check for unusual sounds or vibrations
+• Monitor temperature readings
+• Verify alarm systems
+
+**Weekly Tasks:**
+• Clean equipment surfaces
+• Check connection tightness
+• Review operational logs
+• Test backup systems
+
+**Monthly Procedures:**
+• Calibrate measuring instruments
+• Inspect protective devices
+• Check grounding systems
+• Review maintenance records
+
+**Quarterly Activities:**
+• Comprehensive equipment testing
+• Update safety procedures
+• Staff training refreshers
+• System performance analysis
+
+Need help with specific maintenance tasks?`;
+            break;
+            
+        case 'emergency':
+            response = `🚨 **Emergency Response Protocol:**
+
+**Immediate Actions:**
+1. **Isolate Power**: Turn off main power supply immediately
+2. **Evacuate Area**: Clear personnel from danger zone
+3. **Call Emergency**: Contact emergency services (911)
+4. **Notify Supervisor**: Alert management and safety team
+5. **Document Incident**: Record time, location, and circumstances
+
+**Safety Measures:**
+• Never touch electrical equipment with wet hands
+• Use proper PPE (Personal Protective Equipment)
+• Follow lockout/tagout procedures
+• Keep emergency contact numbers visible
+• Maintain first aid supplies nearby
+
+**Post-Emergency:**
+• Conduct thorough investigation
+• Review and update safety procedures
+• Provide staff training if needed
+• Document lessons learned
+
+Need specific emergency procedures for your situation?`;
+            break;
+            
+        case 'analysis':
+            if (currentFormData) {
+                response = analyzeUserData(currentFormData);
+            } else {
+                response = `📊 **Data Analysis Available:**
+
+I can analyze your system parameters to provide personalized recommendations. Please submit a fault prediction first, and I'll be able to:
+
+• Analyze your specific voltage, current, and power readings
+• Identify potential risk factors in your system
+• Provide targeted prevention strategies
+• Suggest maintenance priorities
+• Recommend monitoring improvements
+
+Go ahead and run a prediction to get started!`;
+            }
+            break;
+    }
+    
+    addMessage(response, 'bot');
+}
+
+// Generate AI response
+function generateAIResponse(userMessage) {
+    const message = userMessage.toLowerCase();
+    
+    // Keywords for different topics
+    const preventionKeywords = ['prevent', 'avoid', 'prevention', 'safety', 'protect'];
+    const maintenanceKeywords = ['maintain', 'maintenance', 'repair', 'fix', 'service'];
+    const emergencyKeywords = ['emergency', 'urgent', 'danger', 'hazard', 'accident'];
+    const analysisKeywords = ['analyze', 'analysis', 'data', 'parameters', 'values'];
+    const generalKeywords = ['hello', 'hi', 'help', 'what', 'how', 'why'];
+    
+    if (preventionKeywords.some(keyword => message.includes(keyword))) {
+        return `🛡️ **Prevention is Key!** Here are essential electrical safety measures:
+
+• **Regular Monitoring**: Check parameters every 4 hours
+• **Environmental Control**: Maintain stable conditions
+• **Load Management**: Never exceed 80% of rated capacity
+• **Protection Systems**: Ensure all safety devices are functional
+• **Staff Training**: Keep everyone updated on safety procedures
+• **Documentation**: Record all readings and incidents
+
+Would you like specific prevention strategies for your system?`;
+    }
+    
+    if (maintenanceKeywords.some(keyword => message.includes(keyword))) {
+        return `🔧 **Maintenance Best Practices:**
+
+**Critical Maintenance Tasks:**
+• Clean all electrical contacts monthly
+• Check insulation resistance quarterly
+• Calibrate measuring instruments every 6 months
+• Inspect protective devices annually
+• Update safety procedures as needed
+
+**Warning Signs to Watch:**
+• Unusual temperature readings
+• Fluctuating voltage levels
+• Increased current consumption
+• Equipment vibration or noise
+• Discolored or damaged components
+
+Need a maintenance checklist for your specific equipment?`;
+    }
+    
+    if (emergencyKeywords.some(keyword => message.includes(keyword))) {
+        return `🚨 **Emergency Response Steps:**
+
+**If Fault Detected:**
+1. **Immediate**: Isolate power source
+2. **Safety**: Evacuate affected area
+3. **Communication**: Alert emergency services
+4. **Documentation**: Record incident details
+5. **Investigation**: Conduct thorough analysis
+
+**Prevention Focus:**
+• Regular system monitoring
+• Proactive maintenance
+• Staff training updates
+• Equipment upgrades when needed
+
+Is this an emergency situation requiring immediate assistance?`;
+    }
+    
+    if (analysisKeywords.some(keyword => message.includes(keyword))) {
+        if (currentFormData) {
+            return analyzeUserData(currentFormData);
+        } else {
+            return `📊 **Data Analysis Ready!** 
+
+I can provide detailed analysis once you submit system parameters. Please run a fault prediction first, then I'll analyze your specific data and provide personalized recommendations.
+
+What specific aspects would you like me to analyze?`;
+        }
+    }
+    
+    if (generalKeywords.some(keyword => message.includes(keyword))) {
+        return `👋 **Hello! I'm your AI Safety Advisor.**
+
+I can help you with:
+• **Prevention Tips** - Avoid electrical faults
+• **Maintenance Guides** - Keep systems running safely  
+• **Emergency Response** - Handle critical situations
+• **Data Analysis** - Understand your system parameters
+
+What would you like to know about electrical safety?`;
+    }
+    
+    // Default response
+    return `I understand you're asking about "${userMessage}". 
+
+As your AI Safety Advisor, I can help with:
+• Electrical fault prevention strategies
+• Maintenance scheduling and procedures
+• Emergency response protocols
+• Analysis of your system parameters
+
+Could you be more specific about what you'd like to know? I'm here to help keep your electrical systems safe!`;
+}
+
+// Analyze user data
+function analyzeUserData(formData) {
+    const voltage = parseFloat(formData.voltage) || 0;
+    const current = parseFloat(formData.current) || 0;
+    const power = parseFloat(formData.power) || 0;
+    const frequency = parseFloat(formData.frequency) || 0;
+    const temperature = parseFloat(formData.temperature) || 0;
+    const humidity = parseFloat(formData.humidity) || 0;
+    const windSpeed = parseFloat(formData.wind_speed) || 0;
+    const pressure = parseFloat(formData.pressure) || 0;
+
+    let analysis = `📊 **System Analysis Based on Your Data:**
+
+**Current Parameters:**
+• Voltage: ${voltage}V
+• Current: ${current}A  
+• Power: ${power}W
+• Frequency: ${frequency}Hz
+• Temperature: ${temperature}°C
+• Humidity: ${humidity}%
+• Wind Speed: ${windSpeed} m/s
+• Pressure: ${pressure} Pa
+
+**Risk Assessment:**`;
+
+    // Risk analysis
+    const risks = [];
+    
+    if (voltage > 2500 || voltage < 2000) {
+        risks.push("⚠️ Voltage outside normal range (2000-2500V)");
+    }
+    
+    if (current > 200) {
+        risks.push("⚠️ High current load detected");
+    }
+    
+    if (temperature > 40) {
+        risks.push("⚠️ Elevated temperature may cause equipment stress");
+    }
+    
+    if (humidity > 80) {
+        risks.push("⚠️ High humidity increases corrosion risk");
+    }
+    
+    if (windSpeed > 15) {
+        risks.push("⚠️ High wind speed may affect outdoor equipment");
+    }
+    
+    if (risks.length === 0) {
+        analysis += "\n✅ **Low Risk** - Parameters within acceptable ranges";
+    } else {
+        analysis += "\n" + risks.join("\n");
+    }
+
+    analysis += `\n\n**Recommendations:**
+• Monitor parameters every 2 hours
+• Schedule maintenance if risks detected
+• Consider environmental controls
+• Update safety procedures as needed
+
+Need specific action plans for any of these issues?`;
+
+    return analysis;
+}
+
+// Update form data for analysis
+function updateFormDataForChatbot(data) {
+    currentFormData = data;
+}
