@@ -218,6 +218,13 @@ function displayResults(result) {
         animateBadges();
     }, 500);
     
+    // Initialize live graph after results are displayed
+    setTimeout(() => {
+        if (document.getElementById('liveGraph')) {
+            initializeLiveGraph();
+        }
+    }, 1000);
+    
     // Show success notification
     showNotification('Prediction completed successfully!', 'success');
 }
@@ -454,6 +461,9 @@ function resetForm() {
         input.style.borderColor = '#e1e8ed';
     });
     
+    // Stop live graph updates
+    stopLiveUpdates();
+    
     showNotification('Form reset successfully', 'info');
 }
 
@@ -479,8 +489,10 @@ function showNotification(message, type = 'info') {
         return;
     }
 
-    // Initialize live graph
-    initializeLiveGraph();
+    // Initialize live graph when results are shown
+    if (document.getElementById('liveGraph')) {
+        initializeLiveGraph();
+    }
     
     // Create notification element
     const notification = document.createElement('div');
@@ -862,9 +874,25 @@ let dataPointCount = 0;
 
 // Initialize Live Graph
 function initializeLiveGraph() {
-    const canvas = document.getElementById('liveGraph');
-    if (!canvas) return;
+    // Prevent multiple initializations
+    if (liveGraph) {
+        console.log('Live graph already initialized');
+        return;
+    }
 
+    const canvas = document.getElementById('liveGraph');
+    if (!canvas) {
+        console.log('Live graph canvas not found, retrying...');
+        setTimeout(() => {
+            const retryCanvas = document.getElementById('liveGraph');
+            if (retryCanvas) {
+                initializeLiveGraph();
+            }
+        }, 500);
+        return;
+    }
+
+    console.log('Initializing live graph...');
     const ctx = canvas.getContext('2d');
     
     // Initialize with sample data
