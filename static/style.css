@@ -2783,6 +2783,80 @@ html {
     color: #b0b0b0;
 }
 
+/* PDF Download Section */
+.pdf-download-section {
+    margin-top: 30px;
+    padding: 25px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 249, 250, 0.9));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: slideInUp 0.6s ease-out;
+}
+
+.pdf-download-section h3 {
+    margin: 0 0 20px 0;
+    color: #2c3e50;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pdf-controls {
+    text-align: center;
+}
+
+.pdf-btn {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pdf-btn:hover {
+    background: linear-gradient(135deg, #c0392b, #e74c3c);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+}
+
+.pdf-btn:active {
+    transform: translateY(0);
+}
+
+.pdf-info {
+    margin-top: 10px;
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+.dark-theme .pdf-download-section {
+    background: linear-gradient(135deg, rgba(30, 30, 50, 0.95), rgba(20, 30, 50, 0.9));
+    border: 1px solid rgba(100, 200, 255, 0.2);
+}
+
+.dark-theme .pdf-download-section h3 {
+    color: #e0e0e0;
+}
+
+.dark-theme .pdf-info {
+    color: #b0b0b0;
+}
+
 /* Enhanced Chatbot Animations */
 @keyframes chatbotPulse {
     0%, 100% {

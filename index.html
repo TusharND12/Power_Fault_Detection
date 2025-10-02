@@ -293,6 +293,20 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- PDF Download Section -->
+                    <div class="pdf-download-section">
+                        <h3><i class="fas fa-file-pdf"></i> Export Report</h3>
+                        <div class="pdf-controls">
+                            <button class="btn pdf-btn" id="downloadPdfBtn">
+                                <i class="fas fa-download"></i>
+                                Download PDF Report
+                            </button>
+                            <div class="pdf-info">
+                                <small>Includes all graphs, data, and analysis</small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -392,6 +406,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-gauge@0.3.0/dist/chartjs-gauge.min.js"></script>
+    
+    <!-- PDF Generation Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="static/script.js?v=2.0"></script>
 </body>
 </html>

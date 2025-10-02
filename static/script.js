@@ -526,6 +526,9 @@ function showNotification(message, type = 'info') {
         initializeGaugeCharts();
     }, 1000);
     
+    // Initialize PDF download functionality
+    initializePdfDownload();
+    
     // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
@@ -1040,6 +1043,135 @@ function initializeGaugeCharts() {
         setTimeout(() => {
             initializeGaugeCharts();
         }, 2000);
+    }
+}
+
+// PDF Download Functionality
+function initializePdfDownload() {
+    const downloadBtn = document.getElementById('downloadPdfBtn');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', generatePdfReport);
+    }
+}
+
+async function generatePdfReport() {
+    const downloadBtn = document.getElementById('downloadPdfBtn');
+    const originalText = downloadBtn.innerHTML;
+    
+    try {
+        // Show loading state
+        downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+        downloadBtn.disabled = true;
+        
+        // Wait for charts to be fully rendered
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Get the results container
+        const resultsContainer = document.getElementById('resultsContainer');
+        if (!resultsContainer) {
+            throw new Error('Results container not found');
+        }
+        
+        // Create a temporary container for PDF generation
+        const tempContainer = document.createElement('div');
+        tempContainer.style.position = 'absolute';
+        tempContainer.style.left = '-9999px';
+        tempContainer.style.top = '0';
+        tempContainer.style.width = '800px';
+        tempContainer.style.backgroundColor = 'white';
+        tempContainer.style.padding = '20px';
+        tempContainer.style.fontFamily = 'Arial, sans-serif';
+        
+        // Clone the results container
+        const clonedResults = resultsContainer.cloneNode(true);
+        clonedResults.style.display = 'block';
+        clonedResults.style.position = 'static';
+        clonedResults.style.width = '100%';
+        clonedResults.style.backgroundColor = 'white';
+        clonedResults.style.color = 'black';
+        
+        // Remove animations and transitions for PDF
+        const allElements = clonedResults.querySelectorAll('*');
+        allElements.forEach(el => {
+            el.style.animation = 'none';
+            el.style.transition = 'none';
+            el.style.transform = 'none';
+        });
+        
+        // Add header
+        const header = document.createElement('div');
+        header.style.textAlign = 'center';
+        header.style.marginBottom = '30px';
+        header.style.borderBottom = '2px solid #3498db';
+        header.style.paddingBottom = '20px';
+        header.innerHTML = `
+            <h1 style="color: #2c3e50; margin: 0; font-size: 28px;">Power Fault Analysis Report</h1>
+            <p style="color: #7f8c8d; margin: 10px 0 0 0; font-size: 16px;">Generated on ${new Date().toLocaleString()}</p>
+        `;
+        
+        tempContainer.appendChild(header);
+        tempContainer.appendChild(clonedResults);
+        document.body.appendChild(tempContainer);
+        
+        // Generate PDF using html2canvas and jsPDF
+        const canvas = await html2canvas(tempContainer, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
+            width: 800,
+            height: tempContainer.scrollHeight
+        });
+        
+        // Clean up temporary container
+        document.body.removeChild(tempContainer);
+        
+        // Create PDF
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgWidth = 210;
+        const pageHeight = 295;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        
+        let position = 0;
+        
+        // Add image to PDF
+        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+        
+        // Add new pages if content is longer than one page
+        while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
+        
+        // Add footer to each page
+        const pageCount = pdf.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            pdf.setPage(i);
+            pdf.setFontSize(8);
+            pdf.setTextColor(128, 128, 128);
+            pdf.text(`Page ${i} of ${pageCount}`, 20, 285);
+            pdf.text('Power Fault Prediction System - AI-Powered Analysis', 105, 285, { align: 'center' });
+        }
+        
+        // Save the PDF
+        const fileName = `Power_Fault_Report_${new Date().toISOString().split('T')[0]}.pdf`;
+        pdf.save(fileName);
+        
+        // Show success message
+        showNotification('PDF report generated successfully!', 'success');
+        
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+        showNotification('Error generating PDF report. Please try again.', 'error');
+    } finally {
+        // Reset button state
+        downloadBtn.innerHTML = originalText;
+        downloadBtn.disabled = false;
     }
 }
 
