@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Fault Prediction System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-bolt"></i>
+                    <h1>Power Fault Prediction System</h1>
+                </div>
+                <p class="subtitle">AI-powered electrical grid monitoring and fault prediction</p>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2><i class="fas fa-cog"></i> System Parameters</h2>
+                    <p>Enter the current power system parameters to get fault predictions</p>
+                </div>
+
+                <form id="predictionForm" class="prediction-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="voltage">
+                                <i class="fas fa-bolt"></i>
+                                Voltage (V)
+                            </label>
+                            <input type="number" id="voltage" name="voltage" step="0.0001" min="0" max="5000" value="2200.0000" required>
+                            <span class="input-hint">Typical range: 1000-3000V</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="current">
+                                <i class="fas fa-stream"></i>
+                                Current (A)
+                            </label>
+                            <input type="number" id="current" name="current" step="0.0001" min="0" max="1000" value="250.0000" required>
+                            <span class="input-hint">Typical range: 100-500A</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="power_load">
+                                <i class="fas fa-chart-line"></i>
+                                Power Load (MW)
+                            </label>
+                            <input type="number" id="power_load" name="power_load" step="0.0001" min="0" max="200" value="50.0000" required>
+                            <span class="input-hint">Typical range: 10-150MW</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="temperature">
+                                <i class="fas fa-thermometer-half"></i>
+                                Temperature (°C)
+                            </label>
+                            <input type="number" id="temperature" name="temperature" step="0.0001" min="-50" max="100" value="25.0000" required>
+                            <span class="input-hint">Operating temperature</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="wind_speed">
+                                <i class="fas fa-wind"></i>
+                                Wind Speed (km/h)
+                            </label>
+                            <input type="number" id="wind_speed" name="wind_speed" step="0.0001" min="0" max="200" value="20.0000" required>
+                            <span class="input-hint">Environmental condition</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="duration_of_fault">
+                                <i class="fas fa-clock"></i>
+                                Duration of Fault (hrs)
+                            </label>
+                            <input type="number" id="duration_of_fault" name="duration_of_fault" step="0.0001" min="0" max="24" value="2.0000" required>
+                            <span class="input-hint">How long the fault has been active</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="down_time">
+                                <i class="fas fa-stop-circle"></i>
+                                Down Time (hrs)
+                            </label>
+                            <input type="number" id="down_time" name="down_time" step="0.0001" min="0" max="24" value="1.0000" required>
+                            <span class="input-hint">System downtime duration</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="weather_condition">
+                                <i class="fas fa-cloud"></i>
+                                Weather Condition
+                            </label>
+                            <select id="weather_condition" name="weather_condition">
+                                <option value="clear">Clear</option>
+                                <option value="rainy">Rainy</option>
+                                <option value="snowy">Snowy</option>
+                                <option value="windstorm">Windstorm</option>
+                                <option value="thunderstorm">Thunderstorm</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="maintenance_status">
+                                <i class="fas fa-tools"></i>
+                                Maintenance Status
+                            </label>
+                            <select id="maintenance_status" name="maintenance_status">
+                                <option value="completed">Completed</option>
+                                <option value="scheduled">Scheduled</option>
+                                <option value="pending">Pending</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="component_health">
+                                <i class="fas fa-heartbeat"></i>
+                                Component Health
+                            </label>
+                            <select id="component_health" name="component_health">
+                                <option value="normal">Normal</option>
+                                <option value="faulty">Faulty</option>
+                                <option value="overheated">Overheated</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-brain"></i>
+                            Predict Fault
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                            <i class="fas fa-undo"></i>
+                            Reset
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="results-container" id="resultsContainer" style="display: none;">
+                <div class="results-header">
+                    <h2><i class="fas fa-chart-bar"></i> Prediction Results</h2>
+                </div>
+                
+                <div class="results-content">
+                    <div class="prediction-summary">
+                        <div class="prediction-card" id="predictionCard">
+                            <div class="prediction-icon">
+                                <i class="fas fa-exclamation-triangle" id="predictionIcon"></i>
+                            </div>
+                            <div class="prediction-details">
+                                <h3 id="predictionLabel">Predicted Fault Type</h3>
+                                <p class="confidence" id="confidenceText">Confidence: 0%</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="probabilities-chart">
+                        <h3>Probability Distribution</h3>
+                        <div class="chart-container">
+                            <canvas id="probabilityChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="input-summary">
+                        <h3>Input Parameters</h3>
+                        <div class="parameters-grid" id="parametersGrid">
+                            <!-- Input parameters will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2024 Power Fault Prediction System. AI-powered electrical grid monitoring.</p>
+        </footer>
+    </div>
+
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-cog fa-spin"></i>
+            <p>Analyzing system parameters...</p>
+        </div>
+    </div>
+
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
