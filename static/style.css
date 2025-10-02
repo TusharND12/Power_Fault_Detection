@@ -2723,6 +2723,33 @@ html {
     font-weight: 600;
 }
 
+.gauge-item {
+    position: relative;
+}
+
+.gauge-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.gauge-percentage {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.gauge-value {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #7f8c8d;
+}
+
 .dark-theme .gauge-section {
     background: linear-gradient(135deg, rgba(30, 30, 50, 0.95), rgba(20, 30, 50, 0.9));
     border: 1px solid rgba(100, 200, 255, 0.2);
@@ -2739,6 +2766,14 @@ html {
 
 .dark-theme .gauge-item h4 {
     color: #e0e0e0;
+}
+
+.dark-theme .gauge-percentage {
+    color: #e0e0e0;
+}
+
+.dark-theme .gauge-value {
+    color: #b0b0b0;
 }
 
 /* Enhanced Chatbot Animations */

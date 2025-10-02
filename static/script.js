@@ -914,16 +914,30 @@ function initializeGaugeCharts() {
                 datasets: [{
                     data: [75, 25],
                     backgroundColor: ['#2ecc71', '#ecf0f1'],
-                    borderWidth: 0
+                    borderWidth: 0,
+                    circumference: 270,
+                    rotation: 225
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
-                cutout: '70%',
+                maintainAspectRatio: true,
+                cutout: '75%',
                 plugins: {
                     legend: { display: false },
-                    tooltip: { enabled: false }
+                    tooltip: { 
+                        enabled: true,
+                        callbacks: {
+                            label: function(context) {
+                                return 'Voltage Health: ' + Math.round(context.parsed) + '%';
+                            }
+                        }
+                    }
+                },
+                elements: {
+                    arc: {
+                        borderWidth: 0
+                    }
                 }
             }
         });
@@ -938,16 +952,30 @@ function initializeGaugeCharts() {
                 datasets: [{
                     data: [60, 40],
                     backgroundColor: ['#f39c12', '#ecf0f1'],
-                    borderWidth: 0
+                    borderWidth: 0,
+                    circumference: 270,
+                    rotation: 225
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
-                cutout: '70%',
+                maintainAspectRatio: true,
+                cutout: '75%',
                 plugins: {
                     legend: { display: false },
-                    tooltip: { enabled: false }
+                    tooltip: { 
+                        enabled: true,
+                        callbacks: {
+                            label: function(context) {
+                                return 'Current Load: ' + Math.round(context.parsed) + '%';
+                            }
+                        }
+                    }
+                },
+                elements: {
+                    arc: {
+                        borderWidth: 0
+                    }
                 }
             }
         });
@@ -962,16 +990,30 @@ function initializeGaugeCharts() {
                 datasets: [{
                     data: [45, 55],
                     backgroundColor: ['#3498db', '#ecf0f1'],
-                    borderWidth: 0
+                    borderWidth: 0,
+                    circumference: 270,
+                    rotation: 225
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
-                cutout: '70%',
+                maintainAspectRatio: true,
+                cutout: '75%',
                 plugins: {
                     legend: { display: false },
-                    tooltip: { enabled: false }
+                    tooltip: { 
+                        enabled: true,
+                        callbacks: {
+                            label: function(context) {
+                                return 'Temperature: ' + Math.round(context.parsed) + '%';
+                            }
+                        }
+                    }
+                },
+                elements: {
+                    arc: {
+                        borderWidth: 0
+                    }
                 }
             }
         });
@@ -984,19 +1026,50 @@ function updateGaugeValues(voltage, current, temperature) {
         const voltagePercent = Math.min(Math.max((voltage / 2500) * 100, 0), 100);
         voltageGauge.data.datasets[0].data = [voltagePercent, 100 - voltagePercent];
         voltageGauge.update();
+        
+        // Add text label
+        addGaugeText('voltageGauge', Math.round(voltagePercent) + '%', voltage + 'V');
     }
     
     if (currentGauge) {
         const currentPercent = Math.min(Math.max((current / 200) * 100, 0), 100);
         currentGauge.data.datasets[0].data = [currentPercent, 100 - currentPercent];
         currentGauge.update();
+        
+        // Add text label
+        addGaugeText('currentGauge', Math.round(currentPercent) + '%', current + 'A');
     }
     
     if (temperatureGauge) {
         const tempPercent = Math.min(Math.max((temperature / 50) * 100, 0), 100);
         temperatureGauge.data.datasets[0].data = [tempPercent, 100 - tempPercent];
         temperatureGauge.update();
+        
+        // Add text label
+        addGaugeText('temperatureGauge', Math.round(tempPercent) + '%', temperature + '°C');
     }
+}
+
+// Add text labels to gauges
+function addGaugeText(canvasId, percentage, value) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    
+    // Remove existing text if any
+    const existingText = canvas.parentNode.querySelector('.gauge-text');
+    if (existingText) {
+        existingText.remove();
+    }
+    
+    // Create text overlay
+    const textDiv = document.createElement('div');
+    textDiv.className = 'gauge-text';
+    textDiv.innerHTML = `
+        <div class="gauge-percentage">${percentage}</div>
+        <div class="gauge-value">${value}</div>
+    `;
+    
+    canvas.parentNode.appendChild(textDiv);
 }
 let dataPointCount = 0;
 
