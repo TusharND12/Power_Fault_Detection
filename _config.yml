@@ -1,0 +1,69 @@
+# GitHub Pages Configuration for Power Fault Prediction System
+
+# Site settings
+title: "Power Fault Prediction System"
+description: "AI-powered electrical grid monitoring with 4-decimal precision"
+author: "TUSHAR"
+email: "your.email@example.com"
+url: "https://yourusername.github.io"
+baseurl: "/power-fault-prediction"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+theme: minima
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Exclude files from processing
+exclude:
+  - README.md
+  - CONTRIBUTING.md
+  - LICENSE
+  - requirements.txt
+  - app.py
+  - app_simple.py
+  - test_precision.py
+  - run_server.bat
+  - INSTALL_TENSORFLOW.md
+  - power_faults_best.keras
+  - power_faults_expanded.csv
+  - .gitignore
+
+# Include files
+include:
+  - _config.yml
+
+# Collections
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:name/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+
+# SEO settings
+seo:
+  type: "WebApplication"
+  name: "Power Fault Prediction System"
+  description: "AI-powered electrical grid monitoring with 4-decimal precision"
+  url: "https://yourusername.github.io/power-fault-prediction"
+  image: "/assets/images/og-image.png"
+  twitter:
+    creator: "@yourusername"
+    card: "summary_large_image"
