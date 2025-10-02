@@ -1,19 +1,27 @@
 // Global variables
 let probabilityChart = null;
 
-// DOM elements
-const form = document.getElementById('predictionForm');
-const resultsContainer = document.getElementById('resultsContainer');
-const loadingOverlay = document.getElementById('loadingOverlay');
+// DOM elements (will be set after DOM loads)
+let form, resultsContainer, loadingOverlay;
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
+    // Get DOM elements after DOM is loaded
+    form = document.getElementById('predictionForm');
+    resultsContainer = document.getElementById('resultsContainer');
+    loadingOverlay = document.getElementById('loadingOverlay');
+    
     setupEventListeners();
     checkModelInfo();
 });
 
 // Setup event listeners
 function setupEventListeners() {
+    if (!form) {
+        console.error('Form element not found');
+        return;
+    }
+    
     form.addEventListener('submit', handleFormSubmit);
     
     // Add real-time validation
@@ -83,6 +91,11 @@ async function handleFormSubmit(event) {
 
 // Validate form
 function validateForm() {
+    if (!form) {
+        console.error('Form element not found');
+        return false;
+    }
+    
     const inputs = form.querySelectorAll('input[required], select[required]');
     let isValid = true;
     
@@ -173,6 +186,11 @@ function clearInputError(input) {
 
 // Display results
 function displayResults(result) {
+    if (!resultsContainer) {
+        console.error('Results container not found');
+        return;
+    }
+    
     // Update prediction card
     updatePredictionCard(result);
     
@@ -400,6 +418,11 @@ function updateFaultDetails(faultDetails) {
 
 // Reset form
 function resetForm() {
+    if (!form || !resultsContainer) {
+        console.error('Form or results container not found');
+        return;
+    }
+    
     form.reset();
     resultsContainer.style.display = 'none';
     
@@ -417,12 +440,16 @@ function resetForm() {
 
 // Show loading overlay
 function showLoading() {
-    loadingOverlay.classList.add('active');
+    if (loadingOverlay) {
+        loadingOverlay.classList.add('active');
+    }
 }
 
 // Hide loading overlay
 function hideLoading() {
-    loadingOverlay.classList.remove('active');
+    if (loadingOverlay) {
+        loadingOverlay.classList.remove('active');
+    }
 }
 
 // Show notification
