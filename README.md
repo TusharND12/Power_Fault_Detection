@@ -48,6 +48,10 @@ A comprehensive AI-powered web application for predicting electrical power syste
 - **Activation**: Softmax output for probability distribution
 - **Precision**: 4-decimal precision support for accurate predictions
 
+## 🌐 Live Demo
+
+**Try the live demo**: [Power Fault Prediction System](https://yourusername.github.io/Indicators-of-Anxiety-or-Depression-Model/)
+
 ## 🛠️ Installation & Setup
 
 ### Prerequisites
@@ -90,6 +94,38 @@ Open your web browser and navigate to:
 ```
 http://localhost:5000
 ```
+
+## 🚀 GitHub Pages Deployment
+
+This project is automatically deployed to GitHub Pages. To deploy your own version:
+
+### 1. Fork and Clone
+```bash
+git clone https://github.com/yourusername/Indicators-of-Anxiety-or-Depression-Model.git
+cd Indicators-of-Anxiety-or-Depression-Model
+```
+
+### 2. Enable GitHub Pages
+1. Go to your repository settings
+2. Scroll to "Pages" section
+3. Select "GitHub Actions" as source
+4. Save the settings
+
+### 3. Deploy
+Simply push to the main branch - the site will automatically deploy:
+```bash
+git add .
+git commit -m "Deploy to GitHub Pages"
+git push origin main
+```
+
+### 4. Access Your Site
+Your site will be available at:
+```
+https://yourusername.github.io/Indicators-of-Anxiety-or-Depression-Model/
+```
+
+**Note**: Replace `yourusername` with your actual GitHub username.
 
 ## 📱 Usage
 
