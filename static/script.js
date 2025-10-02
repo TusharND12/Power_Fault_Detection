@@ -563,17 +563,50 @@ document.head.appendChild(style);
 
 // Local prediction function (replaces API call)
 function makeLocalPrediction(data) {
-    // Extract core features
-    const voltage = data.voltage || 2200.0;
-    const current = data.current || 250.0;
-    const powerLoad = data.power_load || 50.0;
-    const temperature = data.temperature || 25.0;
-    const windSpeed = data.wind_speed || 20.0;
-    const durationOfFault = data.duration_of_fault || 2.0;
-    const downTime = data.down_time || 1.0;
+    // Extract core features with zero defaults
+    const voltage = data.voltage || 0.0;
+    const current = data.current || 0.0;
+    const powerLoad = data.power_load || 0.0;
+    const temperature = data.temperature || 0.0;
+    const windSpeed = data.wind_speed || 0.0;
+    const durationOfFault = data.duration_of_fault || 0.0;
+    const downTime = data.down_time || 0.0;
     
     // Enhanced prediction based on actual dataset fault types
     // Analyze patterns from the dataset to predict fault types
+    
+    // Check if all values are zero (system normal)
+    const allZero = voltage === 0 && current === 0 && powerLoad === 0 && 
+                   temperature === 0 && windSpeed === 0 && durationOfFault === 0 && downTime === 0;
+    
+    if (allZero) {
+        // System normal - all values are zero
+        const probabilities = [0.1, 0.1, 0.1]; // Low probability for all fault types
+        const classLabels = ['Line Breakage', 'Transformer Failure', 'Overheating'];
+        const predictedClassIdx = 0; // Default to first class
+        const predictedClass = classLabels[predictedClassIdx];
+        const confidence = 0.1;
+        
+        return {
+            prediction: "System Normal",
+            confidence: confidence,
+            probabilities: {
+                'Line Breakage': probabilities[0],
+                'Transformer Failure': probabilities[1],
+                'Overheating': probabilities[2]
+            },
+            input_features: {
+                voltage: voltage,
+                current: current,
+                power_load: powerLoad,
+                temperature: temperature,
+                wind_speed: windSpeed,
+                duration_of_fault: durationOfFault,
+                down_time: downTime
+            },
+            fault_details: getFaultDetails(voltage, current, temperature, "System Normal", probabilities)
+        };
+    }
     
     // High temperature indicates Overheating
     const tempFactor = temperature > 35 ? 1.0 : (temperature > 30 ? 0.8 : 0.3);
@@ -696,6 +729,27 @@ function getFaultDetails(voltage, current, temperature, predictedClass, probabil
                 "Verify protection device operation",
                 "Notify line maintenance crew",
                 "Prepare emergency repair equipment"
+            ]
+        };
+    } else if (predictedClass === "System Normal") {
+        return {
+            "fault_type": "System Normal",
+            "severity": "NONE",
+            "description": "All parameters are at zero values. System appears to be offline or not operational. Please enter actual system parameters for fault prediction.",
+            "recommended_actions": [
+                "Enter actual system parameters",
+                "Verify system is operational",
+                "Check sensor readings",
+                "Ensure all monitoring systems are active"
+            ],
+            "estimated_downtime": "None",
+            "risk_level": "LOW",
+            "affected_components": "None",
+            "immediate_steps": [
+                "Enter real system values",
+                "Verify system status",
+                "Check monitoring equipment",
+                "Contact system operator if needed"
             ]
         };
     } else {
