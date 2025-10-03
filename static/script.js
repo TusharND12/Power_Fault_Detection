@@ -2631,35 +2631,43 @@ async function initializeWatsonAssistant() {
         console.log('Initializing Watson Assistant...');
         console.log('Watson SDK available:', typeof window.WatsonAssistantV2 !== 'undefined');
         console.log('IamAuthenticator available:', typeof window.IamAuthenticator !== 'undefined');
+        console.log('Watson Config:', window.WATSON_CONFIG);
         
-        if (typeof window.WatsonAssistantV2 !== 'undefined' && typeof window.IamAuthenticator !== 'undefined') {
-            console.log('Creating Watson Assistant instance...');
-            const assistant = new window.WatsonAssistantV2({
-                version: window.WATSON_CONFIG.version,
-                authenticator: new window.IamAuthenticator({
-                    apikey: window.WATSON_CONFIG.apikey
-                }),
-                serviceUrl: window.WATSON_CONFIG.serviceUrl
-            });
+        // Wait a bit for SDK to load if not immediately available
+        if (typeof window.WatsonAssistantV2 === 'undefined' || typeof window.IamAuthenticator === 'undefined') {
+            console.log('Watson SDK not loaded yet, waiting...');
+            await new Promise(resolve => setTimeout(resolve, 2000));
             
-            console.log('Creating Watson session...');
-            // Create session
-            const sessionResponse = await assistant.createSession({
-                assistantId: window.WATSON_CONFIG.assistantId
-            });
-            
-            watsonSession = sessionResponse.result.session_id;
-            console.log('Watson Assistant initialized successfully with session:', watsonSession);
-            return true;
-        } else {
-            console.error('Watson Assistant SDK not loaded properly');
-            console.log('WatsonAssistantV2:', typeof window.WatsonAssistantV2);
-            console.log('IamAuthenticator:', typeof window.IamAuthenticator);
-            return false;
+            if (typeof window.WatsonAssistantV2 === 'undefined' || typeof window.IamAuthenticator === 'undefined') {
+                console.error('Watson Assistant SDK failed to load after waiting');
+                console.log('WatsonAssistantV2:', typeof window.WatsonAssistantV2);
+                console.log('IamAuthenticator:', typeof window.IamAuthenticator);
+                return false;
+            }
         }
+        
+        console.log('Creating Watson Assistant instance...');
+        const assistant = new window.WatsonAssistantV2({
+            version: window.WATSON_CONFIG.version,
+            authenticator: new window.IamAuthenticator({
+                apikey: window.WATSON_CONFIG.apikey
+            }),
+            serviceUrl: window.WATSON_CONFIG.serviceUrl
+        });
+        
+        console.log('Creating Watson session...');
+        // Create session
+        const sessionResponse = await assistant.createSession({
+            assistantId: window.WATSON_CONFIG.assistantId
+        });
+        
+        watsonSession = sessionResponse.result.session_id;
+        console.log('Watson Assistant initialized successfully with session:', watsonSession);
+        return true;
     } catch (error) {
         console.error('Failed to initialize Watson Assistant:', error);
         console.error('Error details:', error.message);
+        console.error('Error stack:', error.stack);
         return false;
     }
 }
@@ -2680,19 +2688,6 @@ function initializeChatbot() {
 
     console.log('Initializing chatbot...');
     
-    // Initialize Watson Assistant
-    initializeWatsonAssistant().then(success => {
-        console.log('Watson initialization result:', success);
-        if (success) {
-            addMessage('Hello! I\'m your AI Safety Advisor powered by Watson Assistant. How can I help you with electrical fault prevention today?', 'bot');
-        } else {
-            addMessage('Hello! I\'m your AI Safety Advisor. While Watson Assistant is loading, I can still help with basic electrical fault guidance.', 'bot');
-        }
-    }).catch(error => {
-        console.error('Watson initialization failed:', error);
-        addMessage('Hello! I\'m your AI Safety Advisor. I can help with electrical fault prevention and safety guidance.', 'bot');
-    });
-    
     // Make sure chatbot is visible
     chatbotContainer.style.display = 'flex';
     chatbotContainer.style.visibility = 'visible';
@@ -2702,17 +2697,17 @@ function initializeChatbot() {
     // Start in collapsed state
     isChatbotOpen = false;
     
-    // Add welcome message
-    setTimeout(() => {
-        addMessage("Hello! I'm your AI Safety Advisor. I can help you with electrical fault prevention and provide personalized recommendations. How can I assist you today?", 'bot');
-    }, 1000);
-    
-    // Add a test message to show the chatbot can reply
-    setTimeout(() => {
-        addMessage("Try asking me about prevention, maintenance, emergency procedures, or data analysis. I can also analyze your electrical system parameters!", 'bot');
-    }, 3000);
+    // Initialize Watson Assistant in background
+    initializeWatsonAssistant().then(success => {
+        console.log('Watson initialization result:', success);
+        // Don't add duplicate welcome messages - HTML already has one
+    }).catch(error => {
+        console.error('Watson initialization failed:', error);
+        // Don't add duplicate welcome messages - HTML already has one
+    });
     
     // Click handler for the container (only when collapsed)
+    console.log('Attaching chatbot container click listener');
     chatbotContainer.addEventListener('click', function(e) {
         // Only handle clicks when chatbot is collapsed
         if (!isChatbotOpen && !chatbotContainer.classList.contains('expanded')) {
@@ -2776,6 +2771,7 @@ function initializeChatbot() {
             hideTypingIndicator();
             console.error('Error sending message to Watson:', error);
             console.error('Error details:', error.message);
+            console.log('Falling back to local AI response...');
             // Fallback response
             generateAIResponse(message);
         }
@@ -2783,16 +2779,22 @@ function initializeChatbot() {
 
     // Event listeners
     if (chatbotSend) {
+        console.log('Attaching send button event listener');
         chatbotSend.addEventListener('click', (e) => {
             e.stopPropagation();
+            console.log('Send button clicked');
             sendMessage();
         });
+    } else {
+        console.error('Chatbot send button not found');
     }
     
     if (chatbotInput) {
+        console.log('Attaching input field event listeners');
         chatbotInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.stopPropagation();
+                console.log('Enter key pressed in input');
                 sendMessage();
             }
         });
@@ -2801,6 +2803,8 @@ function initializeChatbot() {
         chatbotInput.addEventListener('click', (e) => {
             e.stopPropagation();
         });
+    } else {
+        console.error('Chatbot input field not found');
     }
 
     // Quick actions
@@ -3671,3 +3675,37 @@ Need specific guidance for any of these actions?`;
 function updateFormDataForChatbot(data) {
     currentFormData = data;
 }
+
+// Test chatbot functionality
+function testChatbotFunctionality() {
+    console.log('=== TESTING CHATBOT FUNCTIONALITY ===');
+    
+    // Test DOM elements
+    const chatbotContainer = document.getElementById('chatbotContainer');
+    const chatbotInput = document.getElementById('chatbotInput');
+    const chatbotSend = document.getElementById('chatbotSend');
+    const chatbotMessages = document.getElementById('chatbotMessages');
+    
+    console.log('DOM Elements:');
+    console.log('- Container:', !!chatbotContainer);
+    console.log('- Input:', !!chatbotInput);
+    console.log('- Send Button:', !!chatbotSend);
+    console.log('- Messages:', !!chatbotMessages);
+    
+    // Test Watson config
+    console.log('Watson Config:', window.WATSON_CONFIG);
+    console.log('Watson Session:', watsonSession);
+    
+    // Test AI response function
+    console.log('Testing generateAIResponse function...');
+    generateAIResponse('test message');
+    
+    // Test addMessage function
+    console.log('Testing addMessage function...');
+    addMessage('Test message from console', 'bot');
+    
+    console.log('=== CHATBOT TEST COMPLETE ===');
+}
+
+// Make test function available globally
+window.testChatbotFunctionality = testChatbotFunctionality;
