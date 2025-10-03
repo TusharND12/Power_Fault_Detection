@@ -2706,31 +2706,196 @@ What specific aspects would you like me to analyze?`;
 Need specific guidance for your fault type?`;
     }
     
-    if (generalKeywords.some(keyword => message.includes(keyword))) {
-        return `👋 **Hello! I'm your AI Safety Advisor.**
-
-I can help you with:
-• **Prevention Tips** - Avoid electrical faults
-• **Maintenance Guides** - Keep systems running safely  
-• **Emergency Response** - Handle critical situations
-• **Data Analysis** - Understand your system parameters
-• **Fault Solutions** - Troubleshoot specific issues
-
-What would you like to know about electrical safety?`;
+    // Greetings and casual conversation
+    if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
+        return `Hello! 👋 I'm your AI assistant. I'm here to help you with electrical fault prevention and safety guidance, but I can also chat about general topics. What would you like to discuss today?`;
     }
     
-        // Default response
-        const defaultResponse = `I understand you're asking about "${userMessage}". 
+    if (message.includes('how are you') || message.includes('how do you do')) {
+        return `I'm doing great, thank you for asking! 😊 I'm here and ready to help you with any questions you have. Whether it's about electrical safety, general topics, or just a friendly chat, I'm here for you. How can I assist you today?`;
+    }
+    
+    if (message.includes('thank you') || message.includes('thanks')) {
+        return `You're very welcome! 😊 I'm always happy to help. Feel free to ask me anything else - I'm here to assist you with electrical safety guidance or any other questions you might have.`;
+    }
+    
+    if (message.includes('bye') || message.includes('goodbye') || message.includes('see you')) {
+        return `Goodbye! 👋 It was great chatting with you. Remember to stay safe with electrical equipment, and feel free to come back anytime if you need help or just want to chat. Take care!`;
+    }
+    
+    // General questions and responses
+    if (message.includes('what is') || message.includes('explain')) {
+        if (message.includes('electric') || message.includes('voltage') || message.includes('current')) {
+            return `I'd be happy to explain electrical concepts! ⚡ 
 
-As your AI Safety Advisor, I can help with:
-• Electrical fault prevention strategies
-• Maintenance scheduling and procedures
-• Emergency response protocols
-• Analysis of your system parameters
+**Basic Electrical Concepts:**
+• **Voltage** - The electrical pressure that pushes current through a circuit
+• **Current** - The flow of electrical charge through a conductor
+• **Resistance** - Opposition to the flow of current
+• **Power** - The rate at which electrical energy is used
 
-Could you be more specific about what you'd like to know? I'm here to help keep your electrical systems safe!`;
-        
-        addMessage(defaultResponse, 'bot');
+**Safety Note:** Always consult qualified electricians for hands-on electrical work.
+
+Would you like me to explain any specific electrical concept in more detail?`;
+        } else {
+            return `I'd be happy to help explain that! 🤔 Could you be more specific about what you'd like me to explain? I can help with:
+
+• Electrical concepts and safety
+• General knowledge questions
+• Problem-solving
+• Technical explanations
+
+What would you like to know more about?`;
+        }
+    }
+    
+    // Weather and general topics
+    if (message.includes('weather')) {
+        return `I don't have access to real-time weather data, but I can help you understand how weather affects electrical systems! 🌤️
+
+**Weather Impact on Electrical Equipment:**
+• **Humidity** - Can cause corrosion and insulation breakdown
+• **Temperature** - Affects equipment performance and lifespan
+• **Storms** - Can cause power surges and equipment damage
+• **Lightning** - Major cause of electrical faults and fires
+
+**Safety Tips:**
+• Install surge protectors
+• Regular inspection after severe weather
+• Keep equipment dry and ventilated
+• Have emergency backup plans
+
+Is there a specific weather-related electrical concern you have?`;
+    }
+    
+    // Technology and general questions
+    if (message.includes('technology') || message.includes('ai') || message.includes('artificial intelligence')) {
+        return `Great question about technology! 🤖
+
+**About AI and Technology:**
+• I'm an AI assistant designed to help with electrical safety
+• AI can analyze patterns and predict potential issues
+• Technology helps monitor electrical systems in real-time
+• Smart systems can prevent faults before they happen
+
+**My Capabilities:**
+• Electrical safety guidance and prevention
+• General conversation and assistance
+• Problem-solving and analysis
+• Educational explanations
+
+**The Future of AI in Electrical Safety:**
+• Predictive maintenance
+• Real-time monitoring
+• Automated safety systems
+• Smart grid management
+
+What aspect of technology or AI interests you most?`;
+    }
+    
+    // Work and career
+    if (message.includes('work') || message.includes('job') || message.includes('career')) {
+        return `I can help with work-related topics, especially electrical safety in the workplace! 💼
+
+**Workplace Electrical Safety:**
+• Follow OSHA regulations and company policies
+• Use proper personal protective equipment
+• Report unsafe conditions immediately
+• Participate in safety training programs
+
+**Career Development:**
+• Continuous learning and skill development
+• Networking and professional relationships
+• Staying updated with industry standards
+• Building expertise in your field
+
+**Work-Life Balance:**
+• Set clear boundaries between work and personal time
+• Take breaks and manage stress effectively
+• Pursue hobbies and interests outside work
+• Maintain good relationships with colleagues
+
+What aspect of work or career would you like to discuss?`;
+    }
+    
+    // Problem-solving and advice
+    if (message.includes('problem') || message.includes('issue') || message.includes('trouble')) {
+        return `I'm here to help you work through problems! 🤔
+
+**Problem-Solving Approach:**
+1. **Define the problem** clearly
+2. **Gather information** and analyze the situation
+3. **Consider multiple solutions** and their consequences
+4. **Choose the best approach** and implement it
+5. **Evaluate results** and learn from the experience
+
+**For Electrical Issues:**
+• Safety first - always prioritize safety
+• Consult qualified professionals for complex problems
+• Document issues for future reference
+• Follow proper procedures and protocols
+
+**General Problem-Solving Tips:**
+• Break large problems into smaller parts
+• Seek advice from experts when needed
+• Learn from mistakes and experiences
+• Stay calm and think logically
+
+What specific problem are you facing? I'd be happy to help you work through it!`;
+    }
+    
+    // Learning and education
+    if (message.includes('learn') || message.includes('study') || message.includes('education')) {
+        return `Learning is a lifelong journey! 📚
+
+**Effective Learning Strategies:**
+• Set clear goals and objectives
+• Practice regularly and consistently
+• Seek feedback and guidance
+• Apply knowledge in real-world situations
+
+**Electrical Safety Education:**
+• Take certified safety courses
+• Read industry publications and standards
+• Attend workshops and seminars
+• Learn from experienced professionals
+
+**General Learning Tips:**
+• Find learning methods that work for you
+• Join study groups or communities
+• Use technology to enhance learning
+• Stay curious and ask questions
+
+**Resources for Learning:**
+• Online courses and tutorials
+• Books and technical manuals
+• Professional organizations
+• Mentorship programs
+
+What would you like to learn more about? I'm here to help guide your learning journey!`;
+    }
+    
+    // Default response for any other message
+    return `I understand you're asking about: "${userMessage}"
+
+I'm your AI assistant, and I'm here to help! 🤖 While I specialize in electrical fault prevention and safety guidance, I can also chat about general topics and provide assistance with various questions.
+
+**How I can help you:**
+• Answer questions and provide information
+• Help solve problems and challenges
+• Discuss topics of interest
+• Provide guidance and advice
+• Chat about general subjects
+
+**My areas of expertise:**
+• Electrical safety and prevention
+• Technical explanations
+• Problem-solving strategies
+• General knowledge and conversation
+
+**What would you like to discuss?** Feel free to ask me anything - I'm here to help and chat with you! 😊
+
+**Remember:** For electrical safety questions, I can provide expert guidance. For other topics, I'll do my best to help with general information and conversation.`;
     }, 1500); // 1.5 second delay
 }
 
