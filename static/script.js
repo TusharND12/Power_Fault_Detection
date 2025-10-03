@@ -1159,6 +1159,179 @@ function testPdfLibraries() {
     }
 }
 
+// Try Multiple PDF Methods
+function tryMultiplePdfMethods() {
+    console.log('=== TRYING MULTIPLE PDF METHODS ===');
+    
+    // Method 1: Try basic PDF
+    try {
+        console.log('Method 1: Basic PDF generation');
+        generateBasicPdf();
+        return;
+    } catch (error) {
+        console.log('Method 1 failed:', error.message);
+    }
+    
+    // Method 2: Try simple text download
+    try {
+        console.log('Method 2: Text file download');
+        generateTextDownload();
+        return;
+    } catch (error) {
+        console.log('Method 2 failed:', error.message);
+    }
+    
+    // Method 3: Try blob download
+    try {
+        console.log('Method 3: Blob download');
+        generateBlobDownload();
+        return;
+    } catch (error) {
+        console.log('Method 3 failed:', error.message);
+    }
+    
+    // Method 4: Try window.open
+    try {
+        console.log('Method 4: Window open');
+        generateWindowOpen();
+        return;
+    } catch (error) {
+        console.log('Method 4 failed:', error.message);
+    }
+    
+    console.error('All PDF methods failed');
+    showNotification('All download methods failed. Please check console.', 'error');
+}
+
+// Method 1: Basic PDF Generation
+function generateBasicPdf() {
+    console.log('=== GENERATING BASIC PDF ===');
+    
+    // Check if jsPDF is available
+    if (typeof window.jspdf === 'undefined' && typeof window.jsPDF === 'undefined') {
+        throw new Error('jsPDF library not loaded');
+    }
+    
+    // Try different ways to access jsPDF
+    let jsPDF;
+    if (typeof window.jspdf !== 'undefined') {
+        jsPDF = window.jspdf.jsPDF;
+    } else if (typeof window.jsPDF !== 'undefined') {
+        jsPDF = window.jsPDF;
+    } else {
+        throw new Error('Cannot access jsPDF');
+    }
+    
+    console.log('jsPDF accessed successfully');
+    
+    // Create PDF
+    const pdf = new jsPDF();
+    console.log('PDF object created');
+    
+    // Add simple content
+    pdf.setFontSize(16);
+    pdf.text('Power Fault Analysis Report', 20, 30);
+    
+    pdf.setFontSize(12);
+    pdf.text(`Generated: ${new Date().toLocaleString()}`, 20, 50);
+    pdf.text('This is a test PDF to verify functionality.', 20, 70);
+    
+    // Save PDF
+    const fileName = `Power_Fault_Test_${new Date().getTime()}.pdf`;
+    console.log('Attempting to save PDF:', fileName);
+    
+    pdf.save(fileName);
+    console.log('PDF save called successfully');
+    
+    // Show success notification
+    showNotification('PDF downloaded successfully!', 'success');
+}
+
+// Method 2: Text File Download
+function generateTextDownload() {
+    console.log('=== GENERATING TEXT DOWNLOAD ===');
+    
+    const content = `Power Fault Analysis Report
+Generated: ${new Date().toLocaleString()}
+
+Fault Type: ${document.getElementById('predictionLabel')?.textContent || 'Not available'}
+Confidence: ${document.getElementById('confidenceText')?.textContent || 'Not available'}
+
+Input Parameters:
+${Array.from(document.querySelectorAll('input[type="number"]')).map(input => `${input.name || input.id}: ${input.value}`).join('\n')}
+
+Note: This is a text file export of the analysis results.
+`;
+    
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Power_Fault_Report_${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    console.log('Text file downloaded successfully');
+    showNotification('Text file downloaded successfully!', 'success');
+}
+
+// Method 3: Blob Download
+function generateBlobDownload() {
+    console.log('=== GENERATING BLOB DOWNLOAD ===');
+    
+    const content = 'Power Fault Analysis Report\nGenerated: ' + new Date().toISOString();
+    const blob = new Blob([content], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    
+    // Try different download methods
+    if (navigator.msSaveBlob) {
+        navigator.msSaveBlob(blob, 'Power_Fault_Report.txt');
+    } else {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Power_Fault_Report.txt';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+    
+    URL.revokeObjectURL(url);
+    console.log('Blob download completed');
+    showNotification('File downloaded successfully!', 'success');
+}
+
+// Method 4: Window Open
+function generateWindowOpen() {
+    console.log('=== GENERATING WINDOW OPEN ===');
+    
+    const content = `
+    <html>
+    <head><title>Power Fault Analysis Report</title></head>
+    <body>
+        <h1>Power Fault Analysis Report</h1>
+        <p>Generated: ${new Date().toLocaleString()}</p>
+        <p>Fault Type: ${document.getElementById('predictionLabel')?.textContent || 'Not available'}</p>
+        <p>Confidence: ${document.getElementById('confidenceText')?.textContent || 'Not available'}</p>
+        <h2>Input Parameters:</h2>
+        <ul>
+            ${Array.from(document.querySelectorAll('input[type="number"]')).map(input => `<li>${input.name || input.id}: ${input.value}</li>`).join('')}
+        </ul>
+        <p><small>You can print this page or save as PDF using Ctrl+P</small></p>
+    </body>
+    </html>
+    `;
+    
+    const newWindow = window.open('', '_blank');
+    newWindow.document.write(content);
+    newWindow.document.close();
+    
+    console.log('Window opened successfully');
+    showNotification('Report opened in new window. Use Ctrl+P to print/save as PDF.', 'success');
+}
+
 // Basic PDF Generation (minimal approach)
 function generateBasicPdf() {
     console.log('=== GENERATING BASIC PDF ===');
@@ -1341,8 +1514,8 @@ function initializePdfDownload() {
             
             // Add a small delay to ensure the notification shows
             setTimeout(() => {
-                // Try basic PDF first
-                generateBasicPdf();
+                // Try multiple PDF methods
+                tryMultiplePdfMethods();
             }, 100);
         });
         console.log('PDF download event listener added');
