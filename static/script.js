@@ -2294,11 +2294,8 @@ function initializeChatbot() {
             } else {
                 console.log('Watson not available, using fallback AI...');
                 // Fallback to local AI
-                setTimeout(() => {
-                    response = generateAIResponse(message);
-                    hideTypingIndicator();
-                    addMessage(response, 'bot');
-                }, 1000 + Math.random() * 1000);
+                hideTypingIndicator();
+                generateAIResponse(message);
                 return;
             }
             
@@ -2309,8 +2306,7 @@ function initializeChatbot() {
             console.error('Error sending message to Watson:', error);
             console.error('Error details:', error.message);
             // Fallback response
-            const fallbackResponse = generateAIResponse(message);
-            addMessage(fallbackResponse, 'bot');
+            generateAIResponse(message);
         }
     }
 
@@ -2599,6 +2595,7 @@ Run a prediction to get personalized fault analysis!`;
 
 // Generate AI response
 function generateAIResponse(userMessage) {
+    console.log('generateAIResponse called with:', userMessage);
     const message = userMessage.toLowerCase();
     
     // Keywords for different topics
@@ -2864,6 +2861,7 @@ I'm your AI assistant, and I'm here to help! 🤖 While I specialize in electric
     
     // Simulate thinking time and then add the response
     setTimeout(() => {
+        console.log('Adding bot response:', response);
         hideTypingIndicator();
         addMessage(response, 'bot');
     }, 1500); // 1.5 second delay
