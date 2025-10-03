@@ -2793,6 +2793,21 @@ Would you like me to explain any specific electrical concept in more detail?`;
 
 What would you like to know more about?`;
         }
+    } else if (message.includes('time') || message.includes('what time') || message.includes('clock')) {
+        const now = new Date();
+        const currentTime = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const currentDate = now.toLocaleDateString([], {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
+        
+        response = `The current time is **${currentTime}** and today is **${currentDate}**. ⏰
+
+**Time Zone Information:**
+• Local time: ${currentTime}
+• Date: ${currentDate}
+• Time zone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}
+
+**Electrical Safety Note:** Time-based maintenance schedules are crucial for electrical equipment. Regular inspections at consistent times help prevent faults and ensure system reliability.
+
+Is there a specific time-related electrical maintenance question I can help with?`;
     } else if (message.includes('weather')) {
         response = `I don't have access to real-time weather data, but I can help you understand how weather affects electrical systems! 🌤️
 
@@ -2809,6 +2824,72 @@ What would you like to know more about?`;
 • Have emergency backup plans
 
 Is there a specific weather-related electrical concern you have?`;
+    } else if (message.includes('date') || message.includes('today') || message.includes('calendar')) {
+        const now = new Date();
+        const currentDate = now.toLocaleDateString([], {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
+        const dayOfWeek = now.toLocaleDateString([], {weekday: 'long'});
+        
+        response = `Today is **${currentDate}**. 📅
+
+**Date Information:**
+• Day: ${dayOfWeek}
+• Date: ${now.toLocaleDateString()}
+• Year: ${now.getFullYear()}
+
+**Electrical Maintenance Note:** Regular calendar-based maintenance schedules are essential for electrical equipment. Weekly, monthly, and annual inspections help prevent faults and ensure system reliability.
+
+Is there a specific date-related electrical maintenance question I can help with?`;
+    } else if (message.includes('name') || message.includes('who are you') || message.includes('what are you')) {
+        response = `I'm your AI Safety Advisor! 🤖
+
+**About Me:**
+• I'm an AI assistant specializing in electrical fault prevention and safety guidance
+• I can help with electrical safety, maintenance, and general questions
+• I'm here to provide expert advice and support
+
+**My Expertise:**
+• Electrical fault prevention and analysis
+• Safety protocols and procedures
+• Maintenance scheduling and best practices
+• General knowledge and problem-solving
+
+**How I Can Help:**
+• Answer electrical safety questions
+• Provide maintenance guidance
+• Assist with general topics
+• Offer expert recommendations
+
+What would you like to know about electrical safety or any other topic?`;
+    } else if (message.includes('help') || message.includes('assistance') || message.includes('support')) {
+        response = `I'm here to help! 🤗
+
+**How I Can Assist You:**
+
+**Electrical Safety:**
+• Fault prevention strategies
+• Maintenance procedures
+• Safety protocols
+• Emergency response guidance
+
+**General Topics:**
+• Problem-solving assistance
+• Educational explanations
+• Technical guidance
+• General conversation
+
+**Quick Actions Available:**
+• Prevention tips
+• Maintenance guides
+• Emergency protocols
+• Data analysis
+
+**Just Ask Me:**
+• "How do I prevent electrical faults?"
+• "What maintenance should I perform?"
+• "Explain electrical safety concepts"
+• "Help me solve a problem"
+
+What specific help do you need today?`;
     } else if (message.includes('technology') || message.includes('ai') || message.includes('artificial intelligence')) {
         response = `Great question about technology! 🤖
 
@@ -2905,17 +2986,23 @@ What specific problem are you facing? I'd be happy to help you work through it!`
 
 What would you like to learn more about? I'm here to help guide your learning journey!`;
     } else {
-        // Default response for any other message - make it more conversational and contextual
+        // Default response for any other message - ChatGPT-like responses
         const responses = [
-            `I understand you're asking about "${userMessage}". I'm your AI assistant and I'm here to help! 🤖 While I specialize in electrical fault prevention and safety guidance, I can also chat about general topics. What would you like to discuss?`,
+            `I'd be happy to help you with "${userMessage}"! As your AI assistant, I specialize in electrical fault prevention and safety guidance, but I can also assist with general topics. What specific information would you like to know?`,
             
-            `That's an interesting question about "${userMessage}"! I'm your AI assistant, and I'm here to help you with electrical safety guidance or any general topics. How can I assist you today?`,
+            `That's a great question about "${userMessage}"! I'm here to help you with electrical safety guidance or any other topics you'd like to discuss. How can I assist you today?`,
             
-            `Thanks for asking about "${userMessage}"! I'm your AI assistant, and I'm here to help. Whether it's electrical safety or general questions, I'm ready to chat. What would you like to know?`,
+            `Thanks for asking about "${userMessage}"! I'm your AI assistant, and I'm ready to help with electrical safety information or general questions. What would you like to explore?`,
             
-            `I'd be happy to help with "${userMessage}"! I'm your AI assistant specializing in electrical safety, but I can also assist with general topics. What specific information are you looking for?`,
+            `I understand you're asking about "${userMessage}". I'm your AI assistant specializing in electrical safety, but I can help with a wide range of topics. What specific guidance are you looking for?`,
             
-            `Great question about "${userMessage}"! I'm your AI assistant, and I'm here to help you with electrical fault prevention and safety guidance, or any general topics you'd like to discuss. How can I assist you?`
+            `Interesting question about "${userMessage}"! I'm here to help you with electrical fault prevention and safety guidance, or any other topics you'd like to discuss. How can I be of assistance?`,
+            
+            `I'd be glad to help with "${userMessage}"! As your AI assistant, I can provide electrical safety guidance or assist with general questions. What would you like to know more about?`,
+            
+            `That's an interesting topic - "${userMessage}"! I'm your AI assistant, and I'm here to help with electrical safety guidance or any other questions you might have. What specific information are you looking for?`,
+            
+            `I understand you're interested in "${userMessage}". I'm your AI assistant specializing in electrical safety, but I can help with various topics. What would you like to discuss?`
         ];
         
         // Select a random response to make it more natural
