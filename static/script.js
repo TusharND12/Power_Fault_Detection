@@ -3127,19 +3127,35 @@ Run a prediction to get personalized fault analysis!`;
 // Generate AI response
 function generateAIResponse(userMessage) {
     console.log('generateAIResponse called with:', userMessage);
-    const message = userMessage.toLowerCase();
+    
+    // Handle empty or invalid messages
+    if (!userMessage || typeof userMessage !== 'string' || userMessage.trim().length === 0) {
+        console.log('Empty or invalid message received');
+        showTypingIndicator();
+        setTimeout(() => {
+            hideTypingIndicator();
+            addMessage("I didn't receive a clear message. Could you please rephrase your question?", 'bot');
+        }, 1000);
+        return;
+    }
+    
+    const message = userMessage.toLowerCase().trim();
     const cleanMessage = message.replace(/\s+/g, ''); // Remove all spaces for better matching
     
-    // Keywords for different topics
-    const preventionKeywords = ['prevent', 'avoid', 'prevention', 'safety', 'protect', 'secure', 'shield'];
-    const maintenanceKeywords = ['maintain', 'maintenance', 'repair', 'fix', 'service', 'check', 'inspect'];
-    const emergencyKeywords = ['emergency', 'urgent', 'danger', 'hazard', 'accident', 'critical', 'alarm'];
-    const analysisKeywords = ['analyze', 'analysis', 'data', 'parameters', 'values', 'monitor', 'check'];
-    const generalKeywords = ['hello', 'hi', 'help', 'what', 'how', 'why', 'explain', 'tell', 'ask', 'question'];
-    const faultKeywords = ['fault', 'error', 'problem', 'issue', 'failure', 'breakdown'];
-    const greetingKeywords = ['good morning', 'good afternoon', 'good evening', 'good night', 'morning', 'afternoon', 'evening', 'night', 'hello', 'hi', 'hey', 'greetings'];
+    // Enhanced keywords for different topics
+    const preventionKeywords = ['prevent', 'avoid', 'prevention', 'safety', 'protect', 'secure', 'shield', 'safe', 'protection', 'precaution'];
+    const maintenanceKeywords = ['maintain', 'maintenance', 'repair', 'fix', 'service', 'check', 'inspect', 'upkeep', 'servicing', 'repairing'];
+    const emergencyKeywords = ['emergency', 'urgent', 'danger', 'hazard', 'accident', 'critical', 'alarm', 'crisis', 'disaster', 'malfunction'];
+    const analysisKeywords = ['analyze', 'analysis', 'data', 'parameters', 'values', 'monitor', 'check', 'examine', 'review', 'assess', 'evaluate'];
+    const generalKeywords = ['hello', 'hi', 'help', 'what', 'how', 'why', 'explain', 'tell', 'ask', 'question', 'information', 'know'];
+    const faultKeywords = ['fault', 'error', 'problem', 'issue', 'failure', 'breakdown', 'malfunction', 'defect', 'glitch', 'bug'];
+    const greetingKeywords = ['good morning', 'good afternoon', 'good evening', 'good night', 'morning', 'afternoon', 'evening', 'night', 'hello', 'hi', 'hey', 'greetings', 'good day', 'howdy'];
+    const timeKeywords = ['time', 'clock', 'date', 'today', 'now', 'current', 'what time', 'what date'];
+    const weatherKeywords = ['weather', 'temperature', 'rain', 'sunny', 'cloudy', 'storm', 'wind', 'hot', 'cold'];
+    const technicalKeywords = ['voltage', 'current', 'power', 'electric', 'electrical', 'circuit', 'wiring', 'transformer', 'generator', 'load', 'frequency'];
     
     let response = '';
+    let responseGenerated = false;
     
     // Determine response based on keywords - check greetings first
     if (greetingKeywords.some(keyword => message.includes(keyword))) {
@@ -3158,6 +3174,63 @@ function generateAIResponse(userMessage) {
         
         response = `${greeting}! 👋 I'm your AI assistant. I'm here to help you with electrical fault prevention and safety guidance, but I can also chat about general topics. What would you like to discuss today?`;
         console.log('Matched greeting pattern, response:', response);
+        responseGenerated = true;
+    } else if (timeKeywords.some(keyword => cleanMessage.includes(keyword.replace(/\s+/g, '')))) {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const dateString = now.toLocaleDateString();
+        
+        if (cleanMessage.includes('whattime') || cleanMessage.includes('whattimeisit') || cleanMessage.includes('whattimeis')) {
+            response = `🕐 The current time is ${timeString}. Is there anything else you'd like to know about electrical safety or other topics?`;
+        } else if (cleanMessage.includes('whatdate') || cleanMessage.includes('whatdateisit') || cleanMessage.includes('whatdateis')) {
+            response = `📅 Today's date is ${dateString}. How can I help you with electrical fault prevention or other questions today?`;
+        } else {
+            response = `🕐 Current time: ${timeString}\n📅 Today's date: ${dateString}\n\nIs there anything specific about electrical safety I can help you with?`;
+        }
+        console.log('Matched time/date pattern, response:', response);
+        responseGenerated = true;
+    } else if (weatherKeywords.some(keyword => message.includes(keyword))) {
+        response = `🌤️ I understand you're asking about weather conditions. While I specialize in electrical fault prevention, I can tell you that weather conditions significantly impact electrical systems:
+
+**Weather Impact on Electrical Systems:**
+• **High Temperature**: Can cause overheating and thermal stress
+• **Rain/Moisture**: Increases corrosion and insulation breakdown risk
+• **Wind**: Can cause mechanical stress on power lines
+• **Storms**: Create electromagnetic interference and physical damage
+
+**Protective Measures:**
+• Regular weather monitoring
+• Enhanced insulation for wet conditions
+• Temperature sensors for overheating prevention
+• Storm surge protection systems
+
+Would you like specific guidance on weather-related electrical safety measures?`;
+        console.log('Matched weather pattern, response:', response);
+        responseGenerated = true;
+    } else if (technicalKeywords.some(keyword => message.includes(keyword))) {
+        response = `⚡ **Electrical System Guidance**
+
+**Key Electrical Parameters:**
+• **Voltage**: Critical for proper equipment operation
+• **Current**: Indicates load levels and potential issues
+• **Power**: Shows system capacity utilization
+• **Frequency**: Affects motor and transformer performance
+
+**Safety Considerations:**
+• Always follow proper lockout/tagout procedures
+• Use appropriate personal protective equipment
+• Regular testing and calibration of instruments
+• Maintain proper documentation of all measurements
+
+**Common Issues:**
+• Voltage fluctuations can damage equipment
+• Overcurrent conditions indicate potential faults
+• Power factor problems affect efficiency
+• Frequency variations impact motor performance
+
+Would you like specific guidance on any particular electrical parameter or safety procedure?`;
+        console.log('Matched technical pattern, response:', response);
+        responseGenerated = true;
     } else if (preventionKeywords.some(keyword => message.includes(keyword))) {
         response = `🛡️ **Prevention is Key!** Here are essential electrical safety measures:
 
@@ -3169,6 +3242,7 @@ function generateAIResponse(userMessage) {
 • **Documentation**: Record all readings and incidents
 
 Would you like specific prevention strategies for your system?`;
+        responseGenerated = true;
     } else if (maintenanceKeywords.some(keyword => message.includes(keyword))) {
         response = `🔧 **Maintenance Best Practices:**
 
@@ -3187,6 +3261,7 @@ Would you like specific prevention strategies for your system?`;
 • Discolored or damaged components
 
 Need a maintenance checklist for your specific equipment?`;
+        responseGenerated = true;
     } else if (emergencyKeywords.some(keyword => message.includes(keyword))) {
         response = `🚨 **Emergency Response Steps:**
 
@@ -3204,6 +3279,7 @@ Need a maintenance checklist for your specific equipment?`;
 • Equipment upgrades when needed
 
 Is this an emergency situation requiring immediate assistance?`;
+        responseGenerated = true;
     } else if (analysisKeywords.some(keyword => message.includes(keyword))) {
         if (currentFormData) {
             response = analyzeUserData(currentFormData);
@@ -3214,6 +3290,7 @@ I can provide detailed analysis once you submit system parameters. Please run a 
 
 What specific aspects would you like me to analyze?`;
         }
+        responseGenerated = true;
     } else if (faultKeywords.some(keyword => message.includes(keyword))) {
         response = `⚡ **Fault Analysis & Solutions**
 
@@ -3239,6 +3316,7 @@ What specific aspects would you like me to analyze?`;
 • Staff training programs
 
 Need specific guidance for your fault type?`;
+        responseGenerated = true;
     } else if (message.includes('how are you') || message.includes('how do you do')) {
         response = `I'm doing great, thank you for asking! 😊 I'm here and ready to help you with any questions you have. Whether it's about electrical safety, general topics, or just a friendly chat, I'm here for you. How can I assist you today?`;
     } else if (message.includes('thank you') || message.includes('thanks')) {
@@ -3268,6 +3346,7 @@ Would you like me to explain any specific electrical concept in more detail?`;
 
 What would you like to know more about?`;
         }
+        responseGenerated = true;
     } else if (message.includes('time') || message.includes('what time') || message.includes('clock') || cleanMessage.includes('whattime') || cleanMessage.includes('whattimeisit') || cleanMessage.includes('whattimeis')) {
         const now = new Date();
         const currentTime = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
@@ -3283,6 +3362,7 @@ What would you like to know more about?`;
 **Electrical Safety Note:** Time-based maintenance schedules are crucial for electrical equipment. Regular inspections at consistent times help prevent faults and ensure system reliability.
 
 Is there a specific time-related electrical maintenance question I can help with?`;
+        responseGenerated = true;
     } else if (message.includes('weather')) {
         response = `I don't have access to real-time weather data, but I can help you understand how weather affects electrical systems! 🌤️
 
@@ -3299,6 +3379,7 @@ Is there a specific time-related electrical maintenance question I can help with
 • Have emergency backup plans
 
 Is there a specific weather-related electrical concern you have?`;
+        responseGenerated = true;
     } else if (message.includes('date') || message.includes('today') || message.includes('calendar') || cleanMessage.includes('whatdate') || cleanMessage.includes('whatdateisit') || cleanMessage.includes('whatdateis')) {
         const now = new Date();
         const currentDate = now.toLocaleDateString([], {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
@@ -3314,6 +3395,7 @@ Is there a specific weather-related electrical concern you have?`;
 **Electrical Maintenance Note:** Regular calendar-based maintenance schedules are essential for electrical equipment. Weekly, monthly, and annual inspections help prevent faults and ensure system reliability.
 
 Is there a specific date-related electrical maintenance question I can help with?`;
+        responseGenerated = true;
     } else if (message.includes('name') || message.includes('who are you') || message.includes('what are you') || cleanMessage.includes('whorue') || cleanMessage.includes('whoru') || cleanMessage.includes('whatru') || cleanMessage.includes('whatareu')) {
         response = `I'm your AI Safety Advisor! 🤖
 
@@ -3335,6 +3417,7 @@ Is there a specific date-related electrical maintenance question I can help with
 • Offer expert recommendations
 
 What would you like to know about electrical safety or any other topic?`;
+        responseGenerated = true;
     } else if (message.includes('help') || message.includes('assistance') || message.includes('support') || cleanMessage.includes('helpe') || cleanMessage.includes('helpu')) {
         response = `I'm here to help! 🤗
 
@@ -3365,6 +3448,7 @@ What would you like to know about electrical safety or any other topic?`;
 • "Help me solve a problem"
 
 What specific help do you need today?`;
+        responseGenerated = true;
     } else if (message.includes('technology') || message.includes('ai') || message.includes('artificial intelligence')) {
         response = `Great question about technology! 🤖
 
@@ -3387,6 +3471,7 @@ What specific help do you need today?`;
 • Smart grid management
 
 What aspect of technology or AI interests you most?`;
+        responseGenerated = true;
     } else if (message.includes('work') || message.includes('job') || message.includes('career')) {
         response = `I can help with work-related topics, especially electrical safety in the workplace! 💼
 
@@ -3409,6 +3494,7 @@ What aspect of technology or AI interests you most?`;
 • Maintain good relationships with colleagues
 
 What aspect of work or career would you like to discuss?`;
+        responseGenerated = true;
     } else if (message.includes('problem') || message.includes('issue') || message.includes('trouble')) {
         response = `I'm here to help you work through problems! 🤔
 
@@ -3432,6 +3518,7 @@ What aspect of work or career would you like to discuss?`;
 • Stay calm and think logically
 
 What specific problem are you facing? I'd be happy to help you work through it!`;
+        responseGenerated = true;
     } else if (message.includes('learn') || message.includes('study') || message.includes('education')) {
         response = `Learning is a lifelong journey! 📚
 
@@ -3460,6 +3547,7 @@ What specific problem are you facing? I'd be happy to help you work through it!`
 • Mentorship programs
 
 What would you like to learn more about? I'm here to help guide your learning journey!`;
+        responseGenerated = true;
     } else {
         // Default response for any other message - ChatGPT-like responses
         const responses = [
@@ -3483,7 +3571,17 @@ What would you like to learn more about? I'm here to help guide your learning jo
         // Select a random response to make it more natural
         response = responses[Math.floor(Math.random() * responses.length)];
         console.log('Using default response pattern, response:', response);
+        responseGenerated = true;
     }
+    
+    // Ensure we have a response
+    if (!response || response.trim() === '') {
+        console.log('No response generated, using emergency fallback');
+        response = `I understand you're asking about "${userMessage}". I'm your AI assistant specializing in electrical safety and general assistance. How can I help you today?`;
+        responseGenerated = true;
+    }
+    
+    console.log('Final response generated:', responseGenerated, 'Response:', response);
     
     // Show typing indicator
     showTypingIndicator();
