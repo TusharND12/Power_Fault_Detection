@@ -689,7 +689,7 @@ function openChatbotForRecommendations() {
         setTimeout(() => {
             const chatbotInput = document.getElementById('chatbotInput');
             if (chatbotInput) {
-                chatbotInput.value = 'I need detailed recommendations for my electrical system based on the recent analysis.';
+                chatbotInput.value = '';
                 // Trigger the send button
                 const chatbotSend = document.getElementById('chatbotSend');
                 if (chatbotSend) {
