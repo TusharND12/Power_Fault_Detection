@@ -46,9 +46,9 @@ Since GitHub Pages serves static files, you have two options:
 Add your environment variables as meta tags in `index.html`:
 
 ```html
-<meta name="ASSISTANT_APIKEY" content="your_api_key">
-<meta name="ASSISTANT_URL" content="your_service_url">
-<meta name="ASSISTANT_ID" content="your_assistant_id">
+<meta name="ASSISTANT_APIKEY" content="oGVubRECEeFhuFc5F4CvIk58koNLwW5jcwBX5NtKka46">
+<meta name="ASSISTANT_URL" content="https://api.us-south.assistant.watson.cloud.ibm.com/instances/a082ae29-2af3-4c79-bdc6-3f4027c5493b">
+<meta name="ASSISTANT_ID" content="GVubRECEeFhuFc5F4CvIk58koNLwW5jcwBX5NtKka46">
 ```
 
 #### Option B: Update Default Values

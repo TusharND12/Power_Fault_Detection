@@ -2599,13 +2599,7 @@ Run a prediction to get personalized fault analysis!`;
 
 // Generate AI response
 function generateAIResponse(userMessage) {
-    // Show typing indicator
-    showTypingIndicator();
-    
-    // Simulate thinking time
-    setTimeout(() => {
-        hideTypingIndicator();
-        const message = userMessage.toLowerCase();
+    const message = userMessage.toLowerCase();
     
     // Keywords for different topics
     const preventionKeywords = ['prevent', 'avoid', 'prevention', 'safety', 'protect', 'secure', 'shield'];
@@ -2615,8 +2609,11 @@ function generateAIResponse(userMessage) {
     const generalKeywords = ['hello', 'hi', 'help', 'what', 'how', 'why', 'explain', 'tell'];
     const faultKeywords = ['fault', 'error', 'problem', 'issue', 'failure', 'breakdown'];
     
+    let response = '';
+    
+    // Determine response based on keywords
     if (preventionKeywords.some(keyword => message.includes(keyword))) {
-        return `🛡️ **Prevention is Key!** Here are essential electrical safety measures:
+        response = `🛡️ **Prevention is Key!** Here are essential electrical safety measures:
 
 • **Regular Monitoring**: Check parameters every 4 hours
 • **Environmental Control**: Maintain stable conditions
@@ -2626,10 +2623,8 @@ function generateAIResponse(userMessage) {
 • **Documentation**: Record all readings and incidents
 
 Would you like specific prevention strategies for your system?`;
-    }
-    
-    if (maintenanceKeywords.some(keyword => message.includes(keyword))) {
-        return `🔧 **Maintenance Best Practices:**
+    } else if (maintenanceKeywords.some(keyword => message.includes(keyword))) {
+        response = `🔧 **Maintenance Best Practices:**
 
 **Critical Maintenance Tasks:**
 • Clean all electrical contacts monthly
@@ -2646,10 +2641,8 @@ Would you like specific prevention strategies for your system?`;
 • Discolored or damaged components
 
 Need a maintenance checklist for your specific equipment?`;
-    }
-    
-    if (emergencyKeywords.some(keyword => message.includes(keyword))) {
-        return `🚨 **Emergency Response Steps:**
+    } else if (emergencyKeywords.some(keyword => message.includes(keyword))) {
+        response = `🚨 **Emergency Response Steps:**
 
 **If Fault Detected:**
 1. **Immediate**: Isolate power source
@@ -2665,22 +2658,18 @@ Need a maintenance checklist for your specific equipment?`;
 • Equipment upgrades when needed
 
 Is this an emergency situation requiring immediate assistance?`;
-    }
-    
-    if (analysisKeywords.some(keyword => message.includes(keyword))) {
+    } else if (analysisKeywords.some(keyword => message.includes(keyword))) {
         if (currentFormData) {
-            return analyzeUserData(currentFormData);
+            response = analyzeUserData(currentFormData);
         } else {
-            return `📊 **Data Analysis Ready!** 
+            response = `📊 **Data Analysis Ready!** 
 
 I can provide detailed analysis once you submit system parameters. Please run a fault prediction first, then I'll analyze your specific data and provide personalized recommendations.
 
 What specific aspects would you like me to analyze?`;
         }
-    }
-    
-    if (faultKeywords.some(keyword => message.includes(keyword))) {
-        return `⚡ **Fault Analysis & Solutions**
+    } else if (faultKeywords.some(keyword => message.includes(keyword))) {
+        response = `⚡ **Fault Analysis & Solutions**
 
 **Common Electrical Faults:**
 • **Short Circuits** - Caused by insulation failure
@@ -2704,29 +2693,17 @@ What specific aspects would you like me to analyze?`;
 • Staff training programs
 
 Need specific guidance for your fault type?`;
-    }
-    
-    // Greetings and casual conversation
-    if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
-        return `Hello! 👋 I'm your AI assistant. I'm here to help you with electrical fault prevention and safety guidance, but I can also chat about general topics. What would you like to discuss today?`;
-    }
-    
-    if (message.includes('how are you') || message.includes('how do you do')) {
-        return `I'm doing great, thank you for asking! 😊 I'm here and ready to help you with any questions you have. Whether it's about electrical safety, general topics, or just a friendly chat, I'm here for you. How can I assist you today?`;
-    }
-    
-    if (message.includes('thank you') || message.includes('thanks')) {
-        return `You're very welcome! 😊 I'm always happy to help. Feel free to ask me anything else - I'm here to assist you with electrical safety guidance or any other questions you might have.`;
-    }
-    
-    if (message.includes('bye') || message.includes('goodbye') || message.includes('see you')) {
-        return `Goodbye! 👋 It was great chatting with you. Remember to stay safe with electrical equipment, and feel free to come back anytime if you need help or just want to chat. Take care!`;
-    }
-    
-    // General questions and responses
-    if (message.includes('what is') || message.includes('explain')) {
+    } else if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
+        response = `Hello! 👋 I'm your AI assistant. I'm here to help you with electrical fault prevention and safety guidance, but I can also chat about general topics. What would you like to discuss today?`;
+    } else if (message.includes('how are you') || message.includes('how do you do')) {
+        response = `I'm doing great, thank you for asking! 😊 I'm here and ready to help you with any questions you have. Whether it's about electrical safety, general topics, or just a friendly chat, I'm here for you. How can I assist you today?`;
+    } else if (message.includes('thank you') || message.includes('thanks')) {
+        response = `You're very welcome! 😊 I'm always happy to help. Feel free to ask me anything else - I'm here to assist you with electrical safety guidance or any other questions you might have.`;
+    } else if (message.includes('bye') || message.includes('goodbye') || message.includes('see you')) {
+        response = `Goodbye! 👋 It was great chatting with you. Remember to stay safe with electrical equipment, and feel free to come back anytime if you need help or just want to chat. Take care!`;
+    } else if (message.includes('what is') || message.includes('explain')) {
         if (message.includes('electric') || message.includes('voltage') || message.includes('current')) {
-            return `I'd be happy to explain electrical concepts! ⚡ 
+            response = `I'd be happy to explain electrical concepts! ⚡ 
 
 **Basic Electrical Concepts:**
 • **Voltage** - The electrical pressure that pushes current through a circuit
@@ -2738,7 +2715,7 @@ Need specific guidance for your fault type?`;
 
 Would you like me to explain any specific electrical concept in more detail?`;
         } else {
-            return `I'd be happy to help explain that! 🤔 Could you be more specific about what you'd like me to explain? I can help with:
+            response = `I'd be happy to help explain that! 🤔 Could you be more specific about what you'd like me to explain? I can help with:
 
 • Electrical concepts and safety
 • General knowledge questions
@@ -2747,11 +2724,8 @@ Would you like me to explain any specific electrical concept in more detail?`;
 
 What would you like to know more about?`;
         }
-    }
-    
-    // Weather and general topics
-    if (message.includes('weather')) {
-        return `I don't have access to real-time weather data, but I can help you understand how weather affects electrical systems! 🌤️
+    } else if (message.includes('weather')) {
+        response = `I don't have access to real-time weather data, but I can help you understand how weather affects electrical systems! 🌤️
 
 **Weather Impact on Electrical Equipment:**
 • **Humidity** - Can cause corrosion and insulation breakdown
@@ -2766,11 +2740,8 @@ What would you like to know more about?`;
 • Have emergency backup plans
 
 Is there a specific weather-related electrical concern you have?`;
-    }
-    
-    // Technology and general questions
-    if (message.includes('technology') || message.includes('ai') || message.includes('artificial intelligence')) {
-        return `Great question about technology! 🤖
+    } else if (message.includes('technology') || message.includes('ai') || message.includes('artificial intelligence')) {
+        response = `Great question about technology! 🤖
 
 **About AI and Technology:**
 • I'm an AI assistant designed to help with electrical safety
@@ -2791,11 +2762,8 @@ Is there a specific weather-related electrical concern you have?`;
 • Smart grid management
 
 What aspect of technology or AI interests you most?`;
-    }
-    
-    // Work and career
-    if (message.includes('work') || message.includes('job') || message.includes('career')) {
-        return `I can help with work-related topics, especially electrical safety in the workplace! 💼
+    } else if (message.includes('work') || message.includes('job') || message.includes('career')) {
+        response = `I can help with work-related topics, especially electrical safety in the workplace! 💼
 
 **Workplace Electrical Safety:**
 • Follow OSHA regulations and company policies
@@ -2816,11 +2784,8 @@ What aspect of technology or AI interests you most?`;
 • Maintain good relationships with colleagues
 
 What aspect of work or career would you like to discuss?`;
-    }
-    
-    // Problem-solving and advice
-    if (message.includes('problem') || message.includes('issue') || message.includes('trouble')) {
-        return `I'm here to help you work through problems! 🤔
+    } else if (message.includes('problem') || message.includes('issue') || message.includes('trouble')) {
+        response = `I'm here to help you work through problems! 🤔
 
 **Problem-Solving Approach:**
 1. **Define the problem** clearly
@@ -2842,11 +2807,8 @@ What aspect of work or career would you like to discuss?`;
 • Stay calm and think logically
 
 What specific problem are you facing? I'd be happy to help you work through it!`;
-    }
-    
-    // Learning and education
-    if (message.includes('learn') || message.includes('study') || message.includes('education')) {
-        return `Learning is a lifelong journey! 📚
+    } else if (message.includes('learn') || message.includes('study') || message.includes('education')) {
+        response = `Learning is a lifelong journey! 📚
 
 **Effective Learning Strategies:**
 • Set clear goals and objectives
@@ -2873,10 +2835,9 @@ What specific problem are you facing? I'd be happy to help you work through it!`
 • Mentorship programs
 
 What would you like to learn more about? I'm here to help guide your learning journey!`;
-    }
-    
-    // Default response for any other message
-    return `I understand you're asking about: "${userMessage}"
+    } else {
+        // Default response for any other message
+        response = `I understand you're asking about: "${userMessage}"
 
 I'm your AI assistant, and I'm here to help! 🤖 While I specialize in electrical fault prevention and safety guidance, I can also chat about general topics and provide assistance with various questions.
 
@@ -2896,6 +2857,15 @@ I'm your AI assistant, and I'm here to help! 🤖 While I specialize in electric
 **What would you like to discuss?** Feel free to ask me anything - I'm here to help and chat with you! 😊
 
 **Remember:** For electrical safety questions, I can provide expert guidance. For other topics, I'll do my best to help with general information and conversation.`;
+    }
+    
+    // Show typing indicator
+    showTypingIndicator();
+    
+    // Simulate thinking time and then add the response
+    setTimeout(() => {
+        hideTypingIndicator();
+        addMessage(response, 'bot');
     }, 1500); // 1.5 second delay
 }
 
