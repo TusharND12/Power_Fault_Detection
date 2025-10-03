@@ -933,6 +933,7 @@ let voltageGauge = null;
 let currentGauge = null;
 let temperatureGauge = null;
 let isGeneratingPdf = false;
+let pdfDownloadInProgress = false;
 
 // Initialize Gauge Charts
 function initializeGaugeCharts() {
@@ -1164,41 +1165,61 @@ function testPdfLibraries() {
 function tryMultiplePdfMethods() {
     console.log('=== TRYING MULTIPLE PDF METHODS ===');
     
-    // Set flag to prevent gauge updates during PDF generation
+    // Prevent multiple downloads
+    if (pdfDownloadInProgress) {
+        console.log('PDF download already in progress, skipping...');
+        showNotification('PDF download already in progress...', 'info');
+        return;
+    }
+    
+    // Set flags to prevent multiple downloads and gauge updates
+    pdfDownloadInProgress = true;
     isGeneratingPdf = true;
     
     // Method 1: Try basic PDF
+    console.log('Method 1: Basic PDF generation');
     try {
-        console.log('Method 1: Basic PDF generation');
         generateBasicPdf();
-        return;
+        // Reset flags on success
+        pdfDownloadInProgress = false;
+        isGeneratingPdf = false;
+        return; // Exit if successful
     } catch (error) {
         console.log('Method 1 failed:', error.message);
     }
     
     // Method 2: Try simple text download
+    console.log('Method 2: Text file download');
     try {
-        console.log('Method 2: Text file download');
         generateTextDownload();
-        return;
+        // Reset flags on success
+        pdfDownloadInProgress = false;
+        isGeneratingPdf = false;
+        return; // Exit if successful
     } catch (error) {
         console.log('Method 2 failed:', error.message);
     }
     
     // Method 3: Try blob download
+    console.log('Method 3: Blob download');
     try {
-        console.log('Method 3: Blob download');
         generateBlobDownload();
-        return;
+        // Reset flags on success
+        pdfDownloadInProgress = false;
+        isGeneratingPdf = false;
+        return; // Exit if successful
     } catch (error) {
         console.log('Method 3 failed:', error.message);
     }
     
     // Method 4: Try window.open
+    console.log('Method 4: Window open');
     try {
-        console.log('Method 4: Window open');
         generateWindowOpen();
-        return;
+        // Reset flags on success
+        pdfDownloadInProgress = false;
+        isGeneratingPdf = false;
+        return; // Exit if successful
     } catch (error) {
         console.log('Method 4 failed:', error.message);
     }
@@ -1206,7 +1227,8 @@ function tryMultiplePdfMethods() {
     console.error('All PDF methods failed');
     showNotification('All download methods failed. Please check console.', 'error');
     
-    // Reset flag
+    // Reset flags on failure
+    pdfDownloadInProgress = false;
     isGeneratingPdf = false;
 }
 
@@ -1252,9 +1274,6 @@ function generateBasicPdf() {
     
     // Show success notification
     showNotification('PDF downloaded successfully!', 'success');
-    
-    // Reset flag
-    isGeneratingPdf = false;
 }
 
 // Method 2: Text File Download
@@ -1285,9 +1304,6 @@ Note: This is a text file export of the analysis results.
     
     console.log('Text file downloaded successfully');
     showNotification('Text file downloaded successfully!', 'success');
-    
-    // Reset flag
-    isGeneratingPdf = false;
 }
 
 // Method 3: Blob Download
@@ -1314,9 +1330,6 @@ function generateBlobDownload() {
     URL.revokeObjectURL(url);
     console.log('Blob download completed');
     showNotification('File downloaded successfully!', 'success');
-    
-    // Reset flag
-    isGeneratingPdf = false;
 }
 
 // Method 4: Window Open
@@ -1346,9 +1359,6 @@ function generateWindowOpen() {
     
     console.log('Window opened successfully');
     showNotification('Report opened in new window. Use Ctrl+P to print/save as PDF.', 'success');
-    
-    // Reset flag
-    isGeneratingPdf = false;
 }
 
 // Basic PDF Generation (minimal approach)
