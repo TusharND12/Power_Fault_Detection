@@ -2097,6 +2097,84 @@ function toggleTheme() {
 let currentFormData = null;
 let isChatbotOpen = false;
 
+// Watson Assistant Configuration
+const WATSON_CONFIG = {
+    apikey: 'oGVubRECEeFhuFc5F4CvIk58koNLwW5jcwBX5NtKka46',
+    serviceUrl: 'https://api.us-south.assistant.watson.cloud.ibm.com/instances/a082ae29-2af3-4c79-bdc6-3f4027c5493b',
+    version: '2023-11-22',
+    assistantId: 'a082ae29-2af3-4c79-bdc6-3f4027c5493b'
+};
+
+// Watson Assistant session
+let watsonSession = null;
+
+// Send message to Watson Assistant
+async function sendToWatsonAssistant(message) {
+    try {
+        if (!watsonSession) {
+            throw new Error('Watson session not initialized');
+        }
+
+        const assistant = new window.WatsonAssistantV2({
+            version: WATSON_CONFIG.version,
+            authenticator: new window.IamAuthenticator({
+                apikey: WATSON_CONFIG.apikey
+            }),
+            serviceUrl: WATSON_CONFIG.serviceUrl
+        });
+
+        const response = await assistant.message({
+            assistantId: WATSON_CONFIG.assistantId,
+            sessionId: watsonSession,
+            input: {
+                message_type: 'text',
+                text: message
+            }
+        });
+
+        // Extract response text
+        const output = response.result.output;
+        if (output.generic && output.generic.length > 0) {
+            return output.generic[0].text;
+        } else {
+            return "I understand your message. How can I help you with electrical fault prevention?";
+        }
+    } catch (error) {
+        console.error('Watson Assistant error:', error);
+        throw error;
+    }
+}
+
+// Initialize Watson Assistant
+async function initializeWatsonAssistant() {
+    try {
+        if (typeof window.WatsonAssistantV2 !== 'undefined') {
+            const assistant = new window.WatsonAssistantV2({
+                version: WATSON_CONFIG.version,
+                authenticator: new window.IamAuthenticator({
+                    apikey: WATSON_CONFIG.apikey
+                }),
+                serviceUrl: WATSON_CONFIG.serviceUrl
+            });
+            
+            // Create session
+            const sessionResponse = await assistant.createSession({
+                assistantId: WATSON_CONFIG.assistantId
+            });
+            
+            watsonSession = sessionResponse.result.session_id;
+            console.log('Watson Assistant initialized with session:', watsonSession);
+            return true;
+        } else {
+            console.error('Watson Assistant SDK not loaded');
+            return false;
+        }
+    } catch (error) {
+        console.error('Failed to initialize Watson Assistant:', error);
+        return false;
+    }
+}
+
 // Initialize Chatbot
 function initializeChatbot() {
     const chatbotToggle = document.getElementById('chatbotToggle');
@@ -2113,6 +2191,15 @@ function initializeChatbot() {
 
     console.log('Initializing chatbot...');
     
+    // Initialize Watson Assistant
+    initializeWatsonAssistant().then(success => {
+        if (success) {
+            addMessage('Hello! I\'m your AI Safety Advisor powered by Watson Assistant. How can I help you with electrical fault prevention today?', 'bot');
+        } else {
+            addMessage('Hello! I\'m your AI Safety Advisor. While Watson Assistant is loading, I can still help with basic electrical fault guidance.', 'bot');
+        }
+    });
+    
     // Make sure chatbot is visible
     chatbotContainer.style.display = 'flex';
     chatbotContainer.style.visibility = 'visible';
@@ -2121,8 +2208,6 @@ function initializeChatbot() {
     
     // Start in collapsed state
     isChatbotOpen = false;
-    
-    console.log('Chatbot is now ON and visible!');
     
     // Add welcome message
     setTimeout(() => {
@@ -2161,19 +2246,41 @@ function initializeChatbot() {
         });
     }
 
-    // Send message
-    function sendMessage() {
+    // Send message to Watson Assistant
+    async function sendMessage() {
         const message = chatbotInput.value.trim();
         if (!message) return;
 
         addMessage(message, 'user');
         chatbotInput.value = '';
+        
+        // Show typing indicator
+        showTypingIndicator();
 
-        // Simulate typing delay
-        setTimeout(() => {
-            const response = generateAIResponse(message);
+        try {
+            let response;
+            if (watsonSession && typeof window.WatsonAssistantV2 !== 'undefined') {
+                // Use Watson Assistant
+                response = await sendToWatsonAssistant(message);
+            } else {
+                // Fallback to local AI
+                setTimeout(() => {
+                    response = generateAIResponse(message);
+                    hideTypingIndicator();
+                    addMessage(response, 'bot');
+                }, 1000 + Math.random() * 1000);
+                return;
+            }
+            
+            hideTypingIndicator();
             addMessage(response, 'bot');
-        }, 1000 + Math.random() * 1000);
+        } catch (error) {
+            hideTypingIndicator();
+            console.error('Error sending message to Watson:', error);
+            // Fallback response
+            const fallbackResponse = generateAIResponse(message);
+            addMessage(fallbackResponse, 'bot');
+        }
     }
 
     // Event listeners
@@ -2261,40 +2368,71 @@ function showTypingIndicator() {
     if (!messagesContainer) return;
 
     const typingDiv = document.createElement('div');
-    typingDiv.className = 'message bot-message typing-message';
-    typingDiv.id = 'typing-indicator';
-    
+    typingDiv.className = 'message bot-message typing-indicator';
+    typingDiv.id = 'typingIndicator';
+
     const avatar = document.createElement('div');
     avatar.className = 'message-avatar';
     avatar.innerHTML = '<i class="fas fa-robot"></i>';
+
+    const messageContent = document.createElement('div');
+    messageContent.className = 'message-content';
     
-    const typingContent = document.createElement('div');
-    typingContent.className = 'typing-indicator';
-    typingContent.innerHTML = `
-        <span>AI is thinking</span>
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-    `;
-    
+    const typingText = document.createElement('div');
+    typingText.className = 'typing-dots';
+    typingText.innerHTML = '<span></span><span></span><span></span>';
+
+    messageContent.appendChild(typingText);
     typingDiv.appendChild(avatar);
-    typingDiv.appendChild(typingContent);
-    
+    typingDiv.appendChild(messageContent);
     messagesContainer.appendChild(typingDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
 // Hide typing indicator
 function hideTypingIndicator() {
-    const typingIndicator = document.getElementById('typing-indicator');
+    const typingIndicator = document.getElementById('typingIndicator');
     if (typingIndicator) {
         typingIndicator.remove();
     }
 }
 
+// Get message for quick actions
+function getQuickActionMessage(action) {
+    const messages = {
+        'prevention': 'I need electrical fault prevention tips and safety guidelines.',
+        'maintenance': 'Show me maintenance schedules and procedures for electrical equipment.',
+        'safety': 'What are the safety protocols for electrical systems?',
+        'analysis': 'Analyze my current electrical system data for potential risks.',
+        'current-fault': 'Analyze the current fault data and provide recommendations.',
+        'emergency': 'I have an electrical emergency, what should I do?'
+    };
+    return messages[action] || 'Help me with electrical safety information.';
+}
+
 // Handle quick actions
-function handleQuickAction(action) {
+async function handleQuickAction(action) {
     let response = '';
+    
+    // Show typing indicator
+    showTypingIndicator();
+    
+    try {
+        if (watsonSession && typeof window.WatsonAssistantV2 !== 'undefined') {
+            // Send quick action to Watson Assistant
+            const message = getQuickActionMessage(action);
+            response = await sendToWatsonAssistant(message);
+            hideTypingIndicator();
+            addMessage(response, 'bot');
+            return;
+        }
+    } catch (error) {
+        console.error('Watson Assistant error for quick action:', error);
+        hideTypingIndicator();
+    }
+    
+    // Fallback to local responses
+    hideTypingIndicator();
     
     switch(action) {
         case 'prevention':
