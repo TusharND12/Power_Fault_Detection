@@ -724,9 +724,9 @@ function addChartTooltips() {
     if (!chart || !tooltip) return;
     
     const segments = [
-        { start: 0, end: 144, type: 'overheating', percentage: 40, color: '#ef4444', name: 'Overheating' },
-        { start: 144, end: 216, type: 'transformer', percentage: 20, color: '#f97316', name: 'Transformer Failure' },
-        { start: 216, end: 360, type: 'line-breakage', percentage: 40, color: '#3b82f6', name: 'Line Breakage' }
+        { start: 0, end: 144, type: 'overheating', percentage: 40, color: '#dc2626', name: 'Overheating' },
+        { start: 144, end: 216, type: 'transformer', percentage: 20, color: '#ea580c', name: 'Transformer Failure' },
+        { start: 216, end: 360, type: 'line-breakage', percentage: 40, color: '#2563eb', name: 'Line Breakage' }
     ];
     
     chart.addEventListener('mousemove', (e) => {
@@ -761,7 +761,7 @@ function addChartTooltips() {
                 tooltip.classList.add('show');
                 
                 // Add glow effect to chart
-                chart.style.filter = `drop-shadow(0 0 20px ${hoveredSegment.color}40)`;
+                chart.style.filter = `drop-shadow(0 0 12px ${hoveredSegment.color}30)`;
             } else {
                 tooltip.classList.remove('show');
                 chart.style.filter = '';
@@ -819,16 +819,20 @@ function animateChart() {
     const chart = document.getElementById('enhancedProbabilityChart');
     if (!chart) return;
     
+    // Add loading state
+    chart.classList.add('loading');
+    
     // Initial state
     chart.style.transform = 'scale(0) rotate(0deg)';
     chart.style.opacity = '0';
     
     // Animate in
     setTimeout(() => {
+        chart.classList.remove('loading');
         chart.style.transition = 'all 1s ease-out';
         chart.style.transform = 'scale(1) rotate(360deg)';
         chart.style.opacity = '1';
-    }, 500);
+    }, 800);
     
     // Animate legend items
     const legendItems = document.querySelectorAll('.legend-item');
@@ -942,9 +946,9 @@ function updateEnhancedChartData(data) {
     
     chart.style.background = `conic-gradient(
         from 0deg,
-        #ef4444 0deg ${overheatingDeg}deg,
-        #f97316 ${overheatingDeg}deg ${overheatingDeg + transformerDeg}deg,
-        #3b82f6 ${overheatingDeg + transformerDeg}deg 360deg
+        #dc2626 0deg ${overheatingDeg}deg,
+        #ea580c ${overheatingDeg}deg ${overheatingDeg + transformerDeg}deg,
+        #2563eb ${overheatingDeg + transformerDeg}deg 360deg
     )`;
     
     // Update center text
