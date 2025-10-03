@@ -2293,6 +2293,7 @@ function initializeChatbot() {
                 console.log('Received Watson response:', response);
             } else {
                 console.log('Watson not available, using fallback AI...');
+                console.log('Calling generateAIResponse with message:', message);
                 // Fallback to local AI
                 hideTypingIndicator();
                 generateAIResponse(message);
@@ -2359,8 +2360,13 @@ function initializeChatbot() {
 
 // Add message to chat
 function addMessage(content, sender) {
+    console.log('addMessage called with:', { content, sender });
     const messagesContainer = document.getElementById('chatbotMessages');
-    if (!messagesContainer) return;
+    if (!messagesContainer) {
+        console.log('chatbotMessages container not found');
+        return;
+    }
+    console.log('Adding message to chat:', content);
 
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${sender}-message`;
@@ -2430,7 +2436,7 @@ async function testWatsonAssistant() {
     console.log('Watson SDK loaded:', typeof window.WatsonAssistantV2 !== 'undefined');
     console.log('IamAuthenticator loaded:', typeof window.IamAuthenticator !== 'undefined');
     console.log('Watson session:', watsonSession);
-    
+
     if (watsonSession) {
         try {
             console.log('Testing Watson message...');
@@ -2443,6 +2449,17 @@ async function testWatsonAssistant() {
         console.log('Watson session not available for testing');
     }
 }
+
+// Test fallback AI
+function testFallbackAI() {
+    console.log('=== TESTING FALLBACK AI ===');
+    console.log('Testing generateAIResponse function...');
+    generateAIResponse('hi');
+}
+
+// Make test functions globally available
+window.testFallbackAI = testFallbackAI;
+window.testWatsonAssistant = testWatsonAssistant;
 
 // Get message for quick actions
 function getQuickActionMessage(action) {
@@ -2692,6 +2709,7 @@ What specific aspects would you like me to analyze?`;
 Need specific guidance for your fault type?`;
     } else if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
         response = `Hello! 👋 I'm your AI assistant. I'm here to help you with electrical fault prevention and safety guidance, but I can also chat about general topics. What would you like to discuss today?`;
+        console.log('Matched greeting pattern, response:', response);
     } else if (message.includes('how are you') || message.includes('how do you do')) {
         response = `I'm doing great, thank you for asking! 😊 I'm here and ready to help you with any questions you have. Whether it's about electrical safety, general topics, or just a friendly chat, I'm here for you. How can I assist you today?`;
     } else if (message.includes('thank you') || message.includes('thanks')) {
@@ -2854,6 +2872,7 @@ I'm your AI assistant, and I'm here to help! 🤖 While I specialize in electric
 **What would you like to discuss?** Feel free to ask me anything - I'm here to help and chat with you! 😊
 
 **Remember:** For electrical safety questions, I can provide expert guidance. For other topics, I'll do my best to help with general information and conversation.`;
+        console.log('Using default response pattern, response:', response);
     }
     
     // Show typing indicator
