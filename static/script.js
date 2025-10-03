@@ -2620,13 +2620,30 @@ function generateAIResponse(userMessage) {
     const maintenanceKeywords = ['maintain', 'maintenance', 'repair', 'fix', 'service', 'check', 'inspect'];
     const emergencyKeywords = ['emergency', 'urgent', 'danger', 'hazard', 'accident', 'critical', 'alarm'];
     const analysisKeywords = ['analyze', 'analysis', 'data', 'parameters', 'values', 'monitor', 'check'];
-    const generalKeywords = ['hello', 'hi', 'help', 'what', 'how', 'why', 'explain', 'tell'];
+    const generalKeywords = ['hello', 'hi', 'help', 'what', 'how', 'why', 'explain', 'tell', 'ask', 'question'];
     const faultKeywords = ['fault', 'error', 'problem', 'issue', 'failure', 'breakdown'];
+    const greetingKeywords = ['good morning', 'good afternoon', 'good evening', 'good night', 'morning', 'afternoon', 'evening', 'night', 'hello', 'hi', 'hey', 'greetings'];
     
     let response = '';
     
-    // Determine response based on keywords
-    if (preventionKeywords.some(keyword => message.includes(keyword))) {
+    // Determine response based on keywords - check greetings first
+    if (greetingKeywords.some(keyword => message.includes(keyword))) {
+        const timeOfDay = new Date().getHours();
+        let greeting = 'Hello';
+        
+        if (timeOfDay < 12) {
+            greeting = 'Good morning';
+        } else if (timeOfDay < 17) {
+            greeting = 'Good afternoon';
+        } else if (timeOfDay < 21) {
+            greeting = 'Good evening';
+        } else {
+            greeting = 'Good evening';
+        }
+        
+        response = `${greeting}! 👋 I'm your AI assistant. I'm here to help you with electrical fault prevention and safety guidance, but I can also chat about general topics. What would you like to discuss today?`;
+        console.log('Matched greeting pattern, response:', response);
+    } else if (preventionKeywords.some(keyword => message.includes(keyword))) {
         response = `🛡️ **Prevention is Key!** Here are essential electrical safety measures:
 
 • **Regular Monitoring**: Check parameters every 4 hours
@@ -2707,9 +2724,6 @@ What specific aspects would you like me to analyze?`;
 • Staff training programs
 
 Need specific guidance for your fault type?`;
-    } else if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
-        response = `Hello! 👋 I'm your AI assistant. I'm here to help you with electrical fault prevention and safety guidance, but I can also chat about general topics. What would you like to discuss today?`;
-        console.log('Matched greeting pattern, response:', response);
     } else if (message.includes('how are you') || message.includes('how do you do')) {
         response = `I'm doing great, thank you for asking! 😊 I'm here and ready to help you with any questions you have. Whether it's about electrical safety, general topics, or just a friendly chat, I'm here for you. How can I assist you today?`;
     } else if (message.includes('thank you') || message.includes('thanks')) {
@@ -2851,27 +2865,21 @@ What specific problem are you facing? I'd be happy to help you work through it!`
 
 What would you like to learn more about? I'm here to help guide your learning journey!`;
     } else {
-        // Default response for any other message
-        response = `I understand you're asking about: "${userMessage}"
-
-I'm your AI assistant, and I'm here to help! 🤖 While I specialize in electrical fault prevention and safety guidance, I can also chat about general topics and provide assistance with various questions.
-
-**How I can help you:**
-• Answer questions and provide information
-• Help solve problems and challenges
-• Discuss topics of interest
-• Provide guidance and advice
-• Chat about general subjects
-
-**My areas of expertise:**
-• Electrical safety and prevention
-• Technical explanations
-• Problem-solving strategies
-• General knowledge and conversation
-
-**What would you like to discuss?** Feel free to ask me anything - I'm here to help and chat with you! 😊
-
-**Remember:** For electrical safety questions, I can provide expert guidance. For other topics, I'll do my best to help with general information and conversation.`;
+        // Default response for any other message - make it more conversational and contextual
+        const responses = [
+            `I understand you're asking about "${userMessage}". I'm your AI assistant and I'm here to help! 🤖 While I specialize in electrical fault prevention and safety guidance, I can also chat about general topics. What would you like to discuss?`,
+            
+            `That's an interesting question about "${userMessage}"! I'm your AI assistant, and I'm here to help you with electrical safety guidance or any general topics. How can I assist you today?`,
+            
+            `Thanks for asking about "${userMessage}"! I'm your AI assistant, and I'm here to help. Whether it's electrical safety or general questions, I'm ready to chat. What would you like to know?`,
+            
+            `I'd be happy to help with "${userMessage}"! I'm your AI assistant specializing in electrical safety, but I can also assist with general topics. What specific information are you looking for?`,
+            
+            `Great question about "${userMessage}"! I'm your AI assistant, and I'm here to help you with electrical fault prevention and safety guidance, or any general topics you'd like to discuss. How can I assist you?`
+        ];
+        
+        // Select a random response to make it more natural
+        response = responses[Math.floor(Math.random() * responses.length)];
         console.log('Using default response pattern, response:', response);
     }
     
