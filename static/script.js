@@ -2102,13 +2102,8 @@ function toggleTheme() {
 let currentFormData = null;
 let isChatbotOpen = false;
 
-// Watson Assistant Configuration
-const WATSON_CONFIG = {
-    apikey: 'oGVubRECEeFhuFc5F4CvIk58koNLwW5jcwBX5NtKka46',
-    serviceUrl: 'https://api.us-south.assistant.watson.cloud.ibm.com/instances/a082ae29-2af3-4c79-bdc6-3f4027c5493b',
-    version: '2023-11-22',
-    assistantId: 'a082ae29-2af3-4c79-bdc6-3f4027c5493b'
-};
+// Watson Assistant Configuration (loaded from config.js)
+// Configuration is now loaded from static/config.js which reads from environment variables
 
 // Watson Assistant session
 let watsonSession = null;
@@ -2124,16 +2119,16 @@ async function sendToWatsonAssistant(message) {
         }
 
         const assistant = new window.WatsonAssistantV2({
-            version: WATSON_CONFIG.version,
+            version: window.WATSON_CONFIG.version,
             authenticator: new window.IamAuthenticator({
-                apikey: WATSON_CONFIG.apikey
+                apikey: window.WATSON_CONFIG.apikey
             }),
-            serviceUrl: WATSON_CONFIG.serviceUrl
+            serviceUrl: window.WATSON_CONFIG.serviceUrl
         });
 
         console.log('Calling Watson message API...');
         const response = await assistant.message({
-            assistantId: WATSON_CONFIG.assistantId,
+            assistantId: window.WATSON_CONFIG.assistantId,
             sessionId: watsonSession,
             input: {
                 message_type: 'text',
@@ -2170,17 +2165,17 @@ async function initializeWatsonAssistant() {
         if (typeof window.WatsonAssistantV2 !== 'undefined' && typeof window.IamAuthenticator !== 'undefined') {
             console.log('Creating Watson Assistant instance...');
             const assistant = new window.WatsonAssistantV2({
-                version: WATSON_CONFIG.version,
+                version: window.WATSON_CONFIG.version,
                 authenticator: new window.IamAuthenticator({
-                    apikey: WATSON_CONFIG.apikey
+                    apikey: window.WATSON_CONFIG.apikey
                 }),
-                serviceUrl: WATSON_CONFIG.serviceUrl
+                serviceUrl: window.WATSON_CONFIG.serviceUrl
             });
             
             console.log('Creating Watson session...');
             // Create session
             const sessionResponse = await assistant.createSession({
-                assistantId: WATSON_CONFIG.assistantId
+                assistantId: window.WATSON_CONFIG.assistantId
             });
             
             watsonSession = sessionResponse.result.session_id;
