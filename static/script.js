@@ -504,8 +504,10 @@ function showNotification(message, type = 'info') {
         initializeLiveGraph();
     }
     
-    // Initialize gauge charts
-    initializeGaugeCharts();
+    // Initialize gauge charts (only if not already done)
+    if (!voltageGauge && !currentGauge && !temperatureGauge) {
+        initializeGaugeCharts();
+    }
     
     // Initialize PDF download when results are shown
     initializePdfDownload();
@@ -524,9 +526,11 @@ function showNotification(message, type = 'info') {
     // Initialize theme toggle
     initializeThemeToggle();
     
-    // Initialize gauge charts on page load
+    // Initialize gauge charts on page load (only if not already done)
     setTimeout(() => {
-        initializeGaugeCharts();
+        if (!voltageGauge && !currentGauge && !temperatureGauge) {
+            initializeGaugeCharts();
+        }
     }, 1000);
     
     // Initialize PDF download functionality
@@ -933,6 +937,23 @@ let temperatureGauge = null;
 function initializeGaugeCharts() {
     console.log('Initializing gauge charts...');
     
+    // Destroy existing charts first
+    if (voltageGauge) {
+        console.log('Destroying existing voltage gauge');
+        voltageGauge.destroy();
+        voltageGauge = null;
+    }
+    if (currentGauge) {
+        console.log('Destroying existing current gauge');
+        currentGauge.destroy();
+        currentGauge = null;
+    }
+    if (temperatureGauge) {
+        console.log('Destroying existing temperature gauge');
+        temperatureGauge.destroy();
+        temperatureGauge = null;
+    }
+    
     // Voltage Gauge
     const voltageCtx = document.getElementById('voltageGauge');
     console.log('Voltage canvas found:', !!voltageCtx);
@@ -1059,7 +1080,10 @@ function initializeGaugeCharts() {
     if (!voltageGauge && !currentGauge && !temperatureGauge) {
         console.log('No gauges created, retrying...');
         setTimeout(() => {
-            initializeGaugeCharts();
+            // Only retry if still no gauges exist
+            if (!voltageGauge && !currentGauge && !temperatureGauge) {
+                initializeGaugeCharts();
+            }
         }, 2000);
     }
 }
