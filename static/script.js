@@ -526,6 +526,11 @@ function showNotification(message, type = 'info') {
     // Initialize theme toggle
     initializeThemeToggle();
     
+    // Test Watson Assistant after delay
+    setTimeout(() => {
+        testWatsonAssistant();
+    }, 5000);
+    
     // Initialize gauge charts on page load (only if not already done)
     setTimeout(() => {
         if (!voltageGauge && !currentGauge && !temperatureGauge) {
@@ -2111,6 +2116,9 @@ let watsonSession = null;
 // Send message to Watson Assistant
 async function sendToWatsonAssistant(message) {
     try {
+        console.log('Sending message to Watson:', message);
+        console.log('Watson session:', watsonSession);
+        
         if (!watsonSession) {
             throw new Error('Watson session not initialized');
         }
@@ -2123,6 +2131,7 @@ async function sendToWatsonAssistant(message) {
             serviceUrl: WATSON_CONFIG.serviceUrl
         });
 
+        console.log('Calling Watson message API...');
         const response = await assistant.message({
             assistantId: WATSON_CONFIG.assistantId,
             sessionId: watsonSession,
@@ -2132,15 +2141,21 @@ async function sendToWatsonAssistant(message) {
             }
         });
 
+        console.log('Watson response received:', response);
+
         // Extract response text
         const output = response.result.output;
         if (output.generic && output.generic.length > 0) {
-            return output.generic[0].text;
+            const responseText = output.generic[0].text;
+            console.log('Watson response text:', responseText);
+            return responseText;
         } else {
+            console.log('No generic response, using fallback');
             return "I understand your message. How can I help you with electrical fault prevention?";
         }
     } catch (error) {
         console.error('Watson Assistant error:', error);
+        console.error('Error details:', error.message);
         throw error;
     }
 }
@@ -2148,7 +2163,12 @@ async function sendToWatsonAssistant(message) {
 // Initialize Watson Assistant
 async function initializeWatsonAssistant() {
     try {
-        if (typeof window.WatsonAssistantV2 !== 'undefined') {
+        console.log('Initializing Watson Assistant...');
+        console.log('Watson SDK available:', typeof window.WatsonAssistantV2 !== 'undefined');
+        console.log('IamAuthenticator available:', typeof window.IamAuthenticator !== 'undefined');
+        
+        if (typeof window.WatsonAssistantV2 !== 'undefined' && typeof window.IamAuthenticator !== 'undefined') {
+            console.log('Creating Watson Assistant instance...');
             const assistant = new window.WatsonAssistantV2({
                 version: WATSON_CONFIG.version,
                 authenticator: new window.IamAuthenticator({
@@ -2157,20 +2177,24 @@ async function initializeWatsonAssistant() {
                 serviceUrl: WATSON_CONFIG.serviceUrl
             });
             
+            console.log('Creating Watson session...');
             // Create session
             const sessionResponse = await assistant.createSession({
                 assistantId: WATSON_CONFIG.assistantId
             });
             
             watsonSession = sessionResponse.result.session_id;
-            console.log('Watson Assistant initialized with session:', watsonSession);
+            console.log('Watson Assistant initialized successfully with session:', watsonSession);
             return true;
         } else {
-            console.error('Watson Assistant SDK not loaded');
+            console.error('Watson Assistant SDK not loaded properly');
+            console.log('WatsonAssistantV2:', typeof window.WatsonAssistantV2);
+            console.log('IamAuthenticator:', typeof window.IamAuthenticator);
             return false;
         }
     } catch (error) {
         console.error('Failed to initialize Watson Assistant:', error);
+        console.error('Error details:', error.message);
         return false;
     }
 }
@@ -2193,11 +2217,15 @@ function initializeChatbot() {
     
     // Initialize Watson Assistant
     initializeWatsonAssistant().then(success => {
+        console.log('Watson initialization result:', success);
         if (success) {
             addMessage('Hello! I\'m your AI Safety Advisor powered by Watson Assistant. How can I help you with electrical fault prevention today?', 'bot');
         } else {
             addMessage('Hello! I\'m your AI Safety Advisor. While Watson Assistant is loading, I can still help with basic electrical fault guidance.', 'bot');
         }
+    }).catch(error => {
+        console.error('Watson initialization failed:', error);
+        addMessage('Hello! I\'m your AI Safety Advisor. I can help with electrical fault prevention and safety guidance.', 'bot');
     });
     
     // Make sure chatbot is visible
@@ -2258,11 +2286,18 @@ function initializeChatbot() {
         showTypingIndicator();
 
         try {
+            console.log('Attempting to send message to Watson...');
+            console.log('Watson session available:', !!watsonSession);
+            console.log('Watson SDK available:', typeof window.WatsonAssistantV2 !== 'undefined');
+            
             let response;
             if (watsonSession && typeof window.WatsonAssistantV2 !== 'undefined') {
                 // Use Watson Assistant
+                console.log('Using Watson Assistant for response...');
                 response = await sendToWatsonAssistant(message);
+                console.log('Received Watson response:', response);
             } else {
+                console.log('Watson not available, using fallback AI...');
                 // Fallback to local AI
                 setTimeout(() => {
                     response = generateAIResponse(message);
@@ -2277,6 +2312,7 @@ function initializeChatbot() {
         } catch (error) {
             hideTypingIndicator();
             console.error('Error sending message to Watson:', error);
+            console.error('Error details:', error.message);
             // Fallback response
             const fallbackResponse = generateAIResponse(message);
             addMessage(fallbackResponse, 'bot');
@@ -2394,6 +2430,26 @@ function hideTypingIndicator() {
     const typingIndicator = document.getElementById('typingIndicator');
     if (typingIndicator) {
         typingIndicator.remove();
+    }
+}
+
+// Test Watson Assistant
+async function testWatsonAssistant() {
+    console.log('=== TESTING WATSON ASSISTANT ===');
+    console.log('Watson SDK loaded:', typeof window.WatsonAssistantV2 !== 'undefined');
+    console.log('IamAuthenticator loaded:', typeof window.IamAuthenticator !== 'undefined');
+    console.log('Watson session:', watsonSession);
+    
+    if (watsonSession) {
+        try {
+            console.log('Testing Watson message...');
+            const testResponse = await sendToWatsonAssistant('Hello, can you help me with electrical safety?');
+            console.log('Watson test response:', testResponse);
+        } catch (error) {
+            console.error('Watson test failed:', error);
+        }
+    } else {
+        console.log('Watson session not available for testing');
     }
 }
 
