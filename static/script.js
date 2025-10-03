@@ -544,10 +544,6 @@ function showNotification(message, type = 'info') {
     // Initialize real-time dashboard
     initializeRealtimeDashboard();
     
-    // Test real-time dashboard after delay
-    setTimeout(() => {
-        testRealtimeDashboard();
-    }, 3000);
     
     // Test PDF libraries after a delay
     setTimeout(() => {
@@ -1303,124 +1299,35 @@ Note: This is a text file export of the analysis results.
     }
 }
 
-// Test Real-time Dashboard
-function testRealtimeDashboard() {
-    console.log('=== TESTING REAL-TIME DASHBOARD ===');
-    
-    const toggleButton = document.getElementById('toggleRealtime');
-    const dashboardContent = document.getElementById('dashboardContent');
-    
-    console.log('Test results:');
-    console.log('- Toggle button found:', !!toggleButton);
-    console.log('- Dashboard content found:', !!dashboardContent);
-    
-    if (toggleButton) {
-        console.log('- Button text:', toggleButton.textContent);
-        console.log('- Button classes:', toggleButton.className);
-    }
-    
-    if (dashboardContent) {
-        console.log('- Content display:', dashboardContent.style.display);
-    }
-    
-    // Try to manually trigger monitoring
-    console.log('Attempting to start monitoring manually...');
-    try {
-        startRealtimeMonitoring();
-    } catch (error) {
-        console.error('Error starting monitoring:', error);
-    }
-    
-    // Add manual test button
-    if (!document.getElementById('manualTestBtn')) {
-        const manualBtn = document.createElement('button');
-        manualBtn.id = 'manualTestBtn';
-        manualBtn.innerHTML = '🧪 Manual Test';
-        manualBtn.style.cssText = `
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 10000;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        `;
-        manualBtn.onclick = function() {
-            console.log('Manual test button clicked');
-            startRealtimeMonitoring();
-        };
-        document.body.appendChild(manualBtn);
-        console.log('Manual test button added');
-    }
-}
 
 // Real-time Dashboard Functions
 function initializeRealtimeDashboard() {
-    console.log('Initializing real-time dashboard...');
-    
     const toggleButton = document.getElementById('toggleRealtime');
-    console.log('Toggle button element:', toggleButton);
     
     if (toggleButton) {
-        // Remove any existing listeners first
-        toggleButton.removeEventListener('click', toggleRealtimeMonitoring);
-        
-        // Add click event listener
-        toggleButton.addEventListener('click', function(e) {
-            console.log('Toggle button clicked!');
-            e.preventDefault();
-            e.stopPropagation();
-            toggleRealtimeMonitoring();
-        });
-        
-        console.log('Real-time dashboard toggle button initialized successfully');
-    } else {
-        console.error('Real-time dashboard toggle button not found');
-        // Try again after a delay
-        setTimeout(() => {
-            console.log('Retrying real-time dashboard initialization...');
-            initializeRealtimeDashboard();
-        }, 1000);
+        toggleButton.addEventListener('click', toggleRealtimeMonitoring);
     }
 }
 
 function toggleRealtimeMonitoring() {
-    console.log('toggleRealtimeMonitoring called, realtimeActive:', realtimeActive);
-    
     if (realtimeActive) {
-        console.log('Stopping real-time monitoring...');
         stopRealtimeMonitoring();
     } else {
-        console.log('Starting real-time monitoring...');
         startRealtimeMonitoring();
     }
 }
 
 function startRealtimeMonitoring() {
-    console.log('=== STARTING REAL-TIME MONITORING ===');
-    
     realtimeActive = true;
     connectionCount = 1;
     lastUpdateTime = new Date();
     
     // Update UI
     const toggleButton = document.getElementById('toggleRealtime');
-    const toggleIcon = document.getElementById('toggleIcon');
-    const toggleText = document.getElementById('toggleText');
     const dashboardContent = document.getElementById('dashboardContent');
     const liveStatusDot = document.getElementById('liveStatusDot');
     const liveStatusText = document.getElementById('liveStatusText');
     const connectionCountEl = document.getElementById('connectionCount');
-    
-    console.log('UI elements found:');
-    console.log('- toggleButton:', !!toggleButton);
-    console.log('- dashboardContent:', !!dashboardContent);
-    console.log('- liveStatusDot:', !!liveStatusDot);
-    console.log('- liveStatusText:', !!liveStatusText);
-    console.log('- connectionCountEl:', !!connectionCountEl);
     
     if (toggleButton) {
         toggleButton.classList.add('active');
@@ -1447,9 +1354,7 @@ function startRealtimeMonitoring() {
     addLiveAlert('info', 'Real-time monitoring started');
     
     // Start data streaming
-    console.log('Setting up data streaming interval...');
     realtimeInterval = setInterval(() => {
-        console.log('Data streaming tick...');
         updateLiveData();
         connectionCount++;
         if (connectionCountEl) {
@@ -1457,19 +1362,13 @@ function startRealtimeMonitoring() {
         }
     }, 5000); // Update every 5 seconds
     
-    console.log('Interval set, realtimeInterval:', realtimeInterval);
-    
     // Initial data update
-    console.log('Running initial data update...');
     updateLiveData();
     
     showNotification('Real-time monitoring started', 'success');
-    console.log('Real-time monitoring started successfully');
 }
 
 function stopRealtimeMonitoring() {
-    console.log('Stopping real-time monitoring...');
-    
     realtimeActive = false;
     
     // Clear interval
@@ -1509,14 +1408,7 @@ function stopRealtimeMonitoring() {
 }
 
 function updateLiveData() {
-    console.log('updateLiveData called, realtimeActive:', realtimeActive);
-    
-    if (!realtimeActive) {
-        console.log('Real-time not active, skipping update');
-        return;
-    }
-    
-    console.log('Generating live data...');
+    if (!realtimeActive) return;
     
     // Generate realistic live data
     const liveData = {
@@ -1525,8 +1417,6 @@ function updateLiveData() {
         temperature: 45 + (Math.random() - 0.5) * 20, // 35-55°C
         risk: Math.random() * 100 // 0-100%
     };
-    
-    console.log('Generated live data:', liveData);
     
     // Store in history (keep last 50 readings)
     liveDataHistory.push({
