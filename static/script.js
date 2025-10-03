@@ -542,6 +542,11 @@ function showNotification(message, type = 'info') {
         testPdfLibraries();
     }, 2000);
     
+    // Add test download button
+    setTimeout(() => {
+        addTestDownloadButton();
+    }, 3000);
+    
     // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
@@ -1059,6 +1064,55 @@ function initializeGaugeCharts() {
     }
 }
 
+// Add Test Download Button
+function addTestDownloadButton() {
+    console.log('Adding test download button...');
+    
+    // Create a simple test button
+    const testBtn = document.createElement('button');
+    testBtn.innerHTML = '🧪 Test Download';
+    testBtn.style.cssText = `
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 9999;
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 12px;
+    `;
+    
+    testBtn.onclick = function() {
+        console.log('Test download button clicked');
+        
+        // Try simple text download first
+        try {
+            const content = 'Test download file\nGenerated: ' + new Date().toISOString();
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'test_download.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            console.log('Test download successful');
+            showNotification('Test download successful!', 'success');
+        } catch (error) {
+            console.error('Test download failed:', error);
+            showNotification('Test download failed: ' + error.message, 'error');
+        }
+    };
+    
+    document.body.appendChild(testBtn);
+    console.log('Test download button added');
+}
+
 // Test PDF Libraries
 function testPdfLibraries() {
     console.log('=== TESTING PDF LIBRARIES ===');
@@ -1078,6 +1132,100 @@ function testPdfLibraries() {
     
     if (typeof html2canvas !== 'undefined') {
         console.log('html2canvas test available');
+    }
+}
+
+// Basic PDF Generation (minimal approach)
+function generateBasicPdf() {
+    console.log('=== GENERATING BASIC PDF ===');
+    
+    try {
+        // Check if jsPDF is available
+        if (typeof window.jspdf === 'undefined' && typeof window.jsPDF === 'undefined') {
+            console.error('jsPDF not available');
+            throw new Error('jsPDF library not loaded');
+        }
+        
+        // Try different ways to access jsPDF
+        let jsPDF;
+        if (typeof window.jspdf !== 'undefined') {
+            jsPDF = window.jspdf.jsPDF;
+        } else if (typeof window.jsPDF !== 'undefined') {
+            jsPDF = window.jsPDF;
+        } else {
+            throw new Error('Cannot access jsPDF');
+        }
+        
+        console.log('jsPDF accessed successfully');
+        
+        // Create PDF
+        const pdf = new jsPDF();
+        console.log('PDF object created');
+        
+        // Add simple content
+        pdf.setFontSize(16);
+        pdf.text('Power Fault Analysis Report', 20, 30);
+        
+        pdf.setFontSize(12);
+        pdf.text(`Generated: ${new Date().toLocaleString()}`, 20, 50);
+        pdf.text('This is a test PDF to verify functionality.', 20, 70);
+        
+        // Save PDF
+        const fileName = `Power_Fault_Test_${new Date().getTime()}.pdf`;
+        console.log('Attempting to save PDF:', fileName);
+        
+        pdf.save(fileName);
+        console.log('PDF save called successfully');
+        
+        // Show success notification
+        showNotification('PDF downloaded successfully!', 'success');
+        
+    } catch (error) {
+        console.error('Basic PDF generation failed:', error);
+        showNotification('PDF Error: ' + error.message, 'error');
+        
+        // Try alternative approach
+        tryAlternativePdf();
+    }
+}
+
+// Alternative PDF approach using different method
+function tryAlternativePdf() {
+    console.log('=== TRYING ALTERNATIVE PDF METHOD ===');
+    
+    try {
+        // Try to create a simple text file instead
+        const content = `Power Fault Analysis Report
+Generated: ${new Date().toLocaleString()}
+
+This is a text file containing the analysis results.
+The PDF generation failed, so this is an alternative export.
+
+Fault Type: ${document.getElementById('predictionLabel')?.textContent || 'Not available'}
+Confidence: ${document.getElementById('confidenceText')?.textContent || 'Not available'}
+
+Input Parameters:
+${Array.from(document.querySelectorAll('input[type="number"]')).map(input => `${input.name || input.id}: ${input.value}`).join('\n')}
+
+Note: This is a text file export. For PDF, please check console for errors.
+`;
+        
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Power_Fault_Report_${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        showNotification('Text file downloaded as alternative', 'success');
+        console.log('Alternative text file downloaded');
+        
+    } catch (error) {
+        console.error('Alternative PDF method failed:', error);
+        showNotification('All download methods failed', 'error');
     }
 }
 
@@ -1169,8 +1317,8 @@ function initializePdfDownload() {
             
             // Add a small delay to ensure the notification shows
             setTimeout(() => {
-                // Try simple PDF first
-                generateSimplePdf();
+                // Try basic PDF first
+                generateBasicPdf();
             }, 100);
         });
         console.log('PDF download event listener added');
