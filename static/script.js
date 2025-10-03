@@ -548,10 +548,6 @@ function showNotification(message, type = 'info') {
         testPdfLibraries();
     }, 2000);
     
-    // Add test download button
-    setTimeout(() => {
-        addTestDownloadButton();
-    }, 3000);
     
     // Create notification element
     const notification = document.createElement('div');
@@ -1093,54 +1089,6 @@ function initializeGaugeCharts() {
     }
 }
 
-// Add Test Download Button
-function addTestDownloadButton() {
-    console.log('Adding test download button...');
-    
-    // Create a simple test button
-    const testBtn = document.createElement('button');
-    testBtn.innerHTML = '🧪 Test Download';
-    testBtn.style.cssText = `
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        z-index: 9999;
-        background: #e74c3c;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 12px;
-    `;
-    
-    testBtn.onclick = function() {
-        console.log('Test download button clicked');
-        
-        // Try simple text download first
-        try {
-            const content = 'Test download file\nGenerated: ' + new Date().toISOString();
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'test_download.txt';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            console.log('Test download successful');
-            showNotification('Test download successful!', 'success');
-        } catch (error) {
-            console.error('Test download failed:', error);
-            showNotification('Test download failed: ' + error.message, 'error');
-        }
-    };
-    
-    document.body.appendChild(testBtn);
-    console.log('Test download button added');
-}
 
 // Test PDF Libraries
 function testPdfLibraries() {
