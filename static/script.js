@@ -1161,6 +1161,128 @@ function testPdfLibraries() {
     }
 }
 
+// Single PDF Generation (Reliable)
+function generateSinglePdf() {
+    console.log('=== GENERATING SINGLE PDF ===');
+    
+    // Prevent multiple downloads
+    if (pdfDownloadInProgress) {
+        console.log('PDF download already in progress, skipping...');
+        showNotification('PDF download already in progress...', 'info');
+        return;
+    }
+    
+    // Set flags to prevent multiple downloads and gauge updates
+    pdfDownloadInProgress = true;
+    isGeneratingPdf = true;
+    
+    try {
+        // Try PDF generation first
+        if (typeof window.jspdf !== 'undefined' || typeof window.jsPDF !== 'undefined') {
+            console.log('Attempting PDF generation...');
+            
+            // Try different ways to access jsPDF
+            let jsPDF;
+            if (typeof window.jspdf !== 'undefined') {
+                jsPDF = window.jspdf.jsPDF;
+            } else if (typeof window.jsPDF !== 'undefined') {
+                jsPDF = window.jsPDF;
+            }
+            
+            if (jsPDF) {
+                const pdf = new jsPDF();
+                
+                // Add content
+                pdf.setFontSize(16);
+                pdf.text('Power Fault Analysis Report', 20, 30);
+                
+                pdf.setFontSize(12);
+                pdf.text(`Generated: ${new Date().toLocaleString()}`, 20, 50);
+                
+                // Add analysis results
+                const predictionLabel = document.getElementById('predictionLabel');
+                const confidenceText = document.getElementById('confidenceText');
+                
+                if (predictionLabel) {
+                    pdf.text(`Fault Type: ${predictionLabel.textContent}`, 20, 70);
+                }
+                
+                if (confidenceText) {
+                    pdf.text(`Confidence: ${confidenceText.textContent}`, 20, 85);
+                }
+                
+                // Add form data
+                pdf.text('Input Parameters:', 20, 110);
+                const inputs = document.querySelectorAll('input[type="number"]');
+                let yPos = 130;
+                
+                inputs.forEach((input, index) => {
+                    if (yPos > 250) {
+                        pdf.addPage();
+                        yPos = 30;
+                    }
+                    pdf.text(`${input.name || input.id}: ${input.value}`, 20, yPos);
+                    yPos += 10;
+                });
+                
+                // Save PDF
+                const fileName = `Power_Fault_Report_${new Date().toISOString().split('T')[0]}.pdf`;
+                console.log('Saving PDF:', fileName);
+                
+                pdf.save(fileName);
+                console.log('PDF saved successfully');
+                
+                showNotification('PDF downloaded successfully!', 'success');
+                
+                // Reset flags
+                pdfDownloadInProgress = false;
+                isGeneratingPdf = false;
+                return;
+            }
+        }
+        
+        // Fallback to text file if PDF fails
+        console.log('PDF generation failed, creating text file...');
+        
+        const content = `Power Fault Analysis Report
+Generated: ${new Date().toLocaleString()}
+
+Fault Type: ${document.getElementById('predictionLabel')?.textContent || 'Not available'}
+Confidence: ${document.getElementById('confidenceText')?.textContent || 'Not available'}
+
+Input Parameters:
+${Array.from(document.querySelectorAll('input[type="number"]')).map(input => `${input.name || input.id}: ${input.value}`).join('\n')}
+
+Note: This is a text file export of the analysis results.
+`;
+        
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Power_Fault_Report_${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        console.log('Text file downloaded successfully');
+        showNotification('Text file downloaded successfully!', 'success');
+        
+        // Reset flags
+        pdfDownloadInProgress = false;
+        isGeneratingPdf = false;
+        
+    } catch (error) {
+        console.error('PDF generation failed:', error);
+        showNotification('PDF generation failed: ' + error.message, 'error');
+        
+        // Reset flags on error
+        pdfDownloadInProgress = false;
+        isGeneratingPdf = false;
+    }
+}
+
 // Try Multiple PDF Methods
 function tryMultiplePdfMethods() {
     console.log('=== TRYING MULTIPLE PDF METHODS ===');
@@ -1543,8 +1665,8 @@ function initializePdfDownload() {
             
             // Add a small delay to ensure the notification shows
             setTimeout(() => {
-                // Try multiple PDF methods
-                tryMultiplePdfMethods();
+                // Use single reliable PDF method
+                generateSinglePdf();
             }, 100);
         });
         console.log('PDF download event listener added');
