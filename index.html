@@ -228,7 +228,57 @@
                         </div>
                     </div>
 
-                    <div class="probabilities-chart">
+                    <!-- Enhanced Probability Distribution Section -->
+                    <div class="probability-section">
+                        <h3 class="probability-title">Probability Distribution</h3>
+                        <div class="probability-chart-container">
+                            <div class="probability-chart" id="enhancedProbabilityChart">
+                                <div class="chart-center-text">
+                                    <h3>Fault Analysis</h3>
+                                    <p>Risk Assessment</p>
+                                </div>
+                            </div>
+                            <div class="chart-tooltip" id="chartTooltip"></div>
+                        </div>
+                        <div class="probability-legend">
+                            <div class="legend-item" data-type="overheating" data-percentage="40">
+                                <div class="legend-color overheating"></div>
+                                <span class="legend-text">Overheating</span>
+                                <span class="legend-percentage">40%</span>
+                            </div>
+                            <div class="legend-item" data-type="transformer" data-percentage="20">
+                                <div class="legend-color transformer"></div>
+                                <span class="legend-text">Transformer Failure</span>
+                                <span class="legend-percentage">20%</span>
+                            </div>
+                            <div class="legend-item" data-type="line-breakage" data-percentage="40">
+                                <div class="legend-color line-breakage"></div>
+                                <span class="legend-text">Line Breakage</span>
+                                <span class="legend-percentage">40%</span>
+                            </div>
+                        </div>
+                        <div class="probability-stats">
+                            <div class="stat-card">
+                                <div class="stat-value" id="totalFaults">3</div>
+                                <div class="stat-label">Fault Types</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="highRisk">1</div>
+                                <div class="stat-label">High Risk</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="mediumRisk">1</div>
+                                <div class="stat-label">Medium Risk</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="lowRisk">1</div>
+                                <div class="stat-label">Low Risk</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Original Chart Canvas (Hidden) -->
+                    <div class="probabilities-chart" style="display: none;">
                         <h3>Probability Distribution</h3>
                         <div class="chart-container">
                             <canvas id="probabilityChart"></canvas>

@@ -13,6 +13,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     setupEventListeners();
     checkModelInfo();
+    
+    // Initialize enhanced probability chart
+    setTimeout(() => {
+        initializeEnhancedProbabilityChart();
+    }, 1000);
 });
 
 // Setup event listeners
@@ -83,6 +88,13 @@ async function handleFormSubmit(event) {
         
         // Display results
         displayResults(result);
+        
+        // Update enhanced chart with new data
+        updateEnhancedChartData({
+            overheating: Math.round((result.faultDetails?.overheating || 0.4) * 100),
+            transformer: Math.round((result.faultDetails?.transformer_failure || 0.2) * 100),
+            lineBreakage: Math.round((result.faultDetails?.line_breakage || 0.4) * 100)
+        });
         
         // Show AI recommendations popup after 2 seconds
         setTimeout(() => {
@@ -685,6 +697,263 @@ function openChatbotForRecommendations() {
                 }
             }
         }, 500);
+    }
+}
+
+// Enhanced Probability Distribution Functions
+function initializeEnhancedProbabilityChart() {
+    console.log('Initializing enhanced probability chart...');
+    
+    // Add interactive tooltips
+    addChartTooltips();
+    
+    // Add legend click events
+    addLegendInteractions();
+    
+    // Animate chart on load
+    animateChart();
+    
+    // Update stats with animation
+    updateProbabilityStats();
+}
+
+function addChartTooltips() {
+    const chart = document.getElementById('enhancedProbabilityChart');
+    const tooltip = document.getElementById('chartTooltip');
+    
+    if (!chart || !tooltip) return;
+    
+    const segments = [
+        { start: 0, end: 144, type: 'overheating', percentage: 40, color: '#ef4444', name: 'Overheating' },
+        { start: 144, end: 216, type: 'transformer', percentage: 20, color: '#f97316', name: 'Transformer Failure' },
+        { start: 216, end: 360, type: 'line-breakage', percentage: 40, color: '#3b82f6', name: 'Line Breakage' }
+    ];
+    
+    chart.addEventListener('mousemove', (e) => {
+        const rect = chart.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const mouseX = e.clientX - centerX;
+        const mouseY = e.clientY - centerY;
+        const angle = Math.atan2(mouseY, mouseX) * 180 / Math.PI;
+        const normalizedAngle = (angle + 360) % 360;
+        
+        let hoveredSegment = null;
+        for (const segment of segments) {
+            if (normalizedAngle >= segment.start && normalizedAngle < segment.end) {
+                hoveredSegment = segment;
+                break;
+            }
+        }
+        
+        if (hoveredSegment) {
+            const distance = Math.sqrt(mouseX * mouseX + mouseY * mouseY);
+            const maxRadius = rect.width / 2;
+            
+            if (distance <= maxRadius && distance >= maxRadius * 0.4) {
+                tooltip.innerHTML = `
+                    <strong>${hoveredSegment.name}</strong><br>
+                    Probability: ${hoveredSegment.percentage}%<br>
+                    Risk Level: ${getRiskLevel(hoveredSegment.type)}
+                `;
+                tooltip.style.left = e.clientX + 'px';
+                tooltip.style.top = (e.clientY - 10) + 'px';
+                tooltip.classList.add('show');
+                
+                // Add glow effect to chart
+                chart.style.filter = `drop-shadow(0 0 20px ${hoveredSegment.color}40)`;
+            } else {
+                tooltip.classList.remove('show');
+                chart.style.filter = '';
+            }
+        } else {
+            tooltip.classList.remove('show');
+            chart.style.filter = '';
+        }
+    });
+    
+    chart.addEventListener('mouseleave', () => {
+        tooltip.classList.remove('show');
+        chart.style.filter = '';
+    });
+}
+
+function addLegendInteractions() {
+    const legendItems = document.querySelectorAll('.legend-item');
+    
+    legendItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const type = item.dataset.type;
+            const percentage = item.dataset.percentage;
+            
+            // Highlight the legend item
+            legendItems.forEach(l => l.classList.remove('active'));
+            item.classList.add('active');
+            
+            // Show detailed information
+            showFaultDetails(type, percentage);
+            
+            // Add pulse effect to chart
+            const chart = document.getElementById('enhancedProbabilityChart');
+            if (chart) {
+                chart.style.animation = 'chartPulse 0.5s ease-in-out 3';
+                setTimeout(() => {
+                    chart.style.animation = 'chartPulse 3s ease-in-out infinite';
+                }, 1500);
+            }
+        });
+        
+        item.addEventListener('mouseenter', () => {
+            item.style.transform = 'translateY(-3px) scale(1.05)';
+        });
+        
+        item.addEventListener('mouseleave', () => {
+            if (!item.classList.contains('active')) {
+                item.style.transform = 'translateY(0) scale(1)';
+            }
+        });
+    });
+}
+
+function animateChart() {
+    const chart = document.getElementById('enhancedProbabilityChart');
+    if (!chart) return;
+    
+    // Initial state
+    chart.style.transform = 'scale(0) rotate(0deg)';
+    chart.style.opacity = '0';
+    
+    // Animate in
+    setTimeout(() => {
+        chart.style.transition = 'all 1s ease-out';
+        chart.style.transform = 'scale(1) rotate(360deg)';
+        chart.style.opacity = '1';
+    }, 500);
+    
+    // Animate legend items
+    const legendItems = document.querySelectorAll('.legend-item');
+    legendItems.forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            item.style.transition = 'all 0.5s ease-out';
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+        }, 1000 + (index * 100));
+    });
+    
+    // Animate stat cards
+    const statCards = document.querySelectorAll('.stat-card');
+    statCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.6s ease-out';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, 1500 + (index * 100));
+    });
+}
+
+function updateProbabilityStats() {
+    // Animate counter for stat values
+    const statValues = document.querySelectorAll('.stat-value');
+    
+    statValues.forEach(stat => {
+        const targetValue = parseInt(stat.textContent);
+        let currentValue = 0;
+        const increment = targetValue / 30; // 30 steps
+        const timer = setInterval(() => {
+            currentValue += increment;
+            if (currentValue >= targetValue) {
+                currentValue = targetValue;
+                clearInterval(timer);
+            }
+            stat.textContent = Math.round(currentValue);
+        }, 50);
+    });
+}
+
+function getRiskLevel(type) {
+    const riskLevels = {
+        'overheating': 'High',
+        'transformer': 'Medium',
+        'line-breakage': 'High'
+    };
+    return riskLevels[type] || 'Unknown';
+}
+
+function showFaultDetails(type, percentage) {
+    const details = {
+        'overheating': {
+            title: 'Overheating Fault',
+            description: 'Equipment temperature exceeds safe operating limits',
+            causes: ['Poor ventilation', 'Overloading', 'Loose connections', 'Ambient temperature'],
+            prevention: ['Regular temperature monitoring', 'Adequate ventilation', 'Load management', 'Connection inspection']
+        },
+        'transformer': {
+            title: 'Transformer Failure',
+            description: 'Transformer component malfunction or degradation',
+            causes: ['Insulation breakdown', 'Oil contamination', 'Overloading', 'Age-related wear'],
+            prevention: ['Regular oil testing', 'Load monitoring', 'Insulation checks', 'Preventive maintenance']
+        },
+        'line-breakage': {
+            title: 'Line Breakage',
+            description: 'Electrical conductor damage or disconnection',
+            causes: ['Mechanical stress', 'Environmental damage', 'Corrosion', 'Overcurrent'],
+            prevention: ['Regular inspection', 'Environmental protection', 'Load monitoring', 'Corrosion prevention']
+        }
+    };
+    
+    const detail = details[type];
+    if (detail) {
+        showNotification(`${detail.title}: ${detail.description}`, 'info');
+        console.log(`${detail.title} - ${percentage}% probability`);
+        console.log('Causes:', detail.causes);
+        console.log('Prevention:', detail.prevention);
+    }
+}
+
+function updateEnhancedChartData(data) {
+    // Update chart colors based on data
+    const chart = document.getElementById('enhancedProbabilityChart');
+    if (!chart) return;
+    
+    // Update legend percentages
+    const legendItems = document.querySelectorAll('.legend-item');
+    if (legendItems.length >= 3) {
+        legendItems[0].querySelector('.legend-percentage').textContent = data.overheating + '%';
+        legendItems[0].dataset.percentage = data.overheating;
+        
+        legendItems[1].querySelector('.legend-percentage').textContent = data.transformer + '%';
+        legendItems[1].dataset.percentage = data.transformer;
+        
+        legendItems[2].querySelector('.legend-percentage').textContent = data.lineBreakage + '%';
+        legendItems[2].dataset.percentage = data.lineBreakage;
+    }
+    
+    // Update chart gradient
+    const total = data.overheating + data.transformer + data.lineBreakage;
+    const overheatingDeg = (data.overheating / total) * 360;
+    const transformerDeg = (data.transformer / total) * 360;
+    const lineBreakageDeg = (data.lineBreakage / total) * 360;
+    
+    chart.style.background = `conic-gradient(
+        from 0deg,
+        #ef4444 0deg ${overheatingDeg}deg,
+        #f97316 ${overheatingDeg}deg ${overheatingDeg + transformerDeg}deg,
+        #3b82f6 ${overheatingDeg + transformerDeg}deg 360deg
+    )`;
+    
+    // Update center text
+    const centerText = chart.querySelector('.chart-center-text p');
+    if (centerText) {
+        const maxRisk = Math.max(data.overheating, data.transformer, data.lineBreakage);
+        const riskType = maxRisk === data.overheating ? 'Overheating' : 
+                        maxRisk === data.transformer ? 'Transformer' : 'Line Breakage';
+        centerText.textContent = `${riskType} Risk: ${maxRisk}%`;
     }
 }
 
