@@ -2457,9 +2457,49 @@ function testFallbackAI() {
     generateAIResponse('hi');
 }
 
+// Simple test function
+function testChatbot() {
+    console.log('=== TESTING CHATBOT ===');
+    
+    // Check if DOM elements exist
+    console.log('1. Checking DOM elements:');
+    console.log('- chatbotContainer:', !!document.getElementById('chatbotContainer'));
+    console.log('- chatbotMessages:', !!document.getElementById('chatbotMessages'));
+    console.log('- chatbotInput:', !!document.getElementById('chatbotInput'));
+    console.log('- chatbotSend:', !!document.getElementById('chatbotSend'));
+    
+    // Check if greetingKeywords is defined
+    console.log('2. Testing greetingKeywords:', typeof greetingKeywords !== 'undefined' ? greetingKeywords : 'UNDEFINED');
+    
+    if (typeof greetingKeywords !== 'undefined') {
+        console.log('3. Testing message "good morning":');
+        const testMessage = 'good morning';
+        const testMessageLower = testMessage.toLowerCase();
+        console.log('4. Message to lowercase:', testMessageLower);
+        console.log('5. Checking if message includes greeting keywords...');
+        
+        const hasGreeting = greetingKeywords.some(keyword => testMessageLower.includes(keyword));
+        console.log('6. Has greeting keyword?', hasGreeting);
+        
+        if (hasGreeting) {
+            console.log('7. Should match greeting pattern');
+            generateAIResponse(testMessage);
+        } else {
+            console.log('7. No greeting pattern matched');
+        }
+    } else {
+        console.log('3. greetingKeywords not defined - chatbot may not be initialized');
+    }
+    
+    // Test addMessage directly
+    console.log('8. Testing addMessage function:');
+    addMessage('Test message from console', 'bot');
+}
+
 // Make test functions globally available
 window.testFallbackAI = testFallbackAI;
 window.testWatsonAssistant = testWatsonAssistant;
+window.testChatbot = testChatbot;
 
 // Get message for quick actions
 function getQuickActionMessage(action) {
