@@ -2654,6 +2654,7 @@ Run a prediction to get personalized fault analysis!`;
 function generateAIResponse(userMessage) {
     console.log('generateAIResponse called with:', userMessage);
     const message = userMessage.toLowerCase();
+    const cleanMessage = message.replace(/\s+/g, ''); // Remove all spaces for better matching
     
     // Keywords for different topics
     const preventionKeywords = ['prevent', 'avoid', 'prevention', 'safety', 'protect', 'secure', 'shield'];
@@ -2793,7 +2794,7 @@ Would you like me to explain any specific electrical concept in more detail?`;
 
 What would you like to know more about?`;
         }
-    } else if (message.includes('time') || message.includes('what time') || message.includes('clock')) {
+    } else if (message.includes('time') || message.includes('what time') || message.includes('clock') || cleanMessage.includes('whattime') || cleanMessage.includes('whattimeisit') || cleanMessage.includes('whattimeis')) {
         const now = new Date();
         const currentTime = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         const currentDate = now.toLocaleDateString([], {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
@@ -2824,7 +2825,7 @@ Is there a specific time-related electrical maintenance question I can help with
 • Have emergency backup plans
 
 Is there a specific weather-related electrical concern you have?`;
-    } else if (message.includes('date') || message.includes('today') || message.includes('calendar')) {
+    } else if (message.includes('date') || message.includes('today') || message.includes('calendar') || cleanMessage.includes('whatdate') || cleanMessage.includes('whatdateisit') || cleanMessage.includes('whatdateis')) {
         const now = new Date();
         const currentDate = now.toLocaleDateString([], {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
         const dayOfWeek = now.toLocaleDateString([], {weekday: 'long'});
@@ -2839,7 +2840,7 @@ Is there a specific weather-related electrical concern you have?`;
 **Electrical Maintenance Note:** Regular calendar-based maintenance schedules are essential for electrical equipment. Weekly, monthly, and annual inspections help prevent faults and ensure system reliability.
 
 Is there a specific date-related electrical maintenance question I can help with?`;
-    } else if (message.includes('name') || message.includes('who are you') || message.includes('what are you')) {
+    } else if (message.includes('name') || message.includes('who are you') || message.includes('what are you') || cleanMessage.includes('whorue') || cleanMessage.includes('whoru') || cleanMessage.includes('whatru') || cleanMessage.includes('whatareu')) {
         response = `I'm your AI Safety Advisor! 🤖
 
 **About Me:**
@@ -2860,7 +2861,7 @@ Is there a specific date-related electrical maintenance question I can help with
 • Offer expert recommendations
 
 What would you like to know about electrical safety or any other topic?`;
-    } else if (message.includes('help') || message.includes('assistance') || message.includes('support')) {
+    } else if (message.includes('help') || message.includes('assistance') || message.includes('support') || cleanMessage.includes('helpe') || cleanMessage.includes('helpu')) {
         response = `I'm here to help! 🤗
 
 **How I Can Assist You:**
