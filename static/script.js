@@ -84,6 +84,11 @@ async function handleFormSubmit(event) {
         // Display results
         displayResults(result);
         
+        // Show AI recommendations popup after 2 seconds
+        setTimeout(() => {
+            showAIRecommendationsPopup(result);
+        }, 2000);
+        
     } catch (error) {
         console.error('Error making prediction:', error);
         showNotification('Error making prediction: ' + error.message, 'error');
@@ -488,6 +493,198 @@ function showLoading() {
 function hideLoading() {
     if (loadingOverlay) {
         loadingOverlay.classList.remove('active');
+    }
+}
+
+// Show AI Recommendations Popup
+function showAIRecommendationsPopup(result) {
+    // Create popup overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'ai-recommendations-overlay';
+    overlay.innerHTML = `
+        <div class="ai-recommendations-popup">
+            <div class="ai-popup-header">
+                <div class="ai-popup-icon">🤖</div>
+                <h3>AI Safety Recommendations</h3>
+                <button class="ai-popup-close" onclick="closeAIRecommendationsPopup()">×</button>
+            </div>
+            <div class="ai-popup-content">
+                ${generateAIRecommendations(result)}
+            </div>
+            <div class="ai-popup-footer">
+                <button class="ai-popup-button ai-popup-primary" onclick="openChatbotForRecommendations()">
+                    💬 Chat with AI
+                </button>
+                <button class="ai-popup-button ai-popup-secondary" onclick="closeAIRecommendationsPopup()">
+                    Close
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
+    
+    // Add animation
+    setTimeout(() => {
+        overlay.classList.add('show');
+    }, 100);
+}
+
+// Close AI Recommendations Popup
+function closeAIRecommendationsPopup() {
+    const overlay = document.querySelector('.ai-recommendations-overlay');
+    if (overlay) {
+        overlay.classList.remove('show');
+        setTimeout(() => {
+            overlay.remove();
+        }, 300);
+    }
+}
+
+// Generate AI Recommendations based on prediction results
+function generateAIRecommendations(result) {
+    const prediction = result.prediction;
+    const confidence = result.confidence;
+    const faultDetails = result.faultDetails || {};
+    
+    let recommendations = '';
+    
+    if (prediction === 'Fault Detected' || prediction === 'High Risk') {
+        recommendations = `
+            <div class="ai-recommendation-item critical">
+                <div class="recommendation-icon">🚨</div>
+                <div class="recommendation-content">
+                    <h4>Immediate Action Required</h4>
+                    <p>Based on your system parameters, immediate intervention is recommended to prevent potential electrical hazards.</p>
+                    <ul>
+                        <li>Isolate affected equipment immediately</li>
+                        <li>Contact qualified electrician</li>
+                        <li>Document all observations</li>
+                        <li>Implement safety protocols</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="ai-recommendation-item warning">
+                <div class="recommendation-icon">⚡</div>
+                <div class="recommendation-content">
+                    <h4>Prevention Measures</h4>
+                    <p>To prevent similar faults in the future:</p>
+                    <ul>
+                        <li>Increase monitoring frequency</li>
+                        <li>Schedule immediate maintenance</li>
+                        <li>Review load management</li>
+                        <li>Update safety procedures</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+    } else if (prediction === 'Warning' || prediction === 'Medium Risk') {
+        recommendations = `
+            <div class="ai-recommendation-item warning">
+                <div class="recommendation-icon">⚠️</div>
+                <div class="recommendation-content">
+                    <h4>Proactive Measures</h4>
+                    <p>Your system shows warning signs that require attention to prevent potential faults.</p>
+                    <ul>
+                        <li>Schedule maintenance within 24-48 hours</li>
+                        <li>Monitor parameters closely</li>
+                        <li>Check environmental conditions</li>
+                        <li>Review equipment performance</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="ai-recommendation-item info">
+                <div class="recommendation-icon">🔧</div>
+                <div class="recommendation-content">
+                    <h4>Maintenance Recommendations</h4>
+                    <p>Recommended maintenance actions:</p>
+                    <ul>
+                        <li>Clean electrical contacts</li>
+                        <li>Check insulation resistance</li>
+                        <li>Calibrate measuring instruments</li>
+                        <li>Update documentation</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+    } else {
+        recommendations = `
+            <div class="ai-recommendation-item success">
+                <div class="recommendation-icon">✅</div>
+                <div class="recommendation-content">
+                    <h4>System Normal</h4>
+                    <p>Your electrical system is operating within normal parameters. Continue with regular maintenance schedules.</p>
+                    <ul>
+                        <li>Maintain current monitoring schedule</li>
+                        <li>Continue preventive maintenance</li>
+                        <li>Document all readings</li>
+                        <li>Stay alert for any changes</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="ai-recommendation-item info">
+                <div class="recommendation-icon">📊</div>
+                <div class="recommendation-content">
+                    <h4>Optimization Tips</h4>
+                    <p>To maintain optimal performance:</p>
+                    <ul>
+                        <li>Regular parameter monitoring</li>
+                        <li>Environmental control</li>
+                        <li>Load management</li>
+                        <li>Staff training updates</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Add confidence-based recommendations
+    if (confidence < 0.7) {
+        recommendations += `
+            <div class="ai-recommendation-item info">
+                <div class="recommendation-icon">🤔</div>
+                <div class="recommendation-content">
+                    <h4>Low Confidence Alert</h4>
+                    <p>Prediction confidence is ${Math.round(confidence * 100)}%. Consider additional testing or expert consultation.</p>
+                    <ul>
+                        <li>Perform additional measurements</li>
+                        <li>Consult with electrical engineer</li>
+                        <li>Review historical data</li>
+                        <li>Consider environmental factors</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+    }
+    
+    return recommendations;
+}
+
+// Open chatbot for detailed recommendations
+function openChatbotForRecommendations() {
+    // Close the popup first
+    closeAIRecommendationsPopup();
+    
+    // Open chatbot
+    const chatbotContainer = document.getElementById('chatbotContainer');
+    if (chatbotContainer) {
+        chatbotContainer.click(); // This will open the chatbot
+        
+        // Add a message to the chatbot
+        setTimeout(() => {
+            const chatbotInput = document.getElementById('chatbotInput');
+            if (chatbotInput) {
+                chatbotInput.value = 'I need detailed recommendations for my electrical system based on the recent analysis.';
+                // Trigger the send button
+                const chatbotSend = document.getElementById('chatbotSend');
+                if (chatbotSend) {
+                    chatbotSend.click();
+                }
+            }
+        }, 500);
     }
 }
 
