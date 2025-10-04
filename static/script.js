@@ -561,78 +561,147 @@ function generateAIRecommendations(result) {
     
     let recommendations = '';
     
-    if (prediction === 'Fault Detected' || prediction === 'High Risk') {
+    if (prediction === 'Line Breakage') {
         recommendations = `
             <div class="ai-recommendation-item critical">
-                <div class="recommendation-icon">🚨</div>
+                <div class="recommendation-icon">⚡</div>
                 <div class="recommendation-content">
-                    <h4>Immediate Action Required</h4>
-                    <p>Based on your system parameters, immediate intervention is recommended to prevent potential electrical hazards.</p>
+                    <h4>Line Breakage Detected - Immediate Action Required</h4>
+                    <p><strong>High Risk Alert:</strong> Electrical line breakage detected. This poses significant safety hazards and requires immediate intervention.</p>
                     <ul>
-                        <li>Isolate affected equipment immediately</li>
-                        <li>Contact qualified electrician</li>
-                        <li>Document all observations</li>
-                        <li>Implement safety protocols</li>
+                        <li><strong>IMMEDIATE:</strong> Isolate affected line sections</li>
+                        <li><strong>IMMEDIATE:</strong> Contact emergency electrical services</li>
+                        <li>Evacuate area within 100 meters of breakage</li>
+                        <li>Establish safety perimeter with warning signs</li>
+                        <li>Document exact location and time of detection</li>
                     </ul>
                 </div>
             </div>
             
             <div class="ai-recommendation-item warning">
-                <div class="recommendation-icon">⚡</div>
+                <div class="recommendation-icon">🔧</div>
                 <div class="recommendation-content">
-                    <h4>Prevention Measures</h4>
-                    <p>To prevent similar faults in the future:</p>
+                    <h4>Recovery Actions</h4>
+                    <p>After securing the area, implement these recovery measures:</p>
                     <ul>
-                        <li>Increase monitoring frequency</li>
-                        <li>Schedule immediate maintenance</li>
-                        <li>Review load management</li>
-                        <li>Update safety procedures</li>
+                        <li>Coordinate with utility company for line repair</li>
+                        <li>Inspect adjacent line sections for damage</li>
+                        <li>Test backup power systems if available</li>
+                        <li>Review weather conditions and line loading history</li>
+                        <li>Update maintenance schedule for line inspection</li>
                     </ul>
                 </div>
             </div>
         `;
-    } else if (prediction === 'Warning' || prediction === 'Medium Risk') {
+    } else if (prediction === 'Transformer Failure') {
+        recommendations = `
+            <div class="ai-recommendation-item critical">
+                <div class="recommendation-icon">🔌</div>
+                <div class="recommendation-content">
+                    <h4>Transformer Failure Detected - Critical Alert</h4>
+                    <p><strong>Critical System Alert:</strong> Transformer failure detected. This will cause power outages and potential equipment damage.</p>
+                    <ul>
+                        <li><strong>IMMEDIATE:</strong> Isolate transformer from grid</li>
+                        <li><strong>IMMEDIATE:</strong> Activate backup transformer if available</li>
+                        <li>Contact transformer maintenance team</li>
+                        <li>Monitor temperature and oil levels</li>
+                        <li>Prepare for extended downtime</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="ai-recommendation-item warning">
+                <div class="recommendation-icon">📋</div>
+                <div class="recommendation-content">
+                    <h4>Restoration Plan</h4>
+                    <p>System restoration and prevention measures:</p>
+                    <ul>
+                        <li>Schedule transformer replacement/repair</li>
+                        <li>Implement load shedding to protect other equipment</li>
+                        <li>Review transformer maintenance history</li>
+                        <li>Check environmental protection systems</li>
+                        <li>Update transformer monitoring protocols</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+    } else if (prediction === 'Overheating') {
         recommendations = `
             <div class="ai-recommendation-item warning">
-                <div class="recommendation-icon">⚠️</div>
+                <div class="recommendation-icon">🌡️</div>
                 <div class="recommendation-content">
-                    <h4>Proactive Measures</h4>
-                    <p>Your system shows warning signs that require attention to prevent potential faults.</p>
+                    <h4>Overheating Detected - Thermal Alert</h4>
+                    <p><strong>Thermal Warning:</strong> System overheating detected. Immediate cooling measures required to prevent equipment damage.</p>
                     <ul>
-                        <li>Schedule maintenance within 24-48 hours</li>
-                        <li>Monitor parameters closely</li>
-                        <li>Check environmental conditions</li>
-                        <li>Review equipment performance</li>
+                        <li><strong>IMMEDIATE:</strong> Reduce load on affected equipment</li>
+                        <li><strong>IMMEDIATE:</strong> Activate cooling systems</li>
+                        <li>Monitor temperature trends continuously</li>
+                        <li>Check ventilation and airflow</li>
+                        <li>Prepare for emergency shutdown if temperature rises</li>
                     </ul>
                 </div>
             </div>
             
             <div class="ai-recommendation-item info">
-                <div class="recommendation-icon">🔧</div>
+                <div class="recommendation-icon">❄️</div>
                 <div class="recommendation-content">
-                    <h4>Maintenance Recommendations</h4>
-                    <p>Recommended maintenance actions:</p>
+                    <h4>Cooling Solutions</h4>
+                    <p>Immediate and long-term cooling measures:</p>
                     <ul>
-                        <li>Clean electrical contacts</li>
-                        <li>Check insulation resistance</li>
-                        <li>Calibrate measuring instruments</li>
-                        <li>Update documentation</li>
+                        <li>Increase forced air circulation</li>
+                        <li>Check and clean air filters</li>
+                        <li>Review ambient temperature conditions</li>
+                        <li>Schedule thermal imaging inspection</li>
+                        <li>Consider additional cooling equipment</li>
                     </ul>
                 </div>
             </div>
         `;
-    } else {
+    } else if (prediction === 'System Offline') {
+        recommendations = `
+            <div class="ai-recommendation-item warning">
+                <div class="recommendation-icon">🔌</div>
+                <div class="recommendation-content">
+                    <h4>System Offline - Power Issue</h4>
+                    <p><strong>System Alert:</strong> System appears to be offline or not operational. All parameters are at zero values.</p>
+                    <ul>
+                        <li><strong>PRIORITY:</strong> Check main power supply connections</li>
+                        <li><strong>PRIORITY:</strong> Verify circuit breakers and fuses</li>
+                        <li>Test backup power systems</li>
+                        <li>Inspect power distribution equipment</li>
+                        <li>Contact system operator for status</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="ai-recommendation-item info">
+                <div class="recommendation-icon">🔍</div>
+                <div class="recommendation-content">
+                    <h4>Diagnostic Steps</h4>
+                    <p>System restoration procedures:</p>
+                    <ul>
+                        <li>Enter actual system parameters for analysis</li>
+                        <li>Verify sensor and monitoring equipment</li>
+                        <li>Check communication systems</li>
+                        <li>Review system logs and alarms</li>
+                        <li>Test system startup procedures</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+    } else if (prediction === 'System Normal') {
         recommendations = `
             <div class="ai-recommendation-item success">
                 <div class="recommendation-icon">✅</div>
                 <div class="recommendation-content">
-                    <h4>System Normal</h4>
-                    <p>Your electrical system is operating within normal parameters. Continue with regular maintenance schedules.</p>
+                    <h4>System Normal - Optimal Operation</h4>
+                    <p><strong>Status:</strong> All system parameters are within normal operating ranges. System is functioning optimally.</p>
                     <ul>
-                        <li>Maintain current monitoring schedule</li>
-                        <li>Continue preventive maintenance</li>
-                        <li>Document all readings</li>
-                        <li>Stay alert for any changes</li>
+                        <li>Continue current monitoring schedule</li>
+                        <li>Maintain preventive maintenance routine</li>
+                        <li>Document all system readings</li>
+                        <li>Stay vigilant for parameter changes</li>
+                        <li>Keep emergency procedures updated</li>
                     </ul>
                 </div>
             </div>
@@ -640,13 +709,47 @@ function generateAIRecommendations(result) {
             <div class="ai-recommendation-item info">
                 <div class="recommendation-icon">📊</div>
                 <div class="recommendation-content">
-                    <h4>Optimization Tips</h4>
-                    <p>To maintain optimal performance:</p>
+                    <h4>Optimization Recommendations</h4>
+                    <p>To maintain and improve system performance:</p>
                     <ul>
-                        <li>Regular parameter monitoring</li>
-                        <li>Environmental control</li>
-                        <li>Load management</li>
-                        <li>Staff training updates</li>
+                        <li>Regular parameter trend analysis</li>
+                        <li>Environmental condition monitoring</li>
+                        <li>Load management optimization</li>
+                        <li>Staff training and certification updates</li>
+                        <li>Technology upgrade planning</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+    } else {
+        // Fallback for unknown prediction types
+        recommendations = `
+            <div class="ai-recommendation-item warning">
+                <div class="recommendation-icon">❓</div>
+                <div class="recommendation-content">
+                    <h4>Unknown System Status</h4>
+                    <p><strong>Analysis Result:</strong> ${prediction} - This prediction type requires manual review.</p>
+                    <ul>
+                        <li>Review system parameters manually</li>
+                        <li>Consult with technical experts</li>
+                        <li>Check system documentation</li>
+                        <li>Verify sensor readings</li>
+                        <li>Contact system administrator</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="ai-recommendation-item info">
+                <div class="recommendation-icon">🔍</div>
+                <div class="recommendation-content">
+                    <h4>Further Investigation</h4>
+                    <p>Recommended next steps:</p>
+                    <ul>
+                        <li>Double-check input parameters</li>
+                        <li>Review system logs</li>
+                        <li>Perform manual system inspection</li>
+                        <li>Update system software if needed</li>
+                        <li>Document findings and recommendations</li>
                     </ul>
                 </div>
             </div>
