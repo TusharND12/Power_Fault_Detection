@@ -3060,6 +3060,16 @@ function generateAIResponse(userMessage) {
     const technicalKeywords = ['voltage', 'current', 'power', 'electric', 'electrical', 'circuit', 'wiring', 'transformer', 'generator', 'load', 'frequency', 'insulation', 'grounding', 'resistance'];
     const leakageKeywords = ['leakage', 'leak', 'ground fault', 'insulation', 'isolation', 'leakage current', 'earth fault', 'grounding'];
     
+    // General knowledge categories for ChatGPT-like responses
+    const technologyKeywords = ['technology', 'computer', 'software', 'programming', 'coding', 'ai', 'artificial intelligence', 'machine learning', 'data science', 'internet', 'website', 'app', 'mobile', 'phone'];
+    const scienceKeywords = ['science', 'physics', 'chemistry', 'biology', 'mathematics', 'math', 'research', 'experiment', 'theory', 'hypothesis', 'discovery', 'innovation'];
+    const healthKeywords = ['health', 'medical', 'medicine', 'doctor', 'hospital', 'treatment', 'disease', 'symptoms', 'cure', 'therapy', 'wellness', 'fitness', 'exercise', 'diet', 'nutrition'];
+    const educationKeywords = ['education', 'school', 'university', 'college', 'student', 'teacher', 'learning', 'study', 'course', 'degree', 'academic', 'research', 'knowledge', 'skill'];
+    const businessKeywords = ['business', 'company', 'management', 'marketing', 'finance', 'economy', 'investment', 'stock', 'market', 'entrepreneur', 'startup', 'career', 'job', 'work'];
+    const entertainmentKeywords = ['movie', 'film', 'music', 'game', 'sport', 'book', 'novel', 'art', 'culture', 'entertainment', 'fun', 'hobby', 'travel', 'vacation'];
+    const foodKeywords = ['food', 'cooking', 'recipe', 'restaurant', 'meal', 'drink', 'coffee', 'tea', 'wine', 'beer', 'dessert', 'cuisine', 'ingredient'];
+    const lifestyleKeywords = ['lifestyle', 'home', 'family', 'relationship', 'marriage', 'friendship', 'social', 'community', 'environment', 'sustainability', 'climate', 'nature', 'animal'];
+    
     let response = '';
     let responseGenerated = false;
     
@@ -3784,6 +3794,579 @@ What would you like to learn more about? I'm here to help guide your learning jo
         response = responses[Math.floor(Math.random() * responses.length)];
         console.log('Using default response pattern, response:', response);
         responseGenerated = true;
+    }
+    
+    // General Knowledge Categories for ChatGPT-like responses
+    if (!responseGenerated) {
+        if (technologyKeywords.some(keyword => message.includes(keyword))) {
+            response = `💻 **Technology and Innovation Guide:**
+
+**Current Technology Trends:**
+• **Artificial Intelligence**: Machine learning, deep learning, neural networks
+• **Cloud Computing**: AWS, Azure, Google Cloud, serverless architecture
+• **Mobile Development**: iOS, Android, React Native, Flutter
+• **Web Development**: React, Vue, Angular, Node.js, full-stack development
+• **Data Science**: Python, R, SQL, big data analytics, visualization
+
+**Programming Languages:**
+• **Python**: Data science, AI, web development, automation
+• **JavaScript**: Web development, mobile apps, server-side programming
+• **Java**: Enterprise applications, Android development
+• **C++**: System programming, game development, performance-critical applications
+• **Go**: Cloud services, microservices, concurrent programming
+
+**Development Tools:**
+• **Version Control**: Git, GitHub, GitLab, Bitbucket
+• **IDEs**: VS Code, IntelliJ, PyCharm, Sublime Text
+• **DevOps**: Docker, Kubernetes, CI/CD pipelines, monitoring
+• **Databases**: PostgreSQL, MongoDB, Redis, Elasticsearch
+• **Testing**: Unit testing, integration testing, automation frameworks
+
+**Emerging Technologies:**
+• **Blockchain**: Cryptocurrency, smart contracts, DeFi
+• **IoT**: Internet of Things, sensors, connected devices
+• **AR/VR**: Augmented reality, virtual reality, mixed reality
+• **Quantum Computing**: Quantum algorithms, cryptography, optimization
+• **5G**: Next-generation wireless networks, edge computing
+
+**Career in Technology:**
+• **Software Engineer**: Full-stack development, system design
+• **Data Scientist**: Analytics, machine learning, business intelligence
+• **DevOps Engineer**: Infrastructure, automation, cloud platforms
+• **Product Manager**: Strategy, user experience, technical leadership
+• **Cybersecurity**: Security analysis, penetration testing, compliance
+
+**Learning Resources:**
+• **Online Courses**: Coursera, Udemy, edX, Pluralsight
+• **Documentation**: Official docs, Stack Overflow, GitHub
+• **Communities**: Reddit, Discord, LinkedIn, technical blogs
+• **Practice**: LeetCode, HackerRank, CodeWars, personal projects
+• **Certifications**: AWS, Google Cloud, Microsoft, CompTIA
+
+Would you like specific guidance on any technology topic?`;
+            console.log('Matched technology pattern, response:', response);
+            responseGenerated = true;
+        } else if (scienceKeywords.some(keyword => message.includes(keyword))) {
+            response = `🔬 **Science and Research Guide:**
+
+**Core Scientific Disciplines:**
+• **Physics**: Quantum mechanics, relativity, particle physics, cosmology
+• **Chemistry**: Organic, inorganic, physical, analytical chemistry
+• **Biology**: Genetics, evolution, ecology, molecular biology
+• **Mathematics**: Algebra, calculus, statistics, discrete mathematics
+• **Earth Sciences**: Geology, meteorology, oceanography, environmental science
+
+**Scientific Method:**
+• **Observation**: Gathering data and identifying patterns
+• **Hypothesis**: Formulating testable explanations
+• **Experiment**: Designing controlled tests and measurements
+• **Analysis**: Statistical analysis and data interpretation
+• **Conclusion**: Drawing evidence-based conclusions
+
+**Research Process:**
+• **Literature Review**: Analyzing existing research and knowledge
+• **Experimental Design**: Planning methodology and controls
+• **Data Collection**: Systematic measurement and recording
+• **Statistical Analysis**: Using appropriate statistical methods
+• **Peer Review**: Publication and scientific validation
+
+**Modern Scientific Tools:**
+• **Computational**: MATLAB, R, Python, simulation software
+• **Laboratory**: Microscopes, spectrometers, chromatography
+• **Field Work**: Sensors, drones, GPS, data loggers
+• **Analysis**: Statistical software, visualization tools
+• **Collaboration**: Research networks, open science platforms
+
+**Scientific Careers:**
+• **Researcher**: Academia, industry, government laboratories
+• **Engineer**: Applied science, product development, innovation
+• **Data Analyst**: Scientific data interpretation and modeling
+• **Science Writer**: Communicating complex concepts to public
+• **Educator**: Teaching science at various levels
+
+**Recent Scientific Breakthroughs:**
+• **Gene Editing**: CRISPR technology, personalized medicine
+• **Climate Science**: Global warming research, renewable energy
+• **Space Exploration**: Mars missions, exoplanet discovery
+• **Quantum Physics**: Quantum computers, quantum communication
+• **Neuroscience**: Brain mapping, artificial neural networks
+
+**Scientific Ethics:**
+• **Research Integrity**: Honest reporting, avoiding bias
+• **Animal Welfare**: Ethical treatment in research
+• **Environmental Impact**: Sustainable research practices
+• **Data Privacy**: Protecting research participants
+• **Open Science**: Sharing knowledge and collaboration
+
+Need guidance on any specific scientific topic or research area?`;
+            console.log('Matched science pattern, response:', response);
+            responseGenerated = true;
+        } else if (healthKeywords.some(keyword => message.includes(keyword))) {
+            response = `🏥 **Health and Wellness Guide:**
+
+**Physical Health:**
+• **Exercise**: Cardiovascular fitness, strength training, flexibility
+• **Nutrition**: Balanced diet, vitamins, minerals, hydration
+• **Sleep**: Quality rest, sleep hygiene, circadian rhythms
+• **Preventive Care**: Regular checkups, screenings, vaccinations
+• **Chronic Disease Management**: Diabetes, hypertension, heart disease
+
+**Mental Health:**
+• **Stress Management**: Meditation, mindfulness, relaxation techniques
+• **Emotional Well-being**: Therapy, counseling, support groups
+• **Cognitive Health**: Brain training, memory exercises, learning
+• **Social Connections**: Relationships, community involvement
+• **Work-Life Balance**: Boundaries, time management, self-care
+
+**Common Health Conditions:**
+• **Cardiovascular**: Heart disease, stroke, hypertension
+• **Respiratory**: Asthma, COPD, allergies, infections
+• **Digestive**: IBS, GERD, food intolerances, digestive health
+• **Mental Health**: Anxiety, depression, PTSD, bipolar disorder
+• **Chronic Pain**: Arthritis, migraines, back pain, fibromyalgia
+
+**Healthy Lifestyle Habits:**
+• **Diet**: Whole foods, fruits, vegetables, lean proteins
+• **Exercise**: 150 minutes moderate activity weekly
+• **Hydration**: 8 glasses of water daily, limit sugary drinks
+• **Sleep**: 7-9 hours nightly, consistent sleep schedule
+• **Stress Relief**: Yoga, meditation, hobbies, social activities
+
+**Medical Specialties:**
+• **Primary Care**: General practitioners, family medicine
+• **Specialists**: Cardiology, dermatology, neurology, orthopedics
+• **Mental Health**: Psychiatry, psychology, therapy, counseling
+• **Preventive Medicine**: Public health, epidemiology, wellness
+• **Emergency Medicine**: Trauma care, urgent care, critical care
+
+**Health Technology:**
+• **Telemedicine**: Remote consultations, health monitoring
+• **Wearables**: Fitness trackers, heart rate monitors, sleep tracking
+• **Health Apps**: Medication reminders, symptom tracking, nutrition
+• **Medical Devices**: Blood pressure monitors, glucose meters
+• **Electronic Health Records**: Digital health information systems
+
+**Health Education:**
+• **Self-Care**: Recognizing symptoms, basic first aid
+• **Health Literacy**: Understanding medical information
+• **Prevention**: Vaccinations, screenings, healthy behaviors
+• **Emergency Preparedness**: First aid, emergency contacts
+• **Health Advocacy**: Navigating healthcare system, insurance
+
+**Mental Health Support:**
+• **Crisis Resources**: Suicide prevention hotlines, emergency services
+• **Therapy Options**: Individual, group, family, couples therapy
+• **Medication Management**: Psychiatric medications, side effects
+• **Support Groups**: Peer support, community resources
+• **Self-Help**: Books, apps, online resources, mindfulness
+
+**Important Note**: This information is for educational purposes only and should not replace professional medical advice. Always consult healthcare providers for medical concerns.
+
+Need guidance on any specific health topic or wellness practice?`;
+            console.log('Matched health pattern, response:', response);
+            responseGenerated = true;
+        } else if (educationKeywords.some(keyword => message.includes(keyword))) {
+            response = `🎓 **Education and Learning Guide:**
+
+**Educational Levels:**
+• **Early Childhood**: Preschool, kindergarten, foundational skills
+• **Primary Education**: Elementary school, basic literacy and numeracy
+• **Secondary Education**: High school, college preparation, career exploration
+• **Higher Education**: University, college, professional degrees
+• **Continuing Education**: Professional development, lifelong learning
+
+**Learning Methods:**
+• **Visual Learning**: Diagrams, charts, videos, infographics
+• **Auditory Learning**: Lectures, discussions, podcasts, music
+• **Kinesthetic Learning**: Hands-on activities, experiments, practice
+• **Reading/Writing**: Books, articles, note-taking, essays
+• **Digital Learning**: Online courses, interactive platforms, apps
+
+**Study Strategies:**
+• **Time Management**: Scheduling, prioritization, goal setting
+• **Active Learning**: Note-taking, summarizing, teaching others
+• **Memory Techniques**: Mnemonics, repetition, spaced practice
+• **Problem-Solving**: Breaking down complex problems, practice
+• **Collaborative Learning**: Study groups, peer tutoring, discussion
+
+**Educational Technology:**
+• **Learning Management Systems**: Canvas, Blackboard, Moodle
+• **Online Platforms**: Coursera, Khan Academy, edX, Udemy
+• **Educational Apps**: Duolingo, Quizlet, Photomath, Notion
+• **Virtual Reality**: Immersive learning experiences, simulations
+• **Artificial Intelligence**: Personalized learning, adaptive systems
+
+**Academic Skills:**
+• **Research**: Information literacy, critical thinking, analysis
+• **Writing**: Essays, reports, academic papers, citations
+• **Mathematics**: Problem-solving, logical reasoning, calculations
+• **Science**: Experimental design, data analysis, hypothesis testing
+• **Languages**: Grammar, vocabulary, communication, cultural understanding
+
+**Career Preparation:**
+• **Skills Development**: Technical skills, soft skills, leadership
+• **Internships**: Work experience, networking, career exploration
+• **Certifications**: Professional credentials, industry standards
+• **Portfolio Building**: Projects, achievements, work samples
+• **Networking**: Professional relationships, mentors, industry contacts
+
+**Specialized Education:**
+• **STEM**: Science, Technology, Engineering, Mathematics
+• **Liberal Arts**: Humanities, social sciences, critical thinking
+• **Vocational**: Trade skills, technical training, apprenticeships
+• **Professional**: Law, medicine, business, engineering degrees
+• **Creative**: Arts, design, music, writing, performance
+
+**Learning Challenges:**
+• **Learning Disabilities**: ADHD, dyslexia, processing disorders
+• **Language Barriers**: ESL learners, multilingual support
+• **Financial Constraints**: Scholarships, grants, financial aid
+• **Time Management**: Balancing work, family, and education
+• **Motivation**: Goal setting, accountability, support systems
+
+**Educational Resources:**
+• **Libraries**: Books, databases, research assistance, quiet study spaces
+• **Online Resources**: Open educational resources, free courses
+• **Tutoring**: One-on-one help, peer tutoring, professional services
+• **Study Materials**: Textbooks, workbooks, practice tests, flashcards
+• **Academic Support**: Writing centers, math labs, study skills workshops
+
+**Future of Education:**
+• **Personalized Learning**: AI-driven adaptive learning systems
+• **Micro-credentials**: Short-term skill certifications, badges
+• **Global Learning**: International programs, cultural exchange
+• **Lifelong Learning**: Continuous skill development, career changes
+• **Digital Transformation**: Virtual classrooms, hybrid learning models
+
+Need guidance on any specific educational topic or learning strategy?`;
+            console.log('Matched education pattern, response:', response);
+            responseGenerated = true;
+        } else if (businessKeywords.some(keyword => message.includes(keyword))) {
+            response = `💼 **Business and Career Guide:**
+
+**Business Fundamentals:**
+• **Strategy**: Planning, vision, mission, competitive analysis
+• **Operations**: Processes, efficiency, quality control, supply chain
+• **Marketing**: Branding, advertising, customer acquisition, retention
+• **Finance**: Budgeting, accounting, investment, risk management
+• **Human Resources**: Recruitment, training, performance management
+
+**Entrepreneurship:**
+• **Business Planning**: Market research, business model, feasibility
+• **Startup Launch**: Funding, legal structure, team building
+• **Growth Strategies**: Scaling, market expansion, partnerships
+• **Innovation**: Product development, technology adoption, disruption
+• **Risk Management**: Insurance, compliance, financial planning
+
+**Career Development:**
+• **Skill Building**: Technical skills, soft skills, leadership development
+• **Networking**: Professional relationships, industry connections, mentors
+• **Job Search**: Resume writing, interviewing, salary negotiation
+• **Career Advancement**: Promotions, lateral moves, career changes
+• **Professional Branding**: LinkedIn, personal website, thought leadership
+
+**Financial Management:**
+• **Personal Finance**: Budgeting, saving, investing, retirement planning
+• **Business Finance**: Cash flow, profit margins, financial statements
+• **Investment**: Stocks, bonds, real estate, alternative investments
+• **Risk Management**: Insurance, diversification, emergency funds
+• **Tax Planning**: Deductions, credits, tax-efficient strategies
+
+**Leadership and Management:**
+• **Team Leadership**: Motivation, delegation, conflict resolution
+• **Strategic Thinking**: Long-term planning, decision-making, problem-solving
+• **Communication**: Presentations, meetings, written communication
+• **Change Management**: Organizational change, cultural transformation
+• **Performance Management**: Goal setting, feedback, development plans
+
+**Industry Sectors:**
+• **Technology**: Software, hardware, digital services, tech startups
+• **Healthcare**: Medical devices, pharmaceuticals, healthcare services
+• **Finance**: Banking, insurance, investment, fintech
+• **Manufacturing**: Production, supply chain, quality control
+• **Retail**: E-commerce, brick-and-mortar, customer experience
+
+**Market Analysis:**
+• **Market Research**: Customer needs, competitive landscape, trends
+• **Financial Analysis**: Revenue, costs, profitability, growth potential
+• **SWOT Analysis**: Strengths, weaknesses, opportunities, threats
+• **Porter's Five Forces**: Industry analysis, competitive positioning
+• **Customer Segmentation**: Target markets, buyer personas, positioning
+
+**Business Operations:**
+• **Project Management**: Planning, execution, monitoring, delivery
+• **Quality Control**: Standards, testing, continuous improvement
+• **Supply Chain**: Sourcing, logistics, inventory management
+• **Customer Service**: Support, satisfaction, retention strategies
+• **Data Analytics**: Performance metrics, insights, decision-making
+
+**Professional Development:**
+• **Certifications**: Industry credentials, professional qualifications
+• **Continuing Education**: Courses, workshops, conferences, seminars
+• **Mentorship**: Finding mentors, being a mentor, career guidance
+• **Industry Involvement**: Professional associations, networking events
+• **Skill Assessment**: Identifying strengths, development areas, goals
+
+**Global Business:**
+• **International Markets**: Expansion, cultural considerations, regulations
+• **Supply Chain Management**: Global sourcing, logistics, risk management
+• **Cross-Cultural Communication**: Working with diverse teams, clients
+• **Trade and Commerce**: Import/export, tariffs, international agreements
+• **Digital Transformation**: Technology adoption, remote work, automation
+
+Need guidance on any specific business topic or career development area?`;
+            console.log('Matched business pattern, response:', response);
+            responseGenerated = true;
+        } else if (entertainmentKeywords.some(keyword => message.includes(keyword))) {
+            response = `🎬 **Entertainment and Leisure Guide:**
+
+**Movies and Film:**
+• **Genres**: Action, comedy, drama, horror, sci-fi, romance, documentary
+• **Film Production**: Scriptwriting, directing, cinematography, editing
+• **Film History**: Classic movies, influential directors, film movements
+• **Streaming Platforms**: Netflix, Disney+, Amazon Prime, HBO Max
+• **Film Analysis**: Themes, symbolism, cinematography, storytelling
+
+**Music and Audio:**
+• **Genres**: Pop, rock, classical, jazz, hip-hop, electronic, folk
+• **Music Production**: Recording, mixing, mastering, sound engineering
+• **Instruments**: Guitar, piano, drums, violin, digital audio workstations
+• **Music Theory**: Scales, chords, harmony, rhythm, composition
+• **Music Streaming**: Spotify, Apple Music, YouTube Music, SoundCloud
+
+**Gaming and Interactive Media:**
+• **Game Genres**: RPG, FPS, strategy, puzzle, sports, simulation
+• **Game Development**: Programming, design, art, sound, testing
+• **Gaming Platforms**: PC, console, mobile, VR, cloud gaming
+• **Esports**: Competitive gaming, tournaments, professional players
+• **Game Analysis**: Mechanics, narrative, player experience, design
+
+**Books and Literature:**
+• **Genres**: Fiction, non-fiction, mystery, fantasy, sci-fi, biography
+• **Reading Strategies**: Speed reading, comprehension, note-taking
+• **Book Recommendations**: Bestsellers, classics, contemporary works
+• **Writing**: Creative writing, technical writing, blogging, journalism
+• **Publishing**: Traditional publishing, self-publishing, digital platforms
+
+**Sports and Physical Activities:**
+• **Team Sports**: Football, basketball, soccer, baseball, hockey
+• **Individual Sports**: Tennis, golf, swimming, running, cycling
+• **Fitness Activities**: Gym workouts, yoga, pilates, martial arts
+• **Outdoor Activities**: Hiking, camping, rock climbing, water sports
+• **Sports Analysis**: Statistics, strategy, player performance, coaching
+
+**Arts and Culture:**
+• **Visual Arts**: Painting, sculpture, photography, digital art
+• **Performing Arts**: Theater, dance, opera, musical performances
+• **Cultural Events**: Festivals, exhibitions, concerts, shows
+• **Art History**: Movements, artists, techniques, cultural significance
+• **Creative Expression**: Drawing, crafting, DIY projects, hobbies
+
+**Travel and Adventure:**
+• **Travel Planning**: Destinations, budgeting, itineraries, bookings
+• **Travel Types**: Solo travel, group tours, adventure travel, luxury
+• **Cultural Experiences**: Local customs, cuisine, historical sites
+• **Travel Technology**: Apps, booking platforms, navigation, translation
+• **Sustainable Travel**: Eco-friendly tourism, responsible travel practices
+
+**Digital Entertainment:**
+• **Social Media**: Content creation, community building, influencer marketing
+• **Podcasts**: Audio content, interviews, educational, entertainment
+• **YouTube**: Video content, tutorials, reviews, entertainment
+• **TikTok**: Short-form video, trends, creative expression
+• **Live Streaming**: Gaming, music, educational content, social interaction
+
+**Hobbies and Interests:**
+• **Creative Hobbies**: Drawing, painting, writing, photography, crafting
+• **Technical Hobbies**: Programming, electronics, robotics, 3D printing
+• **Collecting**: Stamps, coins, cards, memorabilia, antiques
+• **Gardening**: Plant care, landscaping, indoor gardening, composting
+• **Cooking**: Recipes, techniques, international cuisine, baking
+
+**Entertainment Industry:**
+• **Career Opportunities**: Acting, directing, producing, technical roles
+• **Industry Trends**: Streaming, virtual reality, AI in entertainment
+• **Business Aspects**: Funding, marketing, distribution, revenue models
+• **Technology Impact**: Digital effects, streaming platforms, social media
+• **Future Developments**: Metaverse, virtual concerts, interactive content
+
+Need recommendations or guidance on any specific entertainment topic or hobby?`;
+            console.log('Matched entertainment pattern, response:', response);
+            responseGenerated = true;
+        } else if (foodKeywords.some(keyword => message.includes(keyword))) {
+            response = `🍽️ **Food and Culinary Guide:**
+
+**Cooking Techniques:**
+• **Basic Methods**: Boiling, steaming, frying, baking, grilling, sautéing
+• **Advanced Techniques**: Sous vide, fermentation, molecular gastronomy
+• **Knife Skills**: Chopping, dicing, julienne, chiffonade, proper handling
+• **Temperature Control**: Heat management, doneness levels, food safety
+• **Flavor Development**: Seasoning, marinating, reducing, layering flavors
+
+**Cuisine Types:**
+• **International**: Italian, French, Chinese, Japanese, Indian, Mexican
+• **Regional Specialties**: Local ingredients, traditional methods, cultural significance
+• **Fusion Cooking**: Combining different culinary traditions and techniques
+• **Vegetarian/Vegan**: Plant-based cooking, protein alternatives, nutrition
+• **Health-Conscious**: Low-carb, gluten-free, organic, superfoods
+
+**Ingredients and Nutrition:**
+• **Essential Ingredients**: Herbs, spices, oils, vinegars, stocks, sauces
+• **Protein Sources**: Meat, poultry, fish, legumes, tofu, tempeh
+• **Vegetables**: Seasonal produce, preparation methods, storage tips
+• **Grains and Starches**: Rice, pasta, quinoa, potatoes, bread making
+• **Nutritional Balance**: Macronutrients, vitamins, minerals, dietary needs
+
+**Beverages:**
+• **Coffee**: Brewing methods, bean types, roasting, specialty drinks
+• **Tea**: Types, brewing techniques, health benefits, cultural traditions
+• **Wine**: Varieties, food pairings, tasting, storage, regions
+• **Cocktails**: Classic recipes, mixology techniques, garnishes
+• **Non-Alcoholic**: Juices, smoothies, kombucha, herbal infusions
+
+**Cooking Equipment:**
+• **Essential Tools**: Knives, cutting boards, pots, pans, measuring tools
+• **Small Appliances**: Blenders, food processors, stand mixers, slow cookers
+• **Specialty Equipment**: Pressure cookers, air fryers, immersion circulators
+• **Baking Equipment**: Ovens, scales, molds, piping tools, thermometers
+• **Storage Solutions**: Containers, vacuum sealers, preservation methods
+
+**Recipe Development:**
+• **Recipe Structure**: Ingredients, measurements, instructions, timing
+• **Scaling Recipes**: Adjusting quantities, maintaining proportions
+• **Substitutions**: Ingredient alternatives, dietary modifications
+• **Testing and Refining**: Taste testing, texture adjustments, balance
+• **Documentation**: Recipe writing, photography, sharing methods
+
+**Food Safety and Storage:**
+• **Food Safety**: Temperature control, cross-contamination prevention
+• **Storage Methods**: Refrigeration, freezing, pantry organization
+• **Preservation**: Canning, pickling, drying, fermentation techniques
+• **Allergen Management**: Identifying allergens, safe preparation methods
+• **Hygiene Practices**: Cleanliness, sanitization, safe handling
+
+**Restaurant and Food Service:**
+• **Menu Planning**: Seasonal menus, cost control, dietary accommodations
+• **Kitchen Operations**: Workflow, timing, quality control, efficiency
+• **Service Standards**: Customer experience, presentation, hospitality
+• **Food Cost Management**: Pricing, waste reduction, inventory control
+• **Industry Trends**: Farm-to-table, sustainability, technology integration
+
+**Cultural and Social Aspects:**
+• **Food Traditions**: Holiday meals, family recipes, cultural celebrations
+• **Social Dining**: Dinner parties, potlucks, community meals
+• **Food Education**: Cooking classes, culinary schools, mentorship
+• **Food Writing**: Blogs, reviews, cookbooks, food journalism
+• **Food Photography**: Styling, lighting, composition, social media
+
+**Health and Dietary Considerations:**
+• **Special Diets**: Keto, paleo, Mediterranean, DASH, plant-based
+• **Food Allergies**: Management, safe cooking, ingredient awareness
+• **Nutritional Goals**: Weight management, muscle building, health conditions
+• **Meal Planning**: Batch cooking, prep work, balanced meals
+• **Mindful Eating**: Portion control, eating habits, food relationships
+
+**Food Science:**
+• **Chemical Reactions**: Maillard reaction, caramelization, fermentation
+• **Texture and Consistency**: Emulsification, gelatinization, protein denaturation
+• **Temperature Effects**: Cooking temperatures, food safety, doneness
+• **Ingredient Interactions**: Acid-base reactions, fat emulsification
+• **Preservation Science**: Microbial control, chemical preservation, packaging
+
+Need guidance on any specific cooking technique, cuisine, or food-related topic?`;
+            console.log('Matched food pattern, response:', response);
+            responseGenerated = true;
+        } else if (lifestyleKeywords.some(keyword => message.includes(keyword))) {
+            response = `🌱 **Lifestyle and Personal Development:**
+
+**Health and Wellness:**
+• **Physical Health**: Regular exercise, balanced nutrition, adequate sleep
+• **Mental Health**: Stress management, mindfulness, emotional well-being
+• **Preventive Care**: Regular checkups, screenings, vaccinations
+• **Healthy Habits**: Hydration, movement, stress reduction, self-care
+• **Chronic Disease Management**: Lifestyle modifications, medication adherence
+
+**Personal Growth:**
+• **Goal Setting**: SMART goals, action plans, progress tracking
+• **Skill Development**: Continuous learning, professional development
+• **Time Management**: Prioritization, productivity, work-life balance
+• **Financial Planning**: Budgeting, saving, investing, debt management
+• **Relationship Building**: Communication, empathy, conflict resolution
+
+**Home and Living:**
+• **Home Organization**: Decluttering, storage solutions, cleaning routines
+• **Interior Design**: Space planning, color schemes, furniture selection
+• **Gardening**: Plant care, landscaping, indoor gardening, composting
+• **Home Maintenance**: Repairs, improvements, energy efficiency
+• **Smart Home**: Technology integration, automation, security systems
+
+**Family and Relationships:**
+• **Family Dynamics**: Communication, boundaries, quality time
+• **Parenting**: Child development, discipline, education, activities
+• **Marriage and Partnerships**: Communication, intimacy, shared goals
+• **Friendships**: Maintaining relationships, making new friends, social skills
+• **Elder Care**: Aging parents, healthcare, independence, support systems
+
+**Social and Community:**
+• **Community Involvement**: Volunteering, local events, civic engagement
+• **Social Skills**: Networking, public speaking, active listening
+• **Cultural Awareness**: Diversity, inclusion, cultural sensitivity
+• **Digital Citizenship**: Online etiquette, privacy, responsible social media use
+• **Environmental Stewardship**: Sustainability, conservation, eco-friendly practices
+
+**Hobbies and Interests:**
+• **Creative Pursuits**: Art, music, writing, crafting, photography
+• **Physical Activities**: Sports, fitness, outdoor adventures, dancing
+• **Intellectual Hobbies**: Reading, learning languages, puzzles, games
+• **Collecting**: Stamps, coins, art, books, memorabilia
+• **Technology**: Programming, electronics, gaming, digital content creation
+
+**Work-Life Balance:**
+• **Time Management**: Scheduling, prioritization, delegation
+• **Stress Management**: Relaxation techniques, boundaries, self-care
+• **Remote Work**: Home office setup, productivity, communication
+• **Career Development**: Skill building, networking, advancement
+• **Financial Wellness**: Budgeting, investing, retirement planning
+
+**Environmental Consciousness:**
+• **Sustainable Living**: Reduce, reuse, recycle, minimalism
+• **Energy Efficiency**: Home improvements, renewable energy, conservation
+• **Eco-Friendly Products**: Green cleaning, sustainable materials, ethical consumption
+• **Climate Action**: Carbon footprint reduction, advocacy, lifestyle changes
+• **Nature Connection**: Outdoor activities, environmental education, conservation
+
+**Personal Finance:**
+• **Budgeting**: Income tracking, expense management, financial goals
+• **Saving**: Emergency funds, short-term goals, long-term investments
+• **Investing**: Stocks, bonds, real estate, retirement accounts
+• **Debt Management**: Credit cards, loans, consolidation strategies
+• **Insurance**: Health, life, home, auto, disability coverage
+
+**Mental and Emotional Well-being:**
+• **Stress Management**: Meditation, yoga, breathing exercises, therapy
+• **Emotional Intelligence**: Self-awareness, empathy, relationship skills
+• **Mindfulness**: Present-moment awareness, gratitude, acceptance
+• **Self-Care**: Rest, recreation, pampering, personal time
+• **Support Systems**: Friends, family, professionals, support groups
+
+**Technology and Digital Life:**
+• **Digital Wellness**: Screen time management, digital detox, online safety
+• **Social Media**: Healthy usage, privacy, content creation, networking
+• **Online Learning**: Courses, tutorials, skill development, certifications
+• **Digital Organization**: File management, cloud storage, productivity apps
+• **Cybersecurity**: Password management, privacy protection, safe browsing
+
+**Life Transitions:**
+• **Career Changes**: Job searching, skill assessment, networking, preparation
+• **Relocation**: Moving planning, community integration, housing search
+• **Life Events**: Marriage, children, aging, retirement, loss
+• **Health Changes**: Chronic conditions, recovery, lifestyle adjustments
+• **Financial Changes**: Income changes, major purchases, investment decisions
+
+Need guidance on any specific lifestyle topic or personal development area?`;
+            console.log('Matched lifestyle pattern, response:', response);
+            responseGenerated = true;
+        }
     }
     
     // Ensure we have a response
