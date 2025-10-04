@@ -2876,13 +2876,14 @@ function formatBotMessage(content) {
 
 // Add message to chat
 function addMessage(content, sender) {
-    console.log('addMessage called with:', { content, sender });
-    const messagesContainer = document.getElementById('chatbotMessages');
-    if (!messagesContainer) {
-        console.log('chatbotMessages container not found');
-        return;
-    }
-    console.log('Adding message to chat:', content);
+    try {
+        console.log('addMessage called with:', { content, sender });
+        const messagesContainer = document.getElementById('chatbotMessages');
+        if (!messagesContainer) {
+            console.log('chatbotMessages container not found');
+            return;
+        }
+        console.log('Adding message to chat:', content);
 
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${sender}-message`;
@@ -2920,6 +2921,22 @@ function addMessage(content, sender) {
 
     // Scroll to bottom
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    } catch (error) {
+        console.error('Error in addMessage:', error);
+        console.error('Error details:', error.message);
+        console.error('Error stack:', error.stack);
+        
+        // Show error message in a simple way
+        const messagesContainer = document.getElementById('chatbotMessages');
+        if (messagesContainer) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'message bot-message';
+            errorDiv.innerHTML = '<div class="message-content">Error displaying message. Please try again.</div>';
+            messagesContainer.appendChild(errorDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    }
 }
 
 // Show typing indicator
@@ -3031,18 +3048,19 @@ window.testChatbot = testChatbot;
 
 // Generate AI response
 function generateAIResponse(userMessage) {
-    console.log('generateAIResponse called with:', userMessage);
-    
-    // Handle empty or invalid messages
-    if (!userMessage || typeof userMessage !== 'string' || userMessage.trim().length === 0) {
-        console.log('Empty or invalid message received');
-        showTypingIndicator();
-        setTimeout(() => {
-            hideTypingIndicator();
-            addMessage("I didn't receive a clear message. Could you please rephrase your question?", 'bot');
-        }, 1000);
-        return;
-    }
+    try {
+        console.log('generateAIResponse called with:', userMessage);
+        
+        // Handle empty or invalid messages
+        if (!userMessage || typeof userMessage !== 'string' || userMessage.trim().length === 0) {
+            console.log('Empty or invalid message received');
+            showTypingIndicator();
+            setTimeout(() => {
+                hideTypingIndicator();
+                addMessage("I didn't receive a clear message. Could you please rephrase your question?", 'bot');
+            }, 1000);
+            return;
+        }
     
     const message = userMessage.toLowerCase().trim();
     const cleanMessage = message.replace(/\s+/g, ''); // Remove all spaces for better matching
@@ -4389,6 +4407,19 @@ Need guidance on any specific lifestyle topic or personal development area?`;
         hideTypingIndicator();
         addMessage(response, 'bot');
     }, 1500); // 1.5 second delay
+    
+    } catch (error) {
+        console.error('Error in generateAIResponse:', error);
+        console.error('Error details:', error.message);
+        console.error('Error stack:', error.stack);
+        
+        // Fallback response
+        showTypingIndicator();
+        setTimeout(() => {
+            hideTypingIndicator();
+            addMessage("I apologize, but I encountered an error processing your message. Please try again or rephrase your question.", 'bot');
+        }, 1000);
+    }
 }
 
 // Analyze user data
@@ -4625,6 +4656,36 @@ function quickChatbotTest() {
     console.log('=== TEST MESSAGES SENT ===');
 }
 
+// Debug function to test chatbot responses
+function debugChatbot() {
+    console.log('=== CHATBOT DEBUG TEST ===');
+    
+    // Test basic response generation
+    console.log('Testing basic response generation...');
+    generateAIResponse('hello');
+    
+    // Test technology response
+    setTimeout(() => {
+        console.log('Testing technology response...');
+        generateAIResponse('how to learn programming');
+    }, 2000);
+    
+    // Test science response
+    setTimeout(() => {
+        console.log('Testing science response...');
+        generateAIResponse('what is quantum physics');
+    }, 4000);
+    
+    // Test health response
+    setTimeout(() => {
+        console.log('Testing health response...');
+        generateAIResponse('how to improve mental health');
+    }, 6000);
+    
+    console.log('=== DEBUG TEST COMPLETE ===');
+}
+
 // Make test functions available globally
 window.testChatbotFunctionality = testChatbotFunctionality;
 window.quickChatbotTest = quickChatbotTest;
+window.debugChatbot = debugChatbot;
