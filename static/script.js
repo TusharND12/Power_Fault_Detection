@@ -3048,16 +3048,17 @@ function generateAIResponse(userMessage) {
     const cleanMessage = message.replace(/\s+/g, ''); // Remove all spaces for better matching
     
     // Enhanced keywords for different topics
-    const preventionKeywords = ['prevent', 'avoid', 'prevention', 'safety', 'protect', 'secure', 'shield', 'safe', 'protection', 'precaution'];
-    const maintenanceKeywords = ['maintain', 'maintenance', 'repair', 'fix', 'service', 'check', 'inspect', 'upkeep', 'servicing', 'repairing'];
-    const emergencyKeywords = ['emergency', 'urgent', 'danger', 'hazard', 'accident', 'critical', 'alarm', 'crisis', 'disaster', 'malfunction'];
-    const analysisKeywords = ['analyze', 'analysis', 'data', 'parameters', 'values', 'monitor', 'check', 'examine', 'review', 'assess', 'evaluate'];
+    const preventionKeywords = ['prevent', 'avoid', 'prevention', 'safety', 'protect', 'secure', 'shield', 'safe', 'protection', 'precaution', 'reduce', 'minimize', 'decrease'];
+    const maintenanceKeywords = ['maintain', 'maintenance', 'repair', 'fix', 'service', 'check', 'inspect', 'upkeep', 'servicing', 'repairing', 'calibrate', 'clean', 'lubricate'];
+    const emergencyKeywords = ['emergency', 'urgent', 'danger', 'hazard', 'accident', 'critical', 'alarm', 'crisis', 'disaster', 'malfunction', 'fire', 'explosion'];
+    const analysisKeywords = ['analyze', 'analysis', 'data', 'parameters', 'values', 'monitor', 'check', 'examine', 'review', 'assess', 'evaluate', 'measure', 'test'];
     const generalKeywords = ['hello', 'hi', 'help', 'what', 'how', 'why', 'explain', 'tell', 'ask', 'question', 'information', 'know'];
-    const faultKeywords = ['fault', 'error', 'problem', 'issue', 'failure', 'breakdown', 'malfunction', 'defect', 'glitch', 'bug'];
+    const faultKeywords = ['fault', 'error', 'problem', 'issue', 'failure', 'breakdown', 'malfunction', 'defect', 'glitch', 'bug', 'leakage', 'leak'];
     const greetingKeywords = ['good morning', 'good afternoon', 'good evening', 'good night', 'morning', 'afternoon', 'evening', 'night', 'hello', 'hi', 'hey', 'greetings', 'good day', 'howdy'];
     const timeKeywords = ['time', 'clock', 'date', 'today', 'now', 'current', 'what time', 'what date'];
     const weatherKeywords = ['weather', 'temperature', 'rain', 'sunny', 'cloudy', 'storm', 'wind', 'hot', 'cold'];
-    const technicalKeywords = ['voltage', 'current', 'power', 'electric', 'electrical', 'circuit', 'wiring', 'transformer', 'generator', 'load', 'frequency'];
+    const technicalKeywords = ['voltage', 'current', 'power', 'electric', 'electrical', 'circuit', 'wiring', 'transformer', 'generator', 'load', 'frequency', 'insulation', 'grounding', 'resistance'];
+    const leakageKeywords = ['leakage', 'leak', 'ground fault', 'insulation', 'isolation', 'leakage current', 'earth fault', 'grounding'];
     
     let response = '';
     let responseGenerated = false;
@@ -3112,6 +3113,68 @@ function generateAIResponse(userMessage) {
 Would you like specific guidance on weather-related electrical safety measures?`;
         console.log('Matched weather pattern, response:', response);
         responseGenerated = true;
+    } else if (leakageKeywords.some(keyword => message.includes(keyword))) {
+        response = `⚡ **Electrical Leakage Reduction Guide:**
+
+**Understanding Electrical Leakage:**
+• **Leakage Current**: Unwanted current flow through insulation or to ground
+• **Ground Fault**: Current leaking to earth instead of returning through neutral
+• **Insulation Breakdown**: Deterioration allowing current leakage paths
+
+**Causes of Electrical Leakage:**
+• **Poor Insulation**: Damaged or degraded insulating materials
+• **Moisture Ingress**: Water contamination in electrical systems
+• **Aging Equipment**: Deterioration over time
+• **Poor Installation**: Incorrect wiring or connections
+• **Environmental Factors**: Humidity, temperature, contamination
+
+**Methods to Reduce Electrical Leakage:**
+
+**1. Insulation Improvements:**
+• Replace damaged insulation immediately
+• Use high-quality insulating materials
+• Ensure proper insulation thickness
+• Apply protective coatings where needed
+
+**2. Environmental Control:**
+• Maintain dry conditions (humidity < 60%)
+• Control temperature (15-35°C optimal)
+• Prevent moisture ingress
+• Use sealed enclosures for outdoor equipment
+
+**3. Grounding & Bonding:**
+• Install proper grounding systems
+• Ensure equipment bonding continuity
+• Use ground fault circuit interrupters (GFCIs)
+• Test ground resistance regularly (should be < 1Ω)
+
+**4. Preventive Measures:**
+• Regular insulation resistance testing (IR tests)
+• Thermal imaging surveys
+• Moisture detection systems
+• Routine maintenance schedules
+
+**5. Monitoring & Detection:**
+• Install ground fault monitors
+• Use leakage current relays
+• Implement continuous monitoring systems
+• Regular electrical safety inspections
+
+**Testing Procedures:**
+• **Insulation Resistance Test**: Should be > 1MΩ
+• **Ground Fault Testing**: Verify GFCI operation
+• **Leakage Current Measurement**: Monitor continuously
+• **Polarization Index**: Ratio of 10-minute to 1-minute IR readings
+
+**Safety Considerations:**
+• Always de-energize equipment before testing
+• Use proper test equipment and procedures
+• Follow lockout/tagout protocols
+• Consult qualified electricians for complex issues
+
+Need specific guidance for your electrical system?`;
+        console.log('Matched leakage pattern, response:', response);
+        responseGenerated = true;
     } else if (technicalKeywords.some(keyword => message.includes(keyword))) {
         response = `⚡ **Electrical System Guidance**
 
@@ -3137,53 +3200,297 @@ Would you like specific guidance on any particular electrical parameter or safet
         console.log('Matched technical pattern, response:', response);
         responseGenerated = true;
     } else if (preventionKeywords.some(keyword => message.includes(keyword))) {
-        response = `🛡️ **Prevention is Key!** Here are essential electrical safety measures:
+        response = `🛡️ **Comprehensive Electrical Prevention Guide:**
 
-• **Regular Monitoring**: Check parameters every 4 hours
-• **Environmental Control**: Maintain stable conditions
-• **Load Management**: Never exceed 80% of rated capacity
-• **Protection Systems**: Ensure all safety devices are functional
-• **Staff Training**: Keep everyone updated on safety procedures
-• **Documentation**: Record all readings and incidents
+**Core Prevention Strategies:**
 
-Would you like specific prevention strategies for your system?`;
+**1. System Monitoring & Inspection:**
+• **Regular Parameter Checks**: Voltage, current, temperature every 4 hours
+• **Visual Inspections**: Daily equipment condition assessment
+• **Thermal Imaging**: Monthly hot spot detection surveys
+• **Insulation Testing**: Quarterly IR measurements (>1MΩ required)
+• **Ground Resistance**: Annual testing (<1Ω recommended)
+
+**2. Environmental Control:**
+• **Temperature Management**: Maintain 15-35°C optimal range
+• **Humidity Control**: Keep below 60% to prevent condensation
+• **Ventilation**: Ensure adequate airflow for heat dissipation
+• **Clean Environment**: Prevent dust and contamination buildup
+• **Moisture Protection**: Use sealed enclosures for outdoor equipment
+
+**3. Load Management:**
+• **Capacity Limits**: Never exceed 80% of rated capacity
+• **Load Distribution**: Balance loads across all phases
+• **Power Factor**: Maintain above 0.85 for efficiency
+• **Harmonic Control**: Use filters to reduce harmonic distortion
+• **Peak Demand**: Monitor and manage peak power consumption
+
+**4. Protection Systems:**
+• **Circuit Breakers**: Install appropriate overcurrent protection
+• **GFCIs**: Ground fault circuit interrupters for safety
+• **Surge Protection**: Install SPDs to prevent voltage spikes
+• **Arc Fault Protection**: AFCI devices for fire prevention
+• **Emergency Shutdown**: Quick disconnect systems
+
+**5. Grounding & Bonding:**
+• **Equipment Grounding**: Connect all metal parts to ground
+• **System Grounding**: Proper neutral grounding configuration
+• **Bonding Jumpers**: Ensure continuity between bonded parts
+• **Ground Electrodes**: Multiple grounding paths for reliability
+• **Ground Fault Monitoring**: Continuous leakage current detection
+
+**6. Maintenance Programs:**
+• **Preventive Maintenance**: Scheduled equipment servicing
+• **Predictive Maintenance**: Condition-based maintenance strategies
+• **Corrective Maintenance**: Immediate repair of identified issues
+• **Documentation**: Detailed maintenance logs and records
+• **Spare Parts**: Maintain critical component inventory
+
+**7. Training & Safety:**
+• **Safety Training**: Regular electrical safety education
+• **Emergency Procedures**: Clear fault response protocols
+• **Lockout/Tagout**: Proper energy isolation procedures
+• **PPE Requirements**: Appropriate personal protective equipment
+• **Qualified Personnel**: Certified electricians for complex work
+
+**8. Technology & Automation:**
+• **Smart Monitoring**: IoT sensors for continuous monitoring
+• **Predictive Analytics**: AI-powered fault prediction
+• **Remote Monitoring**: 24/7 system surveillance
+• **Automated Alerts**: Immediate notification of anomalies
+• **Data Analytics**: Trend analysis for proactive maintenance
+
+**Implementation Priority:**
+1. **Immediate**: Fix any existing safety hazards
+2. **Short-term**: Implement basic monitoring and protection
+3. **Medium-term**: Establish comprehensive maintenance programs
+4. **Long-term**: Deploy advanced monitoring and automation
+
+Need specific guidance for implementing these prevention measures?`;
+        console.log('Matched prevention pattern, response:', response);
         responseGenerated = true;
     } else if (maintenanceKeywords.some(keyword => message.includes(keyword))) {
-        response = `🔧 **Maintenance Best Practices:**
+        response = `🔧 **Comprehensive Electrical Maintenance Guide:**
 
-**Critical Maintenance Tasks:**
-• Clean all electrical contacts monthly
-• Check insulation resistance quarterly
-• Calibrate measuring instruments every 6 months
-• Inspect protective devices annually
-• Update safety procedures as needed
+**Maintenance Categories & Schedules:**
 
-**Warning Signs to Watch:**
-• Unusual temperature readings
-• Fluctuating voltage levels
-• Increased current consumption
-• Equipment vibration or noise
-• Discolored or damaged components
+**1. Daily Maintenance (Visual Inspections):**
+• **Equipment Condition**: Look for physical damage, corrosion, or wear
+• **Temperature Check**: Feel for excessive heat on equipment surfaces
+• **Sound Monitoring**: Listen for unusual noises, humming, or buzzing
+• **Smell Detection**: Check for burning odors or chemical smells
+• **Connection Tightness**: Verify all connections are secure
+• **Environmental Conditions**: Monitor temperature, humidity, and cleanliness
 
-Need a maintenance checklist for your specific equipment?`;
+**2. Weekly Maintenance Tasks:**
+• **Contact Cleaning**: Clean electrical contacts and terminals
+• **Insulation Inspection**: Check for cracks, cuts, or degradation
+• **Grounding Verification**: Ensure ground connections are intact
+• **Protective Device Testing**: Test circuit breakers and fuses
+• **Load Monitoring**: Check current levels and power consumption
+• **Documentation**: Record all observations and measurements
+
+**3. Monthly Maintenance Procedures:**
+• **Insulation Resistance Testing**: Measure IR values (>1MΩ required)
+• **Thermal Imaging**: Scan for hot spots using infrared cameras
+• **Electrical Measurements**: Voltage, current, power factor analysis
+• **Mechanical Inspection**: Check moving parts, bearings, and mechanisms
+• **Safety System Testing**: Verify emergency shutdown systems
+• **Environmental Control**: Clean filters, check ventilation systems
+
+**4. Quarterly Maintenance Activities:**
+• **Comprehensive Testing**: Full electrical system evaluation
+• **Calibration**: Verify accuracy of measuring instruments
+• **Protective Device Coordination**: Test and adjust protection settings
+• **Ground Resistance Testing**: Measure earth resistance (<1Ω target)
+• **Harmonic Analysis**: Check for power quality issues
+• **Load Analysis**: Evaluate system loading and capacity utilization
+
+**5. Annual Maintenance Programs:**
+• **Complete System Overhaul**: Comprehensive equipment inspection
+• **Component Replacement**: Replace aging or worn components
+• **System Upgrades**: Implement technology improvements
+• **Training Updates**: Refresh staff knowledge and certifications
+• **Documentation Review**: Update maintenance procedures and records
+• **Compliance Audit**: Ensure adherence to safety standards
+
+**Critical Maintenance Tasks by Equipment Type:**
+
+**Transformers:**
+• Oil sampling and analysis (quarterly)
+• Winding resistance testing (annually)
+• Tap changer inspection and maintenance
+• Cooling system cleaning and testing
+• Bushing condition assessment
+
+**Circuit Breakers:**
+• Contact resistance measurement
+• Operating mechanism lubrication
+• Arc chute inspection and cleaning
+• Trip unit calibration and testing
+• Insulation resistance verification
+
+**Motors:**
+• Bearing lubrication and replacement
+• Winding insulation testing
+• Air gap measurement and adjustment
+• Vibration analysis and correction
+• Cooling system maintenance
+
+**Cables:**
+• Insulation resistance testing
+• Partial discharge measurement
+• Thermal imaging surveys
+• Mechanical protection inspection
+• Termination point maintenance
+
+**Switchgear:**
+• Bus bar connection inspection
+• Insulator cleaning and testing
+• Protection relay calibration
+• Interlock mechanism verification
+• Arc flash hazard assessment
+
+**Maintenance Tools & Equipment:**
+• **Test Equipment**: Multimeters, clamp meters, insulation testers
+• **Safety Equipment**: Lockout/tagout devices, PPE, safety barriers
+• **Cleaning Supplies**: Contact cleaners, degreasers, protective coatings
+• **Documentation**: Maintenance logs, test reports, procedure manuals
+• **Spare Parts**: Critical components for immediate replacement
+
+**Warning Signs Requiring Immediate Attention:**
+• **Temperature**: Equipment running hotter than normal
+• **Electrical**: Voltage fluctuations, current spikes, power quality issues
+• **Mechanical**: Vibration, noise, binding, or rough operation
+• **Physical**: Discoloration, corrosion, cracks, or damage
+• **Environmental**: Moisture, contamination, or excessive dust
+• **Performance**: Reduced efficiency, increased energy consumption
+
+**Maintenance Best Practices:**
+• **Safety First**: Always follow lockout/tagout procedures
+• **Documentation**: Maintain detailed records of all maintenance activities
+• **Qualified Personnel**: Use certified electricians for complex tasks
+• **Proper Tools**: Use appropriate test equipment and safety devices
+• **Regular Scheduling**: Follow manufacturer recommendations and industry standards
+• **Continuous Improvement**: Update procedures based on experience and new technology
+
+Need specific maintenance guidance for your equipment type?`;
+        console.log('Matched maintenance pattern, response:', response);
         responseGenerated = true;
     } else if (emergencyKeywords.some(keyword => message.includes(keyword))) {
-        response = `🚨 **Emergency Response Steps:**
+        response = `🚨 **Comprehensive Emergency Response Protocol:**
 
-**If Fault Detected:**
-1. **Immediate**: Isolate power source
-2. **Safety**: Evacuate affected area
-3. **Communication**: Alert emergency services
-4. **Documentation**: Record incident details
-5. **Investigation**: Conduct thorough analysis
+**IMMEDIATE EMERGENCY ACTIONS (First 5 Minutes):**
 
-**Prevention Focus:**
-• Regular system monitoring
-• Proactive maintenance
-• Staff training updates
-• Equipment upgrades when needed
+**1. Personal Safety (Priority #1):**
+• **STOP** - Do not touch anything electrical
+• **STEP BACK** - Move to a safe distance (minimum 10 feet)
+• **ASSESS** - Look for immediate hazards (fire, smoke, sparks)
+• **CALL** - Dial emergency services immediately (911/Fire Department)
+• **EVACUATE** - Clear all personnel from the affected area
 
-Is this an emergency situation requiring immediate assistance?`;
+**2. Power Isolation:**
+• **Main Disconnect**: Turn off main electrical supply if safe to do so
+• **Circuit Breakers**: Trip affected circuit breakers
+• **Emergency Stop**: Activate emergency shutdown systems
+• **Lockout/Tagout**: Secure all energy sources
+• **Verify De-energization**: Use proper test equipment to confirm power is off
+
+**3. Fire Emergency Response:**
+• **Fire Extinguisher**: Use Class C (electrical) fire extinguisher only
+• **Never Use Water**: Water conducts electricity and can cause electrocution
+• **Evacuation Routes**: Follow established evacuation procedures
+• **Assembly Point**: Gather at designated safe location
+• **Head Count**: Ensure all personnel are accounted for
+
+**SHORT-TERM RESPONSE (5-30 Minutes):**
+
+**4. Communication & Notification:**
+• **Emergency Services**: Call 911 and provide detailed information
+• **Management**: Notify supervisors and safety personnel
+• **Electrical Utility**: Contact power company if needed
+• **Contractors**: Call qualified electrical contractors
+• **Insurance**: Notify insurance company of incident
+
+**5. Incident Documentation:**
+• **Time & Date**: Record exact time of incident
+• **Location**: Document specific equipment and area affected
+• **Witnesses**: Collect names and contact information
+• **Photos**: Take pictures (from safe distance) if possible
+• **Initial Assessment**: Document what was observed
+
+**6. Safety Perimeter:**
+• **Barricade Area**: Set up safety barriers and warning signs
+• **Restrict Access**: Prevent unauthorized personnel entry
+• **Ventilation**: Ensure adequate ventilation if smoke present
+• **Lighting**: Provide emergency lighting if power is out
+
+**MEDIUM-TERM RESPONSE (30 Minutes - 2 Hours):**
+
+**7. Qualified Personnel:**
+• **Licensed Electrician**: Have certified electrician assess situation
+• **Safety Inspector**: Request safety department inspection
+• **Equipment Manufacturer**: Contact for technical support
+• **Insurance Adjuster**: Coordinate with insurance representative
+
+**8. System Assessment:**
+• **Damage Evaluation**: Determine extent of electrical system damage
+• **Safety Inspection**: Check for hidden hazards or damage
+• **Equipment Testing**: Test unaffected systems for safety
+• **Temporary Power**: Arrange temporary power if critical systems affected
+
+**POST-EMERGENCY RECOVERY (2+ Hours):**
+
+**9. Investigation & Analysis:**
+• **Root Cause Analysis**: Determine what caused the emergency
+• **Failure Analysis**: Examine failed components and systems
+• **Documentation**: Complete detailed incident report
+• **Regulatory Compliance**: Ensure all reporting requirements met
+
+**10. System Restoration:**
+• **Safety Clearance**: Obtain clearance from qualified electrician
+• **Repair Work**: Perform necessary repairs and replacements
+• **Testing & Commissioning**: Test all systems before restoration
+• **Gradual Restoration**: Restore power in stages with monitoring
+
+**11. Prevention Measures:**
+• **Immediate Fixes**: Address immediate safety hazards
+• **System Improvements**: Implement upgrades to prevent recurrence
+• **Training Updates**: Provide additional safety training
+• **Procedure Updates**: Revise emergency procedures based on lessons learned
+
+**EMERGENCY CONTACTS & RESOURCES:**
+
+**Emergency Services:**
+• **Fire Department**: 911
+• **Medical Emergency**: 911
+• **Poison Control**: 1-800-222-1222
+• **Electrical Utility**: [Local utility emergency number]
+
+**Professional Services:**
+• **Licensed Electrician**: [Emergency contact]
+• **Electrical Contractor**: [24/7 service number]
+• **Safety Consultant**: [Contact information]
+• **Insurance Company**: [Claims hotline]
+
+**INTERNAL CONTACTS:**
+• **Safety Manager**: [Contact information]
+• **Facilities Manager**: [Contact information]
+• **Management**: [Emergency contact list]
+• **Maintenance Team**: [On-call personnel]
+
+**CRITICAL SAFETY REMINDERS:**
+• **NEVER** touch electrical equipment during an emergency
+• **ALWAYS** assume electrical equipment is energized
+• **USE** appropriate personal protective equipment (PPE)
+• **FOLLOW** established emergency procedures
+• **COORDINATE** with qualified professionals
+• **DOCUMENT** everything for insurance and regulatory purposes
+
+**Remember: Human safety is always the top priority. Equipment can be replaced, but lives cannot.**
+
+Is this an active emergency requiring immediate response?`;
+        console.log('Matched emergency pattern, response:', response);
         responseGenerated = true;
     } else if (analysisKeywords.some(keyword => message.includes(keyword))) {
         if (currentFormData) {
