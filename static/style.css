@@ -3158,16 +3158,6 @@ html {
     color: white;
 }
 
-.dark-theme .quick-action-btn {
-    background: linear-gradient(135deg, rgba(60, 60, 80, 0.9), rgba(50, 50, 70, 0.8));
-    border: 2px solid rgba(100, 200, 255, 0.3);
-    color: #e0e0e0;
-}
-
-.dark-theme .quick-action-btn:hover {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-}
 
 .dark-theme .chatbot-input {
     background: linear-gradient(135deg, #2c3e50, #34495e);
@@ -3405,35 +3395,6 @@ html {
     margin-top: 5px;
 }
 
-.quick-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 20px 25px 15px;
-    border-bottom: 1px solid rgba(52, 152, 219, 0.1);
-    background: linear-gradient(135deg, #f8f9fa, #ffffff);
-}
-
-.quick-action-btn {
-    background: linear-gradient(135deg, #ffffff, #f8f9fa);
-    border: 2px solid rgba(52, 152, 219, 0.2);
-    padding: 10px 16px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #2c3e50;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.quick-action-btn:hover {
-    background: linear-gradient(135deg, #3498db, #2980b9);
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
-}
 
 .chatbot-input {
     display: flex;
@@ -3803,13 +3764,6 @@ html {
         max-width: 350px;
     }
     
-    .quick-actions {
-        flex-direction: column;
-    }
-    
-    .quick-action-btn {
-        text-align: center;
-    }
 }
 
 /* Footer */

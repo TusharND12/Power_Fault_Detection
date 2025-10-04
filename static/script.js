@@ -2679,7 +2679,6 @@ function initializeChatbot() {
     const chatbotWindow = document.getElementById('chatbotWindow');
     const chatbotInput = document.getElementById('chatbotInput');
     const chatbotSend = document.getElementById('chatbotSend');
-    const quickActions = document.querySelectorAll('.quick-action-btn');
 
     if (!chatbotContainer) {
         console.log('Chatbot container not found');
@@ -2807,14 +2806,6 @@ function initializeChatbot() {
         console.error('Chatbot input field not found');
     }
 
-    // Quick actions
-    quickActions.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const action = btn.dataset.action;
-            handleQuickAction(action);
-        });
-    });
     
     // Prevent clicks inside the chat window from closing the chatbot
     if (chatbotWindow) {
@@ -3037,154 +3028,6 @@ window.testFallbackAI = testFallbackAI;
 window.testWatsonAssistant = testWatsonAssistant;
 window.testChatbot = testChatbot;
 
-// Get message for quick actions
-function getQuickActionMessage(action) {
-    const messages = {
-        'prevention': 'I need electrical fault prevention tips and safety guidelines.',
-        'maintenance': 'Show me maintenance schedules and procedures for electrical equipment.',
-        'safety': 'What are the safety protocols for electrical systems?',
-        'analysis': 'Analyze my current electrical system data for potential risks.',
-        'current-fault': 'Analyze the current fault data and provide recommendations.',
-        'emergency': 'I have an electrical emergency, what should I do?'
-    };
-    return messages[action] || 'Help me with electrical safety information.';
-}
-
-// Handle quick actions
-async function handleQuickAction(action) {
-    let response = '';
-    
-    // Show typing indicator
-    showTypingIndicator();
-    
-    try {
-        if (watsonSession && typeof window.WatsonAssistantV2 !== 'undefined') {
-            // Send quick action to Watson Assistant
-            const message = getQuickActionMessage(action);
-            response = await sendToWatsonAssistant(message);
-            hideTypingIndicator();
-            addMessage(response, 'bot');
-            return;
-        }
-    } catch (error) {
-        console.error('Watson Assistant error for quick action:', error);
-        hideTypingIndicator();
-    }
-    
-    // Fallback to local responses
-    hideTypingIndicator();
-    
-    switch(action) {
-        case 'prevention':
-            response = `🛡️ **Electrical Fault Prevention Tips:**
-
-• **Regular Inspections**: Check equipment monthly for signs of wear, corrosion, or damage
-• **Proper Maintenance**: Follow manufacturer schedules for cleaning and calibration
-• **Environmental Control**: Maintain stable temperature (15-35°C) and humidity (40-60%)
-• **Load Management**: Avoid overloading circuits and ensure proper load distribution
-• **Protection Devices**: Install and test circuit breakers, fuses, and surge protectors
-• **Grounding**: Ensure proper grounding and bonding of all electrical equipment
-• **Training**: Keep staff trained on electrical safety procedures
-• **Documentation**: Maintain detailed logs of all maintenance activities
-
-Would you like specific advice for your system parameters?`;
-            break;
-            
-        case 'maintenance':
-            response = `🔧 **Maintenance Schedule Guide:**
-
-**Daily Checks:**
-• Visual inspection of equipment
-• Check for unusual sounds or vibrations
-• Monitor temperature readings
-• Verify alarm systems
-
-**Weekly Tasks:**
-• Clean equipment surfaces
-• Check connection tightness
-• Review operational logs
-• Test backup systems
-
-**Monthly Procedures:**
-• Calibrate measuring instruments
-• Inspect protective devices
-• Check grounding systems
-• Review maintenance records
-
-**Quarterly Activities:**
-• Comprehensive equipment testing
-• Update safety procedures
-• Staff training refreshers
-• System performance analysis
-
-Need help with specific maintenance tasks?`;
-            break;
-            
-        case 'emergency':
-            response = `🚨 **Emergency Response Protocol:**
-
-**Immediate Actions:**
-1. **Isolate Power**: Turn off main power supply immediately
-2. **Evacuate Area**: Clear personnel from danger zone
-3. **Call Emergency**: Contact emergency services (911)
-4. **Notify Supervisor**: Alert management and safety team
-5. **Document Incident**: Record time, location, and circumstances
-
-**Safety Measures:**
-• Never touch electrical equipment with wet hands
-• Use proper PPE (Personal Protective Equipment)
-• Follow lockout/tagout procedures
-• Keep emergency contact numbers visible
-• Maintain first aid supplies nearby
-
-**Post-Emergency:**
-• Conduct thorough investigation
-• Review and update safety procedures
-• Provide staff training if needed
-• Document lessons learned
-
-Need specific emergency procedures for your situation?`;
-            break;
-            
-        case 'analysis':
-            if (currentFormData) {
-                response = analyzeUserData(currentFormData);
-            } else {
-                response = `📊 **Data Analysis Available:**
-
-I can analyze your system parameters to provide personalized recommendations. Please submit a fault prediction first, and I'll be able to:
-
-• Analyze your specific voltage, current, and power readings
-• Identify potential risk factors in your system
-• Provide targeted prevention strategies
-• Suggest maintenance priorities
-• Recommend monitoring improvements
-
-Go ahead and run a prediction to get started!`;
-            }
-            break;
-            
-        case 'current-fault':
-            if (currentFormData) {
-                response = analyzeCurrentFault(currentFormData);
-            } else {
-                response = `⚡ **Current Fault Analysis:**
-
-I can provide detailed analysis of your current fault prediction. Please submit a fault prediction first, and I'll be able to:
-
-• Analyze your specific fault type and severity
-• Provide targeted solutions for your fault
-• Suggest immediate actions to take
-• Recommend long-term prevention strategies
-• Create a customized action plan
-
-Run a prediction to get personalized fault analysis!`;
-            }
-            break;
-    }
-    
-    addMessage(response, 'bot');
-}
 
 // Generate AI response
 function generateAIResponse(userMessage) {
