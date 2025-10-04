@@ -2832,6 +2832,52 @@ function initializeChatbot() {
     }
 }
 
+// Format bot message content
+function formatBotMessage(content) {
+    if (!content) return '';
+    
+    let formatted = content
+        // Convert **bold** to <strong>bold</strong>
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        // Convert *italic* to <em>italic</em>
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        // Convert line breaks to <br>
+        .replace(/\n/g, '<br>')
+        // Convert bullet points to proper HTML
+        .replace(/^•\s*(.*)$/gm, '<li>$1</li>')
+        // Wrap consecutive list items in <ul>
+        .replace(/(<li>.*<\/li>)(<br>)*(<li>.*<\/li>)/g, function(match, p1, p2, p3) {
+            return '<ul>' + p1.replace(/<br>/g, '') + p2 + p3.replace(/<br>/g, '') + '</ul>';
+        })
+        // Handle numbered lists
+        .replace(/^(\d+)\.\s*(.*)$/gm, '<li class="numbered">$1. $2</li>')
+        // Convert emojis to proper display
+        .replace(/🛡️/g, '<span class="emoji">🛡️</span>')
+        .replace(/🔧/g, '<span class="emoji">🔧</span>')
+        .replace(/🚨/g, '<span class="emoji">🚨</span>')
+        .replace(/📊/g, '<span class="emoji">📊</span>')
+        .replace(/⚡/g, '<span class="emoji">⚡</span>')
+        .replace(/🤖/g, '<span class="emoji">🤖</span>')
+        .replace(/👋/g, '<span class="emoji">👋</span>')
+        .replace(/😊/g, '<span class="emoji">😊</span>')
+        .replace(/🤗/g, '<span class="emoji">🤗</span>')
+        .replace(/🤔/g, '<span class="emoji">🤔</span>')
+        .replace(/📚/g, '<span class="emoji">📚</span>')
+        .replace(/💼/g, '<span class="emoji">💼</span>')
+        .replace(/🕐/g, '<span class="emoji">🕐</span>')
+        .replace(/📅/g, '<span class="emoji">📅</span>')
+        .replace(/🌤️/g, '<span class="emoji">🌤️</span>')
+        .replace(/⚠️/g, '<span class="emoji">⚠️</span>')
+        .replace(/✅/g, '<span class="emoji">✅</span>')
+        .replace(/❌/g, '<span class="emoji">❌</span>')
+        // Clean up extra line breaks
+        .replace(/<br><br><br>/g, '<br><br>')
+        .replace(/<br><ul>/g, '<ul>')
+        .replace(/<\/ul><br>/g, '</ul>');
+    
+    return formatted;
+}
+
 // Add message to chat
 function addMessage(content, sender) {
     console.log('addMessage called with:', { content, sender });
@@ -2852,8 +2898,15 @@ function addMessage(content, sender) {
     const messageContent = document.createElement('div');
     messageContent.className = 'message-content';
     
-    const messageText = document.createElement('p');
-    messageText.textContent = content;
+    const messageText = document.createElement('div');
+    messageText.className = 'message-text';
+    
+    // Format the content with proper HTML rendering
+    if (sender === 'bot') {
+        messageText.innerHTML = formatBotMessage(content);
+    } else {
+        messageText.textContent = content;
+    }
     
     const messageTime = document.createElement('div');
     messageTime.className = 'message-time';

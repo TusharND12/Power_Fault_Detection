@@ -2741,6 +2741,82 @@ html {
     color: #cbd5e1;
 }
 
+/* Enhanced Chat Message Formatting */
+.message-text {
+    line-height: 1.6;
+    word-wrap: break-word;
+}
+
+.message-text strong {
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.message-text em {
+    font-style: italic;
+    color: #4a5568;
+}
+
+.message-text ul {
+    margin: 8px 0;
+    padding-left: 20px;
+    list-style: none;
+}
+
+.message-text ul li {
+    margin: 4px 0;
+    position: relative;
+    padding-left: 20px;
+}
+
+.message-text ul li:before {
+    content: "•";
+    color: #667eea;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+.message-text ul li.numbered {
+    padding-left: 25px;
+}
+
+.message-text ul li.numbered:before {
+    content: none;
+}
+
+.message-text .emoji {
+    font-size: 1.1em;
+    margin-right: 4px;
+}
+
+.message-text h1, .message-text h2, .message-text h3, .message-text h4 {
+    margin: 12px 0 8px 0;
+    color: #2d3748;
+    font-weight: 600;
+}
+
+.message-text h1 { font-size: 1.3em; }
+.message-text h2 { font-size: 1.2em; }
+.message-text h3 { font-size: 1.1em; }
+.message-text h4 { font-size: 1em; }
+
+/* Dark theme support for message formatting */
+.dark-theme .message-text strong {
+    color: #f7fafc;
+}
+
+.dark-theme .message-text em {
+    color: #cbd5e0;
+}
+
+.dark-theme .message-text h1,
+.dark-theme .message-text h2,
+.dark-theme .message-text h3,
+.dark-theme .message-text h4 {
+    color: #f7fafc;
+}
+
 /* Responsive Design for Probability Section */
 @media (max-width: 768px) {
     .probability-section {
