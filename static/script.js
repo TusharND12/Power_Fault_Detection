@@ -2834,7 +2834,11 @@ function initializeChatbot() {
 
 // Format bot message content
 function formatBotMessage(content) {
-    if (!content) return '';
+    console.log('formatBotMessage called with:', content);
+    if (!content) {
+        console.log('Empty content, returning empty string');
+        return '';
+    }
     
     let formatted = content
         // Convert **bold** to <strong>bold</strong>
@@ -2875,6 +2879,7 @@ function formatBotMessage(content) {
         .replace(/<br><ul>/g, '<ul>')
         .replace(/<\/ul><br>/g, '</ul>');
     
+    console.log('formatBotMessage result:', formatted);
     return formatted;
 }
 
@@ -2903,8 +2908,12 @@ function addMessage(content, sender) {
     
     // Format the content with proper HTML rendering
     if (sender === 'bot') {
-        messageText.innerHTML = formatBotMessage(content);
+        console.log('Formatting bot message:', content);
+        const formatted = formatBotMessage(content);
+        console.log('Formatted message:', formatted);
+        messageText.innerHTML = formatted;
     } else {
+        console.log('Adding user message:', content);
         messageText.textContent = content;
     }
     
@@ -3642,6 +3651,8 @@ What would you like to learn more about? I'm here to help guide your learning jo
     // Simulate thinking time and then add the response
     setTimeout(() => {
         console.log('Adding bot response:', response);
+        console.log('Response length:', response.length);
+        console.log('Response type:', typeof response);
         hideTypingIndicator();
         addMessage(response, 'bot');
     }, 1500); // 1.5 second delay
@@ -3858,5 +3869,29 @@ function testChatbotFunctionality() {
     console.log('=== CHATBOT TEST COMPLETE ===');
 }
 
-// Make test function available globally
+// Quick test function for chatbot responses
+function quickChatbotTest() {
+    console.log('=== QUICK CHATBOT TEST ===');
+    
+    // Test different message types
+    const testMessages = [
+        'hello',
+        'what time is it',
+        'help me',
+        'good morning',
+        'how are you'
+    ];
+    
+    testMessages.forEach((msg, index) => {
+        setTimeout(() => {
+            console.log(`Testing message ${index + 1}: "${msg}"`);
+            generateAIResponse(msg);
+        }, index * 2000);
+    });
+    
+    console.log('=== TEST MESSAGES SENT ===');
+}
+
+// Make test functions available globally
 window.testChatbotFunctionality = testChatbotFunctionality;
+window.quickChatbotTest = quickChatbotTest;
