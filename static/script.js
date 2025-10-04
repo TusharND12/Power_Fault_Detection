@@ -4788,7 +4788,116 @@ function debugChatbot() {
     console.log('=== DEBUG TEST COMPLETE ===');
 }
 
+// Comprehensive chatbot debug function
+function debugChatbotIssue() {
+    console.log('=== COMPREHENSIVE CHATBOT DEBUG ===');
+    
+    // 1. Check DOM elements
+    console.log('1. DOM Elements Check:');
+    console.log('- chatbotContainer:', !!document.getElementById('chatbotContainer'));
+    console.log('- chatbotMessages:', !!document.getElementById('chatbotMessages'));
+    console.log('- chatbotInput:', !!document.getElementById('chatbotInput'));
+    console.log('- chatbotSend:', !!document.getElementById('chatbotSend'));
+    console.log('- chatbotWindow:', !!document.getElementById('chatbotWindow'));
+    
+    // 2. Check Watson configuration
+    console.log('2. Watson Configuration:');
+    console.log('- WATSON_CONFIG exists:', !!window.WATSON_CONFIG);
+    console.log('- Watson SDK loaded:', typeof window.WatsonAssistantV2 !== 'undefined');
+    console.log('- Watson session:', watsonSession);
+    
+    // 3. Test event listeners
+    console.log('3. Testing Event Listeners:');
+    const chatbotSend = document.getElementById('chatbotSend');
+    const chatbotInput = document.getElementById('chatbotInput');
+    
+    if (chatbotSend) {
+        console.log('- Send button found, testing click...');
+        chatbotSend.click();
+    } else {
+        console.log('- Send button NOT found!');
+    }
+    
+    if (chatbotInput) {
+        console.log('- Input field found, testing focus...');
+        chatbotInput.focus();
+        chatbotInput.value = 'test message';
+        console.log('- Input value set to:', chatbotInput.value);
+    } else {
+        console.log('- Input field NOT found!');
+    }
+    
+    // 4. Test addMessage function directly
+    console.log('4. Testing addMessage function:');
+    try {
+        addMessage('Direct test message', 'bot');
+        console.log('- addMessage function works');
+    } catch (error) {
+        console.error('- addMessage function failed:', error);
+    }
+    
+    // 5. Test generateAIResponse function directly
+    console.log('5. Testing generateAIResponse function:');
+    try {
+        generateAIResponse('hello');
+        console.log('- generateAIResponse function called');
+    } catch (error) {
+        console.error('- generateAIResponse function failed:', error);
+    }
+    
+    // 6. Check if chatbot is visible
+    console.log('6. Chatbot Visibility:');
+    const chatbotContainer = document.getElementById('chatbotContainer');
+    if (chatbotContainer) {
+        console.log('- Container display:', chatbotContainer.style.display);
+        console.log('- Container visibility:', chatbotContainer.style.visibility);
+        console.log('- Container opacity:', chatbotContainer.style.opacity);
+        console.log('- Container classList:', chatbotContainer.classList.toString());
+    }
+    
+    // 7. Test chatbot expansion
+    console.log('7. Testing Chatbot Expansion:');
+    if (chatbotContainer) {
+        console.log('- Current container classes:', chatbotContainer.classList.toString());
+        chatbotContainer.classList.add('expanded');
+        console.log('- Added expanded class');
+        setTimeout(() => {
+            console.log('- After expansion, classes:', chatbotContainer.classList.toString());
+        }, 100);
+    }
+    
+    console.log('=== DEBUG COMPLETE ===');
+    console.log('Check the console output above to identify the issue.');
+}
+
+// Simple test to check if chatbot responds
+function testChatbotResponse() {
+    console.log('=== TESTING CHATBOT RESPONSE ===');
+    
+    // Test 1: Direct addMessage
+    console.log('Test 1: Direct addMessage');
+    addMessage('Test message from console', 'bot');
+    
+    // Test 2: Direct generateAIResponse
+    console.log('Test 2: Direct generateAIResponse');
+    generateAIResponse('hello');
+    
+    // Test 3: Simulate user input
+    console.log('Test 3: Simulate user input');
+    const chatbotInput = document.getElementById('chatbotInput');
+    if (chatbotInput) {
+        chatbotInput.value = 'test message from console';
+        console.log('Input value set, now try clicking send button or pressing Enter');
+    } else {
+        console.log('Chatbot input not found!');
+    }
+    
+    console.log('=== RESPONSE TEST COMPLETE ===');
+}
+
 // Make test functions available globally
 window.testChatbotFunctionality = testChatbotFunctionality;
 window.quickChatbotTest = quickChatbotTest;
 window.debugChatbot = debugChatbot;
+window.debugChatbotIssue = debugChatbotIssue;
+window.testChatbotResponse = testChatbotResponse;
