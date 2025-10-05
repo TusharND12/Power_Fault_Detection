@@ -1961,6 +1961,151 @@ function enhancedPdfDownload() {
 window.debugPdfDownload = debugPdfDownload;
 window.enhancedPdfDownload = enhancedPdfDownload;
 
+// Debug prediction functionality
+function debugPrediction() {
+    console.log('=== PREDICTION DEBUG ===');
+    
+    // Check DOM elements
+    console.log('1. DOM Elements:');
+    console.log('- form:', !!form);
+    console.log('- resultsContainer:', !!resultsContainer);
+    console.log('- loadingOverlay:', !!loadingOverlay);
+    
+    // Check form element directly
+    const formElement = document.getElementById('predictionForm');
+    console.log('- predictionForm element:', !!formElement);
+    
+    if (formElement) {
+        console.log('- form action:', formElement.action);
+        console.log('- form method:', formElement.method);
+        console.log('- form children count:', formElement.children.length);
+    }
+    
+    // Check form inputs
+    console.log('2. Form Inputs:');
+    const inputs = document.querySelectorAll('#predictionForm input');
+    console.log('- input count:', inputs.length);
+    inputs.forEach((input, index) => {
+        console.log(`  Input ${index + 1}:`, input.name, input.type, input.value);
+    });
+    
+    // Test form validation
+    console.log('3. Form Validation:');
+    try {
+        const isValid = validateForm();
+        console.log('- validateForm() result:', isValid);
+    } catch (error) {
+        console.error('- validateForm() error:', error);
+    }
+    
+    // Test prediction function
+    console.log('4. Prediction Function:');
+    try {
+        const testData = {
+            voltage: 2200,
+            current: 250,
+            power_load: 550,
+            temperature: 40,
+            wind_speed: 25,
+            duration_of_fault: 30,
+            down_time: 15
+        };
+        const result = makeLocalPrediction(testData);
+        console.log('- makeLocalPrediction() result:', result);
+    } catch (error) {
+        console.error('- makeLocalPrediction() error:', error);
+    }
+    
+    // Check event listeners
+    console.log('5. Event Listeners:');
+    if (formElement) {
+        console.log('- form has submit listener:', formElement.onsubmit !== null);
+    }
+    
+    console.log('=== PREDICTION DEBUG COMPLETE ===');
+}
+
+// Test prediction with sample data
+function testPrediction() {
+    console.log('=== TESTING PREDICTION ===');
+    
+    // Create test data
+    const testData = {
+        voltage: 2200,
+        current: 250,
+        power_load: 550,
+        temperature: 40,
+        wind_speed: 25,
+        duration_of_fault: 30,
+        down_time: 15
+    };
+    
+    console.log('Test data:', testData);
+    
+    try {
+        // Test prediction
+        const result = makeLocalPrediction(testData);
+        console.log('Prediction result:', result);
+        
+        // Test display
+        displayResults(result);
+        console.log('Results displayed');
+        
+        // Show notification
+        showNotification('Test prediction completed!', 'success');
+        
+    } catch (error) {
+        console.error('Test prediction failed:', error);
+        showNotification('Test prediction failed: ' + error.message, 'error');
+    }
+    
+    console.log('=== TEST COMPLETE ===');
+}
+
+// Simulate form submission
+function simulateFormSubmit() {
+    console.log('=== SIMULATING FORM SUBMISSION ===');
+    
+    const formElement = document.getElementById('predictionForm');
+    if (!formElement) {
+        console.error('Form not found');
+        return;
+    }
+    
+    // Fill form with test data
+    const testData = {
+        voltage: '2200',
+        current: '250',
+        power_load: '550',
+        temperature: '40',
+        wind_speed: '25',
+        duration_of_fault: '30',
+        down_time: '15'
+    };
+    
+    Object.keys(testData).forEach(key => {
+        const input = formElement.querySelector(`[name="${key}"]`);
+        if (input) {
+            input.value = testData[key];
+            console.log(`Set ${key} to ${testData[key]}`);
+        } else {
+            console.log(`Input ${key} not found`);
+        }
+    });
+    
+    // Trigger form submission
+    console.log('Triggering form submission...');
+    const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+    formElement.dispatchEvent(submitEvent);
+    
+    console.log('=== FORM SUBMISSION SIMULATED ===');
+}
+
+// Make prediction debug functions available globally
+window.debugPrediction = debugPrediction;
+window.testPrediction = testPrediction;
+window.simulateFormSubmit = simulateFormSubmit;
+
 // Old window open function removed
 
 // Old PDF function removed
