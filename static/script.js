@@ -4895,9 +4895,110 @@ function testChatbotResponse() {
     console.log('=== RESPONSE TEST COMPLETE ===');
 }
 
+// Force chatbot initialization
+function forceChatbotInit() {
+    console.log('=== FORCING CHATBOT INITIALIZATION ===');
+    
+    // Ensure chatbot is visible
+    const chatbotContainer = document.getElementById('chatbotContainer');
+    if (chatbotContainer) {
+        chatbotContainer.style.display = 'flex';
+        chatbotContainer.style.visibility = 'visible';
+        chatbotContainer.style.opacity = '1';
+        chatbotContainer.style.transform = 'translateY(0)';
+        chatbotContainer.style.zIndex = '9999';
+        console.log('Chatbot container made visible');
+    }
+    
+    // Re-initialize chatbot
+    console.log('Re-initializing chatbot...');
+    initializeChatbot();
+    
+    // Add welcome message
+    setTimeout(() => {
+        const messagesContainer = document.getElementById('chatbotMessages');
+        if (messagesContainer) {
+            messagesContainer.innerHTML = '';
+            addMessage('Hello! I\'m your AI Safety Advisor. How can I help you today?', 'bot');
+            console.log('Welcome message added');
+        }
+    }, 500);
+    
+    // Test basic functionality
+    setTimeout(() => {
+        console.log('Testing basic functionality...');
+        addMessage('Test message after initialization', 'bot');
+        generateAIResponse('hello');
+    }, 1000);
+    
+    console.log('=== FORCE INITIALIZATION COMPLETE ===');
+}
+
+// Quick fix for chatbot
+function quickChatbotFix() {
+    console.log('=== QUICK CHATBOT FIX ===');
+    
+    // 1. Make sure chatbot is visible
+    const chatbotContainer = document.getElementById('chatbotContainer');
+    if (chatbotContainer) {
+        chatbotContainer.style.cssText = `
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            z-index: 9999 !important;
+        `;
+        console.log('✓ Chatbot container made visible');
+    }
+    
+    // 2. Ensure chatbot is expanded
+    chatbotContainer.classList.add('expanded');
+    console.log('✓ Chatbot expanded');
+    
+    // 3. Clear and add welcome message
+    const messagesContainer = document.getElementById('chatbotMessages');
+    if (messagesContainer) {
+        messagesContainer.innerHTML = '';
+        addMessage('Hello! I\'m your AI Safety Advisor. How can I help you today?', 'bot');
+        console.log('✓ Welcome message added');
+    }
+    
+    // 4. Test input functionality
+    const chatbotInput = document.getElementById('chatbotInput');
+    if (chatbotInput) {
+        chatbotInput.value = '';
+        chatbotInput.placeholder = 'Ask about electrical safety...';
+        console.log('✓ Input field ready');
+    }
+    
+    // 5. Test send button
+    const chatbotSend = document.getElementById('chatbotSend');
+    if (chatbotSend) {
+        chatbotSend.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Send button clicked');
+            const message = chatbotInput.value.trim();
+            if (message) {
+                addMessage(message, 'user');
+                chatbotInput.value = '';
+                setTimeout(() => {
+                    generateAIResponse(message);
+                }, 500);
+            }
+        });
+        console.log('✓ Send button event listener added');
+    }
+    
+    console.log('=== QUICK FIX COMPLETE ===');
+    console.log('Chatbot should now be working. Try typing a message and clicking send.');
+}
+
 // Make test functions available globally
 window.testChatbotFunctionality = testChatbotFunctionality;
 window.quickChatbotTest = quickChatbotTest;
 window.debugChatbot = debugChatbot;
 window.debugChatbotIssue = debugChatbotIssue;
 window.testChatbotResponse = testChatbotResponse;
+window.forceChatbotInit = forceChatbotInit;
+window.quickChatbotFix = quickChatbotFix;
