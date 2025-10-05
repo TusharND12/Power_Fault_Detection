@@ -1082,8 +1082,10 @@ function showNotification(message, type = 'info') {
         initializeGaugeCharts();
     }
     
-    // Initialize PDF download when results are shown
-    initializePdfDownload();
+    // Initialize PDF download when results are shown (only once)
+    if (!pdfDownloadInitialized) {
+        initializePdfDownload();
+    }
     
     // Initialize interactive features
     initializeInteractiveFeatures();
@@ -1111,12 +1113,16 @@ function showNotification(message, type = 'info') {
         }
     }, 1000);
     
-    // Initialize PDF download functionality
-    initializePdfDownload();
-    
-    // Also try again after a delay in case the button isn't ready yet
-    setTimeout(() => {
+    // Initialize PDF download functionality (only once)
+    if (!pdfDownloadInitialized) {
         initializePdfDownload();
+    }
+    
+    // Also try again after a delay in case the button isn't ready yet (only if not initialized)
+    setTimeout(() => {
+        if (!pdfDownloadInitialized) {
+            initializePdfDownload();
+        }
     }, 1000);
     
     
@@ -1510,6 +1516,7 @@ let currentGauge = null;
 let temperatureGauge = null;
 let isGeneratingPdf = false;
 let pdfDownloadInProgress = false;
+let lastPdfClickTime = 0; // Track last click time to prevent rapid clicks
 
 
 // Initialize Gauge Charts
@@ -1827,6 +1834,18 @@ Note: This is a text file export of the analysis results.
 
 // Old blob download function removed
 
+// Reset PDF download state (for debugging)
+function resetPdfDownloadState() {
+    console.log('Resetting PDF download state...');
+    pdfDownloadInProgress = false;
+    isGeneratingPdf = false;
+    lastPdfClickTime = 0;
+    console.log('PDF download state reset');
+}
+
+// Make reset function available globally for debugging
+window.resetPdfDownloadState = resetPdfDownloadState;
+
 // Old window open function removed
 
 // Old PDF function removed
@@ -1960,27 +1979,65 @@ function generateSimplePdf() {
 }
 
 // PDF Download Functionality
+let pdfDownloadInitialized = false; // Flag to prevent multiple initializations
+
 function initializePdfDownload() {
+    // Prevent multiple initializations
+    if (pdfDownloadInitialized) {
+        console.log('PDF download already initialized, skipping...');
+        return;
+    }
+    
     console.log('Initializing PDF download...');
     const downloadBtn = document.getElementById('downloadPdfBtn');
     console.log('PDF button found:', !!downloadBtn);
+    
     if (downloadBtn) {
-        downloadBtn.addEventListener('click', function(e) {
-            console.log('PDF button clicked!');
-            e.preventDefault();
-            e.stopPropagation();
-            showNotification('PDF generation started...', 'info');
-            
-            // Add a small delay to ensure the notification shows
-            setTimeout(() => {
-                // Use single reliable PDF method
-                generateSinglePdf();
-            }, 100);
-        });
-        console.log('PDF download event listener added');
+        // Remove any existing event listeners first
+        downloadBtn.removeEventListener('click', handlePdfDownload);
+        
+        // Add the event listener
+        downloadBtn.addEventListener('click', handlePdfDownload);
+        
+        pdfDownloadInitialized = true;
+        console.log('PDF download event listener added successfully');
     } else {
         console.error('PDF download button not found!');
     }
+}
+
+// Separate function for PDF download handling
+function handlePdfDownload(e) {
+    console.log('PDF button clicked!');
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const currentTime = Date.now();
+    
+    // Prevent rapid successive clicks (debounce)
+    if (currentTime - lastPdfClickTime < 2000) {
+        console.log('PDF click too soon after last click, ignoring');
+        showNotification('Please wait before downloading again...', 'info');
+        return;
+    }
+    
+    // Prevent multiple simultaneous downloads
+    if (pdfDownloadInProgress) {
+        console.log('PDF download already in progress, ignoring click');
+        showNotification('PDF download already in progress...', 'info');
+        return;
+    }
+    
+    // Update last click time
+    lastPdfClickTime = currentTime;
+    
+    showNotification('PDF generation started...', 'info');
+    
+    // Add a small delay to ensure the notification shows
+    setTimeout(() => {
+        // Use single reliable PDF method
+        generateSinglePdf();
+    }, 100);
 }
 
 async function generatePdfReport() {
