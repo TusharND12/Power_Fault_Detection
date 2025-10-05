@@ -1517,6 +1517,7 @@ let temperatureGauge = null;
 let isGeneratingPdf = false;
 let pdfDownloadInProgress = false;
 let lastPdfClickTime = 0; // Track last click time to prevent rapid clicks
+let pdfGenerationCount = 0; // Track how many PDFs have been generated
 
 
 // Initialize Gauge Charts
@@ -1699,7 +1700,8 @@ function testPdfLibraries() {
 
 // Single PDF Generation (Reliable)
 function generateSinglePdf() {
-    console.log('=== GENERATING SINGLE PDF ===');
+    pdfGenerationCount++;
+    console.log(`=== GENERATING SINGLE PDF (Attempt #${pdfGenerationCount}) ===`);
     
     // Prevent multiple downloads with stronger check
     if (pdfDownloadInProgress) {
@@ -1840,11 +1842,124 @@ function resetPdfDownloadState() {
     pdfDownloadInProgress = false;
     isGeneratingPdf = false;
     lastPdfClickTime = 0;
+    pdfGenerationCount = 0;
+    pdfDownloadInitialized = false;
     console.log('PDF download state reset');
 }
 
 // Make reset function available globally for debugging
 window.resetPdfDownloadState = resetPdfDownloadState;
+
+// Debug function to check PDF download state
+function debugPdfDownload() {
+    console.log('=== PDF DOWNLOAD DEBUG ===');
+    console.log('pdfDownloadInitialized:', pdfDownloadInitialized);
+    console.log('pdfDownloadInProgress:', pdfDownloadInProgress);
+    console.log('isGeneratingPdf:', isGeneratingPdf);
+    console.log('lastPdfClickTime:', lastPdfClickTime);
+    console.log('Time since last click:', Date.now() - lastPdfClickTime);
+    console.log('pdfGenerationCount:', pdfGenerationCount);
+    
+    const downloadBtn = document.getElementById('downloadPdfBtn');
+    console.log('Download button found:', !!downloadBtn);
+    
+    if (downloadBtn) {
+        console.log('Button disabled:', downloadBtn.disabled);
+        console.log('Button innerHTML:', downloadBtn.innerHTML);
+        
+        // Check for multiple event listeners (this is tricky to detect)
+        console.log('Button onclick:', downloadBtn.onclick);
+        console.log('Button event listeners:', getEventListeners ? getEventListeners(downloadBtn) : 'getEventListeners not available');
+    }
+    
+    console.log('=== DEBUG COMPLETE ===');
+}
+
+// Enhanced PDF download with better debugging
+function enhancedPdfDownload() {
+    console.log('=== ENHANCED PDF DOWNLOAD DEBUG ===');
+    
+    const downloadBtn = document.getElementById('downloadPdfBtn');
+    if (!downloadBtn) {
+        console.error('Download button not found!');
+        return;
+    }
+    
+    // Remove ALL existing event listeners by cloning the button
+    const newBtn = downloadBtn.cloneNode(true);
+    downloadBtn.parentNode.replaceChild(newBtn, downloadBtn);
+    
+    console.log('Button cloned and replaced to remove all event listeners');
+    
+    // Disable the button initially to prevent rapid clicks
+    newBtn.disabled = true;
+    
+    // Add single event listener to new button
+    newBtn.addEventListener('click', function(e) {
+        console.log('=== PDF BUTTON CLICKED ===');
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Disable button immediately to prevent multiple clicks
+        newBtn.disabled = true;
+        newBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+        
+        const currentTime = Date.now();
+        console.log('Current time:', currentTime);
+        console.log('Last click time:', lastPdfClickTime);
+        console.log('Time difference:', currentTime - lastPdfClickTime);
+        console.log('Current generation count:', pdfGenerationCount);
+        
+        // Prevent rapid successive clicks (debounce)
+        if (currentTime - lastPdfClickTime < 3000) {
+            console.log('PDF click too soon after last click, ignoring');
+            showNotification('Please wait before downloading again...', 'info');
+            // Re-enable button after delay
+            setTimeout(() => {
+                newBtn.disabled = false;
+                newBtn.innerHTML = '<i class="fas fa-download"></i> Download PDF Report';
+            }, 1000);
+            return;
+        }
+        
+        // Prevent multiple simultaneous downloads
+        if (pdfDownloadInProgress) {
+            console.log('PDF download already in progress, ignoring click');
+            showNotification('PDF download already in progress...', 'info');
+            // Re-enable button after delay
+            setTimeout(() => {
+                newBtn.disabled = false;
+                newBtn.innerHTML = '<i class="fas fa-download"></i> Download PDF Report';
+            }, 1000);
+            return;
+        }
+        
+        // Update last click time
+        lastPdfClickTime = currentTime;
+        
+        console.log('Starting PDF generation...');
+        showNotification('PDF generation started...', 'info');
+        
+        // Add a small delay to ensure the notification shows
+        setTimeout(() => {
+            console.log('Calling generateSinglePdf...');
+            generateSinglePdf();
+            
+            // Re-enable button after PDF generation
+            setTimeout(() => {
+                newBtn.disabled = false;
+                newBtn.innerHTML = '<i class="fas fa-download"></i> Download PDF Report';
+            }, 2000);
+        }, 100);
+    });
+    
+    console.log('Single event listener added to new button');
+    console.log('=== ENHANCED PDF DOWNLOAD SETUP COMPLETE ===');
+}
+
+// Make debug functions available globally
+window.debugPdfDownload = debugPdfDownload;
+window.enhancedPdfDownload = enhancedPdfDownload;
 
 // Old window open function removed
 
@@ -1982,25 +2097,15 @@ function generateSimplePdf() {
 let pdfDownloadInitialized = false; // Flag to prevent multiple initializations
 
 function initializePdfDownload() {
-    // Prevent multiple initializations
-    if (pdfDownloadInitialized) {
-        console.log('PDF download already initialized, skipping...');
-        return;
-    }
-    
     console.log('Initializing PDF download...');
     const downloadBtn = document.getElementById('downloadPdfBtn');
     console.log('PDF button found:', !!downloadBtn);
     
     if (downloadBtn) {
-        // Remove any existing event listeners first
-        downloadBtn.removeEventListener('click', handlePdfDownload);
-        
-        // Add the event listener
-        downloadBtn.addEventListener('click', handlePdfDownload);
-        
+        // Use enhanced PDF download to ensure clean state
+        enhancedPdfDownload();
         pdfDownloadInitialized = true;
-        console.log('PDF download event listener added successfully');
+        console.log('PDF download initialized with enhanced method');
     } else {
         console.error('PDF download button not found!');
     }
