@@ -1698,6 +1698,16 @@ function testPdfLibraries() {
     }
 }
 
+// Helper function to reset PDF download button state
+function resetPdfButton() {
+    const downloadBtn = document.getElementById('downloadPdfBtn');
+    if (downloadBtn) {
+        downloadBtn.disabled = false;
+        downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download PDF Report';
+        console.log('PDF button state reset');
+    }
+}
+
 // Single PDF Generation (Reliable)
 function generateSinglePdf() {
     pdfGenerationCount++;
@@ -1773,10 +1783,11 @@ function generateSinglePdf() {
                 console.log('PDF saved successfully');
                 
                 showNotification('PDF downloaded successfully!', 'success');
-                
-                // Reset flags and exit
+
+                // Reset flags and button state
                 pdfDownloadInProgress = false;
                 isGeneratingPdf = false;
+                resetPdfButton();
                 console.log('PDF generation completed successfully - flags reset');
                 return;
             }
@@ -1809,19 +1820,21 @@ Note: This is a text file export of the analysis results.
         
         console.log('Text file downloaded successfully');
         showNotification('Text file downloaded successfully!', 'success');
-        
-        // Reset flags and exit
+
+        // Reset flags and button state
         pdfDownloadInProgress = false;
         isGeneratingPdf = false;
+        resetPdfButton();
         console.log('Text file generation completed - flags reset');
         
     } catch (error) {
         console.error('PDF generation failed:', error);
         showNotification('PDF generation failed: ' + error.message, 'error');
-        
-        // Reset flags on error
+
+        // Reset flags and button state on error
         pdfDownloadInProgress = false;
         isGeneratingPdf = false;
+        resetPdfButton();
         console.log('PDF generation failed - flags reset');
     }
 }
@@ -1944,16 +1957,16 @@ function enhancedPdfDownload() {
         setTimeout(() => {
             console.log('Calling generateSinglePdf...');
             generateSinglePdf();
-            
-            // Re-enable button after PDF generation
-            setTimeout(() => {
-                newBtn.disabled = false;
-                newBtn.innerHTML = '<i class="fas fa-download"></i> Download PDF Report';
-            }, 2000);
+            // Button state is reset inside generateSinglePdf when complete
         }, 100);
     });
     
     console.log('Single event listener added to new button');
+
+    // Enable the button now that setup is complete
+    newBtn.disabled = false;
+    console.log('Button enabled and ready for clicks');
+
     console.log('=== ENHANCED PDF DOWNLOAD SETUP COMPLETE ===');
 }
 
