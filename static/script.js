@@ -1708,29 +1708,29 @@ function resetPdfButton() {
     }
 }
 
-// Single PDF Generation (Reliable)
+// Single PDF Generation (Reliable) - Comprehensive 2-3 Page Report
 function generateSinglePdf() {
     pdfGenerationCount++;
     console.log(`=== GENERATING SINGLE PDF (Attempt #${pdfGenerationCount}) ===`);
-    
+
     // Prevent multiple downloads with stronger check
     if (pdfDownloadInProgress) {
         console.log('PDF download already in progress, skipping...');
         showNotification('PDF download already in progress...', 'info');
         return;
     }
-    
+
     // Set flags to prevent multiple downloads and gauge updates
     pdfDownloadInProgress = true;
     isGeneratingPdf = true;
-    
+
     console.log('PDF generation started - flags set');
-    
+
     try {
         // Try PDF generation first
         if (typeof window.jspdf !== 'undefined' || typeof window.jsPDF !== 'undefined') {
             console.log('Attempting PDF generation...');
-            
+
             // Try different ways to access jsPDF
             let jsPDF;
             if (typeof window.jspdf !== 'undefined') {
@@ -1738,51 +1738,350 @@ function generateSinglePdf() {
             } else if (typeof window.jsPDF !== 'undefined') {
                 jsPDF = window.jsPDF;
             }
-            
+
             if (jsPDF) {
                 const pdf = new jsPDF();
-                
-                // Add content
-                pdf.setFontSize(16);
-                pdf.text('Power Fault Analysis Report', 20, 30);
-                
-                pdf.setFontSize(12);
-                pdf.text(`Generated: ${new Date().toLocaleString()}`, 20, 50);
-                
-                // Add analysis results
-                const predictionLabel = document.getElementById('predictionLabel');
-                const confidenceText = document.getElementById('confidenceText');
-                
-                if (predictionLabel) {
-                    pdf.text(`Fault Type: ${predictionLabel.textContent}`, 20, 70);
-                }
-                
-                if (confidenceText) {
-                    pdf.text(`Confidence: ${confidenceText.textContent}`, 20, 85);
-                }
-                
-                // Add form data
-                pdf.text('Input Parameters:', 20, 110);
-                const inputs = document.querySelectorAll('input[type="number"]');
-                let yPos = 130;
-                
-                inputs.forEach((input, index) => {
-                    if (yPos > 250) {
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const margin = 20;
+                const contentWidth = pageWidth - 2 * margin;
+                let yPos = margin;
+
+                // Helper function to add a new page if needed
+                const checkPageBreak = (requiredSpace) => {
+                    if (yPos + requiredSpace > pageHeight - margin) {
                         pdf.addPage();
-                        yPos = 30;
+                        yPos = margin;
+                        return true;
                     }
-                    pdf.text(`${input.name || input.id}: ${input.value}`, 20, yPos);
-                    yPos += 10;
+                    return false;
+                };
+
+                // Helper function to draw a horizontal line
+                const drawLine = (y, width = contentWidth) => {
+                    pdf.setDrawColor(200, 200, 200);
+                    pdf.line(margin, y, margin + width, y);
+                };
+
+                // Helper function to add section header
+                const addSectionHeader = (title) => {
+                    checkPageBreak(20);
+                    pdf.setFontSize(14);
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setTextColor(41, 128, 185);
+                    pdf.text(title, margin, yPos);
+                    yPos += 3;
+                    drawLine(yPos);
+                    yPos += 8;
+                    pdf.setTextColor(0, 0, 0);
+                    pdf.setFont('helvetica', 'normal');
+                };
+
+                // Gather all data from the page
+                const predictionLabel = document.getElementById('predictionLabel')?.textContent || 'Not Available';
+                const confidenceText = document.getElementById('confidenceText')?.textContent || 'N/A';
+                const confidenceValue = confidenceText.replace('Confidence: ', '');
+
+                // Get input parameters
+                const voltage = document.getElementById('voltage')?.value || 'N/A';
+                const current = document.getElementById('current')?.value || 'N/A';
+                const powerLoad = document.getElementById('power_load')?.value || 'N/A';
+                const temperature = document.getElementById('temperature')?.value || 'N/A';
+                const windSpeed = document.getElementById('wind_speed')?.value || 'N/A';
+                const durationOfFault = document.getElementById('duration_of_fault')?.value || 'N/A';
+                const downTime = document.getElementById('down_time')?.value || 'N/A';
+
+                // Get fault details from DOM
+                const severityEl = document.querySelector('.severity-badge');
+                const riskEl = document.querySelector('.risk-badge');
+                const downtimeEl = document.querySelectorAll('.fault-info-value')[2];
+                const descriptionEl = document.querySelector('.fault-description p');
+                const recommendedActionsEls = document.querySelectorAll('.recommended-actions .action-list li');
+                const immediateStepsEls = document.querySelectorAll('.immediate-steps .action-list li');
+                const componentsEls = document.querySelectorAll('.component-tag');
+
+                const severity = severityEl?.textContent || 'N/A';
+                const riskLevel = riskEl?.textContent || 'N/A';
+                const estimatedDowntime = downtimeEl?.textContent || 'N/A';
+                const description = descriptionEl?.textContent || 'No description available.';
+
+                const recommendedActions = Array.from(recommendedActionsEls).map(el => el.textContent.trim().replace(/^[→\s]+/, ''));
+                const immediateSteps = Array.from(immediateStepsEls).map(el => el.textContent.trim().replace(/^[!\s]+/, ''));
+                const affectedComponents = Array.from(componentsEls).map(el => el.textContent.trim());
+
+                // ==================== PAGE 1 ====================
+
+                // Header with border
+                pdf.setFillColor(41, 128, 185);
+                pdf.rect(0, 0, pageWidth, 35, 'F');
+
+                pdf.setFontSize(22);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(255, 255, 255);
+                pdf.text('POWER FAULT ANALYSIS REPORT', pageWidth / 2, 18, { align: 'center' });
+
+                pdf.setFontSize(10);
+                pdf.setFont('helvetica', 'normal');
+                pdf.text('AI-Powered Electrical Grid Monitoring System', pageWidth / 2, 28, { align: 'center' });
+
+                yPos = 45;
+                pdf.setTextColor(0, 0, 0);
+
+                // Report metadata
+                pdf.setFontSize(10);
+                pdf.setTextColor(100, 100, 100);
+                const reportDate = new Date();
+                pdf.text(`Report Generated: ${reportDate.toLocaleDateString()} at ${reportDate.toLocaleTimeString()}`, margin, yPos);
+                pdf.text(`Report ID: PFR-${Date.now().toString(36).toUpperCase()}`, pageWidth - margin, yPos, { align: 'right' });
+                yPos += 15;
+
+                // Executive Summary Box
+                pdf.setFillColor(245, 245, 245);
+                pdf.roundedRect(margin, yPos, contentWidth, 45, 3, 3, 'F');
+
+                pdf.setFontSize(12);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(0, 0, 0);
+                pdf.text('EXECUTIVE SUMMARY', margin + 5, yPos + 10);
+
+                pdf.setFontSize(10);
+                pdf.setFont('helvetica', 'normal');
+                const summaryText = `This report presents the results of an AI-based power fault analysis conducted on the electrical grid system. The analysis evaluated key parameters including voltage levels, current flow, temperature readings, and environmental factors to predict potential fault conditions.`;
+                const summaryLines = pdf.splitTextToSize(summaryText, contentWidth - 10);
+                pdf.text(summaryLines, margin + 5, yPos + 20);
+                yPos += 55;
+
+                // Main Prediction Result Box
+                let predictionColor;
+                if (predictionLabel.includes('Line Breakage')) {
+                    predictionColor = [231, 76, 60]; // Red
+                } else if (predictionLabel.includes('Transformer')) {
+                    predictionColor = [243, 156, 18]; // Orange
+                } else if (predictionLabel.includes('Overheating')) {
+                    predictionColor = [231, 76, 60]; // Red
+                } else {
+                    predictionColor = [46, 204, 113]; // Green
+                }
+
+                pdf.setFillColor(...predictionColor);
+                pdf.roundedRect(margin, yPos, contentWidth, 35, 3, 3, 'F');
+
+                pdf.setFontSize(12);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(255, 255, 255);
+                pdf.text('PREDICTED FAULT TYPE', margin + 5, yPos + 12);
+
+                pdf.setFontSize(18);
+                pdf.text(predictionLabel.toUpperCase(), margin + 5, yPos + 27);
+
+                pdf.setFontSize(12);
+                pdf.text(`Confidence: ${confidenceValue}`, pageWidth - margin - 5, yPos + 20, { align: 'right' });
+                yPos += 45;
+
+                // Risk Assessment Summary
+                addSectionHeader('RISK ASSESSMENT SUMMARY');
+
+                pdf.setFontSize(10);
+                const riskData = [
+                    ['Severity Level:', severity],
+                    ['Risk Level:', riskLevel],
+                    ['Estimated Downtime:', estimatedDowntime]
+                ];
+
+                riskData.forEach(([label, value]) => {
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.text(label, margin, yPos);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.text(value, margin + 50, yPos);
+                    yPos += 8;
                 });
-                
+                yPos += 10;
+
+                // ==================== PAGE 2 ====================
+                pdf.addPage();
+                yPos = margin;
+
+                // Input Parameters Section
+                addSectionHeader('SYSTEM INPUT PARAMETERS');
+
+                // Create parameter table
+                pdf.setFontSize(10);
+                const params = [
+                    ['Parameter', 'Value', 'Unit', 'Status'],
+                    ['Voltage', voltage, 'V', parseFloat(voltage) < 2000 || parseFloat(voltage) > 2400 ? 'Warning' : 'Normal'],
+                    ['Current', current, 'A', parseFloat(current) > 250 ? 'Warning' : 'Normal'],
+                    ['Power Load', powerLoad, 'kW', parseFloat(powerLoad) > 600 ? 'Warning' : 'Normal'],
+                    ['Temperature', temperature, '°C', parseFloat(temperature) > 40 ? 'Warning' : 'Normal'],
+                    ['Wind Speed', windSpeed, 'm/s', parseFloat(windSpeed) > 30 ? 'Warning' : 'Normal'],
+                    ['Fault Duration', durationOfFault, 'min', 'Recorded'],
+                    ['Down Time', downTime, 'min', 'Recorded']
+                ];
+
+                const colWidths = [50, 35, 25, 35];
+                const rowHeight = 10;
+                let tableX = margin;
+
+                params.forEach((row, rowIndex) => {
+                    let cellX = tableX;
+
+                    // Header row styling
+                    if (rowIndex === 0) {
+                        pdf.setFillColor(41, 128, 185);
+                        pdf.rect(tableX, yPos - 6, colWidths.reduce((a, b) => a + b, 0), rowHeight, 'F');
+                        pdf.setTextColor(255, 255, 255);
+                        pdf.setFont('helvetica', 'bold');
+                    } else {
+                        // Alternating row colors
+                        if (rowIndex % 2 === 0) {
+                            pdf.setFillColor(245, 245, 245);
+                            pdf.rect(tableX, yPos - 6, colWidths.reduce((a, b) => a + b, 0), rowHeight, 'F');
+                        }
+                        pdf.setTextColor(0, 0, 0);
+                        pdf.setFont('helvetica', 'normal');
+
+                        // Color status column
+                        if (row[3] === 'Warning') {
+                            pdf.setTextColor(231, 76, 60);
+                        } else if (row[3] === 'Normal') {
+                            pdf.setTextColor(46, 204, 113);
+                        }
+                    }
+
+                    row.forEach((cell, cellIndex) => {
+                        pdf.text(cell.toString(), cellX + 2, yPos);
+                        cellX += colWidths[cellIndex];
+                    });
+
+                    yPos += rowHeight;
+                    pdf.setTextColor(0, 0, 0);
+                });
+                yPos += 15;
+
+                // Fault Description
+                addSectionHeader('FAULT DESCRIPTION');
+
+                pdf.setFontSize(10);
+                pdf.setFont('helvetica', 'normal');
+                const descLines = pdf.splitTextToSize(description, contentWidth);
+                pdf.text(descLines, margin, yPos);
+                yPos += descLines.length * 5 + 15;
+
+                // Affected Components
+                if (affectedComponents.length > 0) {
+                    addSectionHeader('AFFECTED COMPONENTS');
+
+                    pdf.setFontSize(10);
+                    let compX = margin;
+                    affectedComponents.forEach((comp, index) => {
+                        const compWidth = pdf.getTextWidth(comp) + 10;
+                        if (compX + compWidth > pageWidth - margin) {
+                            compX = margin;
+                            yPos += 12;
+                        }
+
+                        pdf.setFillColor(52, 73, 94);
+                        pdf.roundedRect(compX, yPos - 6, compWidth, 10, 2, 2, 'F');
+                        pdf.setTextColor(255, 255, 255);
+                        pdf.text(comp, compX + 5, yPos);
+                        compX += compWidth + 5;
+                    });
+                    pdf.setTextColor(0, 0, 0);
+                    yPos += 20;
+                }
+
+                // ==================== PAGE 3 ====================
+                pdf.addPage();
+                yPos = margin;
+
+                // Recommended Actions
+                if (recommendedActions.length > 0) {
+                    addSectionHeader('RECOMMENDED ACTIONS');
+
+                    pdf.setFontSize(10);
+                    recommendedActions.forEach((action, index) => {
+                        checkPageBreak(15);
+                        pdf.setFillColor(46, 204, 113);
+                        pdf.circle(margin + 3, yPos - 2, 2, 'F');
+                        const actionLines = pdf.splitTextToSize(action, contentWidth - 15);
+                        pdf.text(actionLines, margin + 10, yPos);
+                        yPos += actionLines.length * 5 + 5;
+                    });
+                    yPos += 10;
+                }
+
+                // Immediate Steps
+                if (immediateSteps.length > 0) {
+                    addSectionHeader('IMMEDIATE STEPS REQUIRED');
+
+                    pdf.setFontSize(10);
+                    immediateSteps.forEach((step, index) => {
+                        checkPageBreak(15);
+                        pdf.setFillColor(231, 76, 60);
+                        pdf.circle(margin + 3, yPos - 2, 2, 'F');
+                        const stepLines = pdf.splitTextToSize(step, contentWidth - 15);
+                        pdf.text(stepLines, margin + 10, yPos);
+                        yPos += stepLines.length * 5 + 5;
+                    });
+                    yPos += 10;
+                }
+
+                // Safety Guidelines
+                addSectionHeader('SAFETY GUIDELINES');
+
+                pdf.setFontSize(10);
+                const safetyGuidelines = [
+                    'Always follow proper lockout/tagout procedures before performing any maintenance.',
+                    'Ensure all personnel are properly trained and equipped with appropriate PPE.',
+                    'Document all findings and actions taken for compliance and future reference.',
+                    'Contact qualified electrical engineers for complex fault resolution.',
+                    'Perform regular preventive maintenance to minimize fault occurrences.'
+                ];
+
+                safetyGuidelines.forEach((guideline) => {
+                    checkPageBreak(12);
+                    pdf.setFillColor(243, 156, 18);
+                    pdf.circle(margin + 3, yPos - 2, 2, 'F');
+                    const guideLines = pdf.splitTextToSize(guideline, contentWidth - 15);
+                    pdf.text(guideLines, margin + 10, yPos);
+                    yPos += guideLines.length * 5 + 3;
+                });
+                yPos += 15;
+
+                // Footer/Disclaimer on last page
+                checkPageBreak(40);
+                drawLine(yPos);
+                yPos += 10;
+
+                pdf.setFontSize(8);
+                pdf.setTextColor(100, 100, 100);
+                pdf.setFont('helvetica', 'italic');
+                const disclaimer = 'DISCLAIMER: This report is generated by an AI-based prediction system and should be used as a supplementary tool for decision-making. Always consult with qualified electrical engineers and follow established safety protocols before taking any corrective actions. The predictions are based on the input parameters provided and historical data patterns.';
+                const disclaimerLines = pdf.splitTextToSize(disclaimer, contentWidth);
+                pdf.text(disclaimerLines, margin, yPos);
+                yPos += disclaimerLines.length * 4 + 10;
+
+                // Footer
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(8);
+                pdf.text('Power Fault Prediction System | AI-Powered Electrical Grid Monitoring', pageWidth / 2, pageHeight - 10, { align: 'center' });
+
+                // Add page numbers to all pages
+                const totalPages = pdf.internal.getNumberOfPages();
+                for (let i = 1; i <= totalPages; i++) {
+                    pdf.setPage(i);
+                    pdf.setFontSize(8);
+                    pdf.setTextColor(150, 150, 150);
+                    pdf.text(`Page ${i} of ${totalPages}`, pageWidth - margin, pageHeight - 10, { align: 'right' });
+                }
+
                 // Save PDF
                 const fileName = `Power_Fault_Report_${new Date().toISOString().split('T')[0]}.pdf`;
                 console.log('Saving PDF:', fileName);
-                
+
                 pdf.save(fileName);
                 console.log('PDF saved successfully');
-                
-                showNotification('PDF downloaded successfully!', 'success');
+
+                showNotification('PDF report downloaded successfully!', 'success');
 
                 // Reset flags and button state
                 pdfDownloadInProgress = false;
@@ -1792,22 +2091,84 @@ function generateSinglePdf() {
                 return;
             }
         }
-        
+
         // Fallback to text file if PDF fails
         console.log('PDF generation failed, creating text file...');
-        
-        const content = `Power Fault Analysis Report
-Generated: ${new Date().toLocaleString()}
+
+        const content = `
+================================================================================
+                    POWER FAULT ANALYSIS REPORT
+                AI-Powered Electrical Grid Monitoring System
+================================================================================
+
+Report Generated: ${new Date().toLocaleString()}
+Report ID: PFR-${Date.now().toString(36).toUpperCase()}
+
+--------------------------------------------------------------------------------
+                           EXECUTIVE SUMMARY
+--------------------------------------------------------------------------------
+
+This report presents the results of an AI-based power fault analysis conducted
+on the electrical grid system. The analysis evaluated key parameters including
+voltage levels, current flow, temperature readings, and environmental factors
+to predict potential fault conditions.
+
+--------------------------------------------------------------------------------
+                         PREDICTION RESULTS
+--------------------------------------------------------------------------------
 
 Fault Type: ${document.getElementById('predictionLabel')?.textContent || 'Not available'}
 Confidence: ${document.getElementById('confidenceText')?.textContent || 'Not available'}
 
-Input Parameters:
-${Array.from(document.querySelectorAll('input[type="number"]')).map(input => `${input.name || input.id}: ${input.value}`).join('\n')}
+--------------------------------------------------------------------------------
+                       SYSTEM INPUT PARAMETERS
+--------------------------------------------------------------------------------
 
-Note: This is a text file export of the analysis results.
+Voltage:           ${document.getElementById('voltage')?.value || 'N/A'} V
+Current:           ${document.getElementById('current')?.value || 'N/A'} A
+Power Load:        ${document.getElementById('power_load')?.value || 'N/A'} kW
+Temperature:       ${document.getElementById('temperature')?.value || 'N/A'} °C
+Wind Speed:        ${document.getElementById('wind_speed')?.value || 'N/A'} m/s
+Fault Duration:    ${document.getElementById('duration_of_fault')?.value || 'N/A'} min
+Down Time:         ${document.getElementById('down_time')?.value || 'N/A'} min
+
+--------------------------------------------------------------------------------
+                          RISK ASSESSMENT
+--------------------------------------------------------------------------------
+
+Severity Level:     ${document.querySelector('.severity-badge')?.textContent || 'N/A'}
+Risk Level:         ${document.querySelector('.risk-badge')?.textContent || 'N/A'}
+Estimated Downtime: ${document.querySelectorAll('.fault-info-value')[2]?.textContent || 'N/A'}
+
+--------------------------------------------------------------------------------
+                         FAULT DESCRIPTION
+--------------------------------------------------------------------------------
+
+${document.querySelector('.fault-description p')?.textContent || 'No description available.'}
+
+--------------------------------------------------------------------------------
+                        SAFETY GUIDELINES
+--------------------------------------------------------------------------------
+
+1. Always follow proper lockout/tagout procedures before maintenance.
+2. Ensure all personnel are properly trained and equipped with PPE.
+3. Document all findings and actions taken for compliance.
+4. Contact qualified electrical engineers for complex fault resolution.
+5. Perform regular preventive maintenance to minimize fault occurrences.
+
+--------------------------------------------------------------------------------
+                            DISCLAIMER
+--------------------------------------------------------------------------------
+
+This report is generated by an AI-based prediction system and should be used
+as a supplementary tool for decision-making. Always consult with qualified
+electrical engineers and follow established safety protocols.
+
+================================================================================
+        Power Fault Prediction System | AI-Powered Grid Monitoring
+================================================================================
 `;
-        
+
         const blob = new Blob([content], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -1817,16 +2178,16 @@ Note: This is a text file export of the analysis results.
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        
+
         console.log('Text file downloaded successfully');
-        showNotification('Text file downloaded successfully!', 'success');
+        showNotification('Text report downloaded successfully!', 'success');
 
         // Reset flags and button state
         pdfDownloadInProgress = false;
         isGeneratingPdf = false;
         resetPdfButton();
         console.log('Text file generation completed - flags reset');
-        
+
     } catch (error) {
         console.error('PDF generation failed:', error);
         showNotification('PDF generation failed: ' + error.message, 'error');
